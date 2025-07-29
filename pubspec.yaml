@@ -44,6 +44,8 @@ dependencies:
   path: ^1.9.1
   shared_preferences: ^2.5.3
   cached_network_image: ^3.4.1
+  injectable: ^2.3.2
+  get_it: ^7.6.4
 
 
 dev_dependencies:
@@ -56,6 +58,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  injectable_generator: ^2.3.2
+  build_runner: ^2.4.6
+  mockito: ^5.4.4
+  bloc_test: ^10.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

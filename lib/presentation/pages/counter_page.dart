@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:product_manager_demo/bloc/counter_bloc.dart';
-
+import 'package:product_manager_demo/presentation/blocs/counter_bloc.dart';
 
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key, required this.title});
@@ -11,9 +10,9 @@ class CounterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _buildAppBar(context, title),
-        body: _buildBody(context),
-        floatingActionButton: _buildFloatingActionButtons(context),
+      appBar: _buildAppBar(context, title),
+      body: _buildBody(context),
+      floatingActionButton: _buildFloatingActionButtons(context),
     );
   }
 
