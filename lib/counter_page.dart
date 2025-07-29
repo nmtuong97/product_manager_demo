@@ -1,65 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:product_manager_demo/database_helper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:product_manager_demo/bloc/counter_bloc.dart';
 
-class CounterPage extends StatefulWidget {
+
+class CounterPage extends StatelessWidget {
   const CounterPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<CounterPage> createState() => _CounterPageState();
-}
-
-class _CounterPageState extends State<CounterPage> {
-  late Future<int?> _counterFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _counterFuture = _loadCounter();
-  }
-
-  Future<int?> _loadCounter() async {
-    int? storedCounter = await DatabaseHelper.instance.getCounter();
-    if (storedCounter == null) {
-      await DatabaseHelper.instance.saveCounter(0);
-      return 0;
-    }
-    return storedCounter;
-  }
-
-  void _incrementCounter() async {
-    setState(() {
-      _counterFuture = _updateCounter((currentCount) => currentCount + 1);
-    });
-  }
-
-  void _decrementCounter() async {
-    setState(() {
-      _counterFuture = _updateCounter((currentCount) => currentCount - 1);
-    });
-  }
-
-  Future<int?> _updateCounter(int Function(int) updateFunction) async {
-    int currentCount = (await _counterFuture) ?? 0;
-    int newCount = updateFunction(currentCount);
-    await DatabaseHelper.instance.saveCounter(newCount);
-    return newCount;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context),
-      body: _buildBody(context),
-      floatingActionButton: _buildFloatingActionButtons(),
+        appBar: _buildAppBar(context, title),
+        body: _buildBody(context),
+        floatingActionButton: _buildFloatingActionButtons(context),
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar(BuildContext context, String title) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      title: Text(widget.title),
+      title: Text(title),
     );
   }
 
@@ -69,42 +30,42 @@ class _CounterPageState extends State<CounterPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           const Text('You have pushed the button this many times:'),
-          _buildCounterDisplay(context),
+          _buildCounterDisplay(),
         ],
       ),
     );
   }
 
-  Widget _buildCounterDisplay(BuildContext context) {
-    return FutureBuilder<int?>(
-      future: _counterFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+  Widget _buildCounterDisplay() {
+    return BlocBuilder<CounterBloc, CounterState>(
+      builder: (context, state) {
+        if (state is CounterInitial) {
           return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
+        } else if (state is CounterLoaded) {
           return Text(
-            '${snapshot.data ?? 0}',
+            '${state.counter}',
             style: Theme.of(context).textTheme.headlineMedium,
           );
+        } else if (state is CounterError) {
+          return Text('Error: ${state.message}');
         }
+        return const Text('Unknown state');
       },
     );
   }
 
-  Widget _buildFloatingActionButtons() {
+  Widget _buildFloatingActionButtons(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         FloatingActionButton(
-          onPressed: _decrementCounter,
+          onPressed: () => context.read<CounterBloc>().add(DecrementCounter()),
           tooltip: 'Decrement',
           child: const Icon(Icons.remove),
         ),
         const SizedBox(width: 10),
         FloatingActionButton(
-          onPressed: _incrementCounter,
+          onPressed: () => context.read<CounterBloc>().add(IncrementCounter()),
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ),

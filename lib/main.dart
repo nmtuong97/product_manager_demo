@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:product_manager_demo/bloc/counter_bloc.dart';
+
 import 'package:product_manager_demo/database_helper.dart';
 import 'package:product_manager_demo/counter_page.dart';
 
@@ -24,7 +27,10 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           ),
-          home: const CounterPage(title: 'Flutter Demo Home Page'),
+          home: BlocProvider(
+            create: (context) => CounterBloc()..add(LoadCounter()),
+            child: const CounterPage(title: 'Flutter Demo Home Page'),
+          ),
         );
       },
     );
