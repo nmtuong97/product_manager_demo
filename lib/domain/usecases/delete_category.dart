@@ -1,5 +1,8 @@
+import 'package:injectable/injectable.dart';
+
 import '../repositories/category_repository.dart';
 
+@injectable
 class DeleteCategory {
   final CategoryRepository repository;
 

@@ -1,7 +1,10 @@
+import 'package:injectable/injectable.dart';
+
 import '../../domain/entities/category.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../datasources/database_helper.dart';
 
+@LazySingleton(as: CategoryRepository)
 class CategoryRepositoryImpl implements CategoryRepository {
   final DatabaseHelper databaseHelper;
 

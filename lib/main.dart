@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:product_manager_demo/presentation/blocs/counter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:product_manager_demo/injection.dart';
-import 'package:product_manager_demo/presentation/pages/counter_page.dart';
+import 'injection.dart';
+import 'presentation/blocs/category/category_barrel.dart';
+import 'presentation/pages/home_page.dart';
+import 'package:product_manager_demo/presentation/blocs/counter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  configureDependencies();
+  await configureDependencies();
+  // Đợi tất cả dependencies async sẵn sàng
   await getIt.allReady();
-
-  final counterBloc = await getIt.getAsync<CounterBloc>();
-  runApp(MyApp(counterBloc: counterBloc));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final CounterBloc counterBloc;
-
-  const MyApp({super.key, required this.counterBloc});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +25,73 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return BlocProvider.value(
-          value: counterBloc..add(LoadCounter()),
-          child: MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            ),
-            home: const CounterPage(title: 'Flutter Demo Home Page'),
-          ),
+        return FutureBuilder<CategoryBloc>(
+          future: getIt.getAsync<CategoryBloc>(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              );
+            }
+            
+            if (snapshot.hasError) {
+              return MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  ),
+                ),
+              );
+            }
+            
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<CategoryBloc>.value(
+                  value: snapshot.data!,
+                ),
+              ],
+              child: FutureBuilder<CounterBloc>(
+                future: getIt.getAsync<CounterBloc>(),
+                builder: (context, counterSnapshot) {
+                  if (counterSnapshot.connectionState == ConnectionState.waiting) {
+                    return const MaterialApp(
+                      home: Scaffold(
+                        body: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (counterSnapshot.hasError) {
+                    return MaterialApp(
+                      home: Scaffold(
+                        body: Center(
+                          child: Text('Error: ${counterSnapshot.error}'),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return BlocProvider<CounterBloc>.value(
+                    value: counterSnapshot.data!,
+                    child: MaterialApp(
+                      title: 'Product Manager Demo',
+                      theme: ThemeData(
+                        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                        useMaterial3: true,
+                      ),
+                      home: const HomePage(),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
         );
       },
     );
