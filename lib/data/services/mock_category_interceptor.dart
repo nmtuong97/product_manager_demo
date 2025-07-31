@@ -3,6 +3,9 @@ import 'package:injectable/injectable.dart';
 import 'mock_categories_service.dart';
 import '../../domain/entities/category.dart';
 
+const _basePath = '/categories';
+const _categoriesFile = 'categories.json';
+
 @injectable
 class MockCategoryInterceptor extends Interceptor {
   final MockCategoriesService _mockService;
@@ -16,85 +19,156 @@ class MockCategoryInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     await Future.delayed(const Duration(seconds: 1));
-    if (options.path == '/categories') {
-      if (options.method == 'GET') {
-        final categories = await _mockService.readData('categories.json');
-        handler.resolve(
-          Response(requestOptions: options, data: categories, statusCode: 200),
-        );
-      } else if (options.method == 'POST') {
-        final data = options.data as Map<String, dynamic>;
-        final newCategory = Category(
-          id: _nextId++,
-          name: data['name'],
-          createdAt: DateTime.now().toIso8601String(),
-          updatedAt: DateTime.now().toIso8601String(),
-        );
-        final categories = await _mockService.readData('categories.json');
-        categories.add(newCategory.toMap());
-        await _mockService.writeData('categories.json', categories);
-        handler.resolve(
-          Response(
-            requestOptions: options,
-            data: newCategory.toMap(),
-            statusCode: 201,
-          ),
-        );
-      }
-    } else if (options.path.startsWith('/categories/')) {
-      final id = int.parse(options.path.split('/').last);
-      if (options.method == 'PUT') {
-        final data = options.data as Map<String, dynamic>;
-        final updatedCategory = Category(
-          id: id,
-          name: data['name'],
-          createdAt: data['createdAt'],
-          updatedAt: DateTime.now().toIso8601String(),
-        );
-        final categories = await _mockService.readData('categories.json');
-        final index = categories.indexWhere((c) => c['id'] == id);
-        if (index != -1) {
-          categories[index] = updatedCategory.toMap();
-          await _mockService.writeData('categories.json', categories);
-          handler.resolve(
-            Response(
-              requestOptions: options,
-              data: updatedCategory.toMap(),
-              statusCode: 200,
-            ),
-          );
-        } else {
-          handler.reject(
-            DioException(
-              requestOptions: options,
-              response: Response(
-                requestOptions: options,
-                data: {'message': 'Category not found'},
-                statusCode: 404,
-              ),
-            ),
-          );
-        }
-      } else if (options.method == 'DELETE') {
-        final categories = await _mockService.readData('categories.json');
-        final index = categories.indexWhere((c) => c['id'] == id);
-        if (index != -1) {
-          categories.removeAt(index);
-          await _mockService.writeData('categories.json', categories);
-          handler.resolve(Response(requestOptions: options, statusCode: 204));
-        } else {
-          handler.reject(
-            DioException(
-              requestOptions: options,
-              response: Response(
-                requestOptions: options,
-                data: {'message': 'Category not found'},
-                statusCode: 404,
-              ),
-            ),
-          );
-        }
-      }
+
+    if (!options.path.startsWith(_basePath)) {
+      return super.onRequest(options, handler);
     }
+
+    final segments = options.path.split('/');
+    final isCollection = segments.length == 2;
+
+    if (isCollection) {
+      return _handleCollectionRequest(options, handler);
+    }
+
+    final id = int.tryParse(segments.last);
+    if (id == null) {
+      return handler.reject(_badRequest(options, 'Invalid category ID'));
+    }
+
+    return _handleResourceRequest(id, options, handler);
+  }
+
+  Future<void> _handleCollectionRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    switch (options.method) {
+      case 'GET':
+        return _getCategories(options, handler);
+      case 'POST':
+        return _createCategory(options, handler);
+      default:
+        return super.onRequest(options, handler);
+    }
+  }
+
+  Future<void> _handleResourceRequest(
+    int id,
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    switch (options.method) {
+      case 'PUT':
+        return _updateCategory(id, options, handler);
+      case 'DELETE':
+        return _deleteCategory(id, options, handler);
+      default:
+        return super.onRequest(options, handler);
+    }
+  }
+
+  Future<void> _getCategories(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final categories = await _mockService.readData(_categoriesFile);
+    handler.resolve(
+      Response(requestOptions: options, data: categories, statusCode: 200),
+    );
+  }
+
+  Future<void> _createCategory(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final data = options.data as Map<String, dynamic>;
+    final newCategory = Category(
+      id: _nextId++,
+      name: data['name'],
+      createdAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+    final categories = await _mockService.readData(_categoriesFile);
+    categories.add(newCategory.toMap());
+    await _mockService.writeData(_categoriesFile, categories);
+    handler.resolve(
+      Response(
+        requestOptions: options,
+        data: newCategory.toMap(),
+        statusCode: 201,
+      ),
+    );
+  }
+
+  Future<void> _updateCategory(
+    int id,
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final data = options.data as Map<String, dynamic>;
+    final categories = await _mockService.readData(_categoriesFile);
+    final index = categories.indexWhere((c) => c['id'] == id);
+
+    if (index == -1) {
+      return handler.reject(_notFound(options));
+    }
+
+    final updatedCategory = Category(
+      id: id,
+      name: data['name'],
+      createdAt: categories[index]['createdAt'], // Keep original creation date
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+
+    categories[index] = updatedCategory.toMap();
+    await _mockService.writeData(_categoriesFile, categories);
+
+    handler.resolve(
+      Response(
+        requestOptions: options,
+        data: updatedCategory.toMap(),
+        statusCode: 200,
+      ),
+    );
+  }
+
+  Future<void> _deleteCategory(
+    int id,
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final categories = await _mockService.readData(_categoriesFile);
+    final index = categories.indexWhere((c) => c['id'] == id);
+
+    if (index == -1) {
+      return handler.reject(_notFound(options));
+    }
+
+    categories.removeAt(index);
+    await _mockService.writeData(_categoriesFile, categories);
+    handler.resolve(Response(requestOptions: options, statusCode: 204));
+  }
+
+  DioException _badRequest(RequestOptions options, String message) {
+    return DioException(
+      requestOptions: options,
+      response: Response(
+        requestOptions: options,
+        data: {'message': message},
+        statusCode: 400,
+      ),
+    );
+  }
+
+  DioException _notFound(RequestOptions options) {
+    return DioException(
+      requestOptions: options,
+      response: Response(
+        requestOptions: options,
+        data: {'message': 'Category not found'},
+        statusCode: 404,
+      ),
+    );
   }
 }
