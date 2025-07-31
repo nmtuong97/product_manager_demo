@@ -1,5 +1,5 @@
-import 'package:product_manager_demo/data/datasources/database_helper.dart';
-import 'package:product_manager_demo/domain/repositories/counter_repository.dart';
+import '../datasources/database_helper.dart';
+import '../../domain/repositories/counter_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: CounterRepository)

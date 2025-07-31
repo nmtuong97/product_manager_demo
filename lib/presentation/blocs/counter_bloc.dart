@@ -1,10 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:product_manager_demo/domain/usecases/get_counter.dart';
-import 'package:product_manager_demo/domain/usecases/save_counter.dart';
+import '../../domain/usecases/get_counter.dart';
+import '../../domain/usecases/save_counter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
-
 
 @immutable
 abstract class CounterEvent {}
@@ -44,7 +43,10 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     on<DecrementCounter>(_onDecrementCounter);
   }
 
-  Future<void> _onLoadCounter(LoadCounter event, Emitter<CounterState> emit) async {
+  Future<void> _onLoadCounter(
+    LoadCounter event,
+    Emitter<CounterState> emit,
+  ) async {
     try {
       int? storedCounter = await _getCounter();
       if (storedCounter == null) {
@@ -58,7 +60,10 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     }
   }
 
-  Future<void> _onIncrementCounter(IncrementCounter event, Emitter<CounterState> emit) async {
+  Future<void> _onIncrementCounter(
+    IncrementCounter event,
+    Emitter<CounterState> emit,
+  ) async {
     if (state is CounterLoaded) {
       final currentCounter = (state as CounterLoaded).counter;
       final newCounter = currentCounter + 1;
@@ -67,7 +72,10 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     }
   }
 
-  Future<void> _onDecrementCounter(DecrementCounter event, Emitter<CounterState> emit) async {
+  Future<void> _onDecrementCounter(
+    DecrementCounter event,
+    Emitter<CounterState> emit,
+  ) async {
     if (state is CounterLoaded) {
       final currentCounter = (state as CounterLoaded).counter;
       final newCounter = currentCounter - 1;

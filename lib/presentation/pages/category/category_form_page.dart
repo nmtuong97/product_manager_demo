@@ -7,7 +7,7 @@ import '../../blocs/category/category_barrel.dart';
 
 class CategoryFormPage extends StatefulWidget {
   final Category? category;
-  
+
   const CategoryFormPage({super.key, this.category});
 
   @override
@@ -38,75 +38,76 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CategoryBloc, CategoryState>(
-        listener: (context, state) {
-          if (state is CategoryLoading) {
-            setState(() {
-              _isLoading = true;
-            });
-          } else {
-            setState(() {
-              _isLoading = false;
-            });
-          }
-          
-          if (state is CategoryOperationSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.green,
-                duration: const Duration(seconds: 2),
-              ),
-            );
-            Navigator.of(context).pop(true);
-          } else if (state is CategoryError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-                duration: const Duration(seconds: 3),
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                _isEditing ? 'Chỉnh sửa danh mục' : 'Thêm danh mục',
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              centerTitle: true,
-              elevation: 0,
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              actions: [
-                if (_isEditing)
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: _isLoading
-                        ? null
-                        : () {
+      listener: (context, state) {
+        if (state is CategoryLoading) {
+          setState(() {
+            _isLoading = true;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+
+        if (state is CategoryOperationSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+          Navigator.of(context).pop(true);
+        } else if (state is CategoryError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              _isEditing ? 'Chỉnh sửa danh mục' : 'Thêm danh mục',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
+            ),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            actions: [
+              if (_isEditing)
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text('Xác nhận xóa'),
                                   content: const Text(
-                                      'Bạn có chắc chắn muốn xóa danh mục này?'),
+                                    'Bạn có chắc chắn muốn xóa danh mục này?',
+                                  ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
                                       child: const Text('Hủy'),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                         context.read<CategoryBloc>().add(
-                                            DeleteCategoryEvent(
-                                                widget.category!.id!));
+                                          DeleteCategoryEvent(
+                                            widget.category!.id!,
+                                          ),
+                                        );
                                       },
                                       child: const Text('Xóa'),
                                     ),
@@ -115,14 +116,14 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                               },
                             );
                           },
-                    tooltip: 'Xóa danh mục',
-                  ),
-              ],
-            ),
-            body: _buildForm(context),
-          );
-        },
-      );
+                  tooltip: 'Xóa danh mục',
+                ),
+            ],
+          ),
+          body: _buildForm(context),
+        );
+      },
+    );
   }
 
   Widget _buildForm(BuildContext context) {
@@ -136,35 +137,35 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                   Card(
-                     elevation: 2,
-                     shape: RoundedRectangleBorder(
-                       borderRadius: BorderRadius.circular(12.r),
-                     ),
-                     child: Padding(
-                       padding: EdgeInsets.all(16.w),
-                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           Text(
-                             'Thông tin danh mục',
-                             style: TextStyle(
-                               fontSize: 16.sp,
-                               fontWeight: FontWeight.bold,
-                               color: Theme.of(context).colorScheme.primary,
-                             ),
-                           ),
-                           SizedBox(height: 16.h),
-                           _buildNameField(),
-                           if (_isEditing) ...[
-                             SizedBox(height: 16.h),
-                             _buildInfoSection(),
-                           ],
-                         ],
-                       ),
-                     ),
-                   ),
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(16.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Thông tin danh mục',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildNameField(),
+                          if (_isEditing) ...[
+                            SizedBox(height: 16.h),
+                            _buildInfoSection(),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -185,14 +186,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         labelText: 'Tên danh mục *',
         hintText: 'Nhập tên danh mục',
         prefixIcon: const Icon(Icons.category),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
-          ),
+          borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
@@ -203,16 +200,11 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: const BorderSide(
-            color: Colors.red,
-          ),
+          borderSide: const BorderSide(color: Colors.red),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
       validator: (value) {
@@ -239,9 +231,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: Colors.grey.shade200,
-        ),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,19 +264,13 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             width: 100.w,
             child: Text(
               '$label:',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey.shade800,
-              ),
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade800),
             ),
           ),
         ],
@@ -308,10 +292,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             ),
             child: Text(
               'Hủy',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -325,22 +306,23 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                 borderRadius: BorderRadius.circular(8.r),
               ),
             ),
-            child: _isLoading
-                ? SizedBox(
-                    height: 20.h,
-                    width: 20.w,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            child:
+                _isLoading
+                    ? SizedBox(
+                      height: 20.h,
+                      width: 20.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : Text(
+                      _isEditing ? 'Cập nhật' : 'Thêm',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  )
-                : Text(
-                    _isEditing ? 'Cập nhật' : 'Thêm',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
           ),
         ),
       ],

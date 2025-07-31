@@ -13,10 +13,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Product Manager Demo',
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 2,
@@ -79,9 +76,7 @@ class HomePage extends StatelessWidget {
   }) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16.r),
@@ -96,11 +91,7 @@ class HomePage extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(
-                  icon,
-                  size: 32.w,
-                  color: color,
-                ),
+                child: Icon(icon, size: 32.w, color: color),
               ),
               SizedBox(width: 16.w),
               Expanded(
@@ -139,11 +130,9 @@ class HomePage extends StatelessWidget {
   }
 
   void _navigateToCategories(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const CategoryListPage(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const CategoryListPage()));
   }
 
   void _navigateToCounter(BuildContext context) {
@@ -160,7 +149,9 @@ class HomePage extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Coming Soon'),
-          content: const Text('Tính năng này sẽ được phát triển trong tương lai.'),
+          content: const Text(
+            'Tính năng này sẽ được phát triển trong tương lai.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

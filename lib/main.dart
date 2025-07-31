@@ -5,11 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'injection.dart';
 import 'presentation/blocs/category/category_barrel.dart';
 import 'presentation/pages/home_page.dart';
-import 'package:product_manager_demo/presentation/blocs/counter_bloc.dart';
+import 'presentation/blocs/counter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureDependencies();
+  configureDependencies();
   // Đợi tất cả dependencies async sẵn sàng
   await getIt.allReady();
   runApp(const MyApp());
@@ -31,38 +31,31 @@ class MyApp extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const MaterialApp(
                 home: Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  body: Center(child: CircularProgressIndicator()),
                 ),
               );
             }
-            
+
             if (snapshot.hasError) {
               return MaterialApp(
                 home: Scaffold(
-                  body: Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  ),
+                  body: Center(child: Text('Error: ${snapshot.error}')),
                 ),
               );
             }
-            
+
             return MultiBlocProvider(
               providers: [
-                BlocProvider<CategoryBloc>.value(
-                  value: snapshot.data!,
-                ),
+                BlocProvider<CategoryBloc>.value(value: snapshot.data!),
               ],
               child: FutureBuilder<CounterBloc>(
                 future: getIt.getAsync<CounterBloc>(),
                 builder: (context, counterSnapshot) {
-                  if (counterSnapshot.connectionState == ConnectionState.waiting) {
+                  if (counterSnapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return const MaterialApp(
                       home: Scaffold(
-                        body: Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        body: Center(child: CircularProgressIndicator()),
                       ),
                     );
                   }
@@ -82,7 +75,9 @@ class MyApp extends StatelessWidget {
                     child: MaterialApp(
                       title: 'Product Manager Demo',
                       theme: ThemeData(
-                        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                        colorScheme: ColorScheme.fromSeed(
+                          seedColor: Colors.deepPurple,
+                        ),
                         useMaterial3: true,
                       ),
                       home: const HomePage(),

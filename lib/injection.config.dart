@@ -9,12 +9,19 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import 'data/datasources/category_local_data_source.dart' as _i77;
+import 'data/datasources/category_local_data_source_impl.dart' as _i983;
+import 'data/datasources/category_remote_data_source.dart' as _i173;
+import 'data/datasources/category_remote_data_source_impl.dart' as _i46;
 import 'data/datasources/database_helper.dart' as _i443;
 import 'data/repositories/category_repository_impl.dart' as _i1032;
 import 'data/repositories/counter_repository_impl.dart' as _i86;
+import 'data/services/mock_categories_service.dart' as _i1017;
+import 'data/services/mock_category_interceptor.dart' as _i0;
 import 'domain/repositories/category_repository.dart' as _i615;
 import 'domain/repositories/counter_repository.dart' as _i123;
 import 'domain/usecases/add_category.dart' as _i945;
@@ -24,6 +31,7 @@ import 'domain/usecases/get_category.dart' as _i677;
 import 'domain/usecases/get_counter.dart' as _i825;
 import 'domain/usecases/save_counter.dart' as _i647;
 import 'domain/usecases/update_category.dart' as _i173;
+import 'injection.dart' as _i464;
 import 'presentation/blocs/category/category_bloc.dart' as _i815;
 import 'presentation/blocs/counter_bloc.dart' as _i565;
 
@@ -34,16 +42,36 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final registerModule = _$RegisterModule();
     gh.singletonAsync<_i443.DatabaseHelper>(
       () => _i443.DatabaseHelper.create(),
     );
-    gh.lazySingletonAsync<_i615.CategoryRepository>(
-      () async =>
-          _i1032.CategoryRepositoryImpl(await getAsync<_i443.DatabaseHelper>()),
+    gh.lazySingleton<_i1017.MockCategoriesService>(
+      () => _i1017.MockCategoriesService(),
+    );
+    gh.lazySingleton<_i361.Dio>(
+      () => registerModule.dio(gh<_i1017.MockCategoriesService>()),
+    );
+    gh.lazySingleton<_i173.CategoryRemoteDataSource>(
+      () => _i46.CategoryRemoteDataSourceImpl(gh<_i361.Dio>()),
+    );
+    gh.lazySingletonAsync<_i77.CategoryLocalDataSource>(
+      () async => _i983.CategoryLocalDataSourceImpl(
+        await getAsync<_i443.DatabaseHelper>(),
+      ),
+    );
+    gh.factory<_i0.MockCategoryInterceptor>(
+      () => _i0.MockCategoryInterceptor(gh<_i1017.MockCategoriesService>()),
     );
     gh.lazySingletonAsync<_i123.CounterRepository>(
       () async =>
           _i86.CounterRepositoryImpl(await getAsync<_i443.DatabaseHelper>()),
+    );
+    gh.lazySingletonAsync<_i615.CategoryRepository>(
+      () async => _i1032.CategoryRepositoryImpl(
+        await getAsync<_i77.CategoryLocalDataSource>(),
+        gh<_i173.CategoryRemoteDataSource>(),
+      ),
     );
     gh.factoryAsync<_i677.GetCategory>(
       () async => _i677.GetCategory(await getAsync<_i615.CategoryRepository>()),
@@ -87,3 +115,5 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$RegisterModule extends _i464.RegisterModule {}

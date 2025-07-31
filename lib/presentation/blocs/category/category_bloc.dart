@@ -7,7 +7,6 @@ import '../../../domain/usecases/add_category.dart';
 import '../../../domain/usecases/update_category.dart';
 import '../../../domain/usecases/delete_category.dart';
 
-
 import 'category_barrel.dart';
 
 @lazySingleton

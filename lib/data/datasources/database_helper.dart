@@ -5,14 +5,12 @@ import 'package:injectable/injectable.dart';
 @singleton
 class DatabaseHelper {
   static Database? _database;
-  
+
   DatabaseHelper._internal();
 
   @factoryMethod
   static Future<DatabaseHelper> create() async {
-
     if (_database == null) {
-
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'app_database.db');
 
@@ -21,7 +19,6 @@ class DatabaseHelper {
         version: 1,
         onCreate: DatabaseHelper._createDB,
       );
-
     }
 
     return DatabaseHelper._internal();
@@ -31,8 +28,6 @@ class DatabaseHelper {
     if (_database != null) return _database!;
     throw Exception('Database not initialized. Call create() first.');
   }
-
-
 
   static Future<void> _createDB(Database db, int version) async {
     await db.execute('''
@@ -78,7 +73,11 @@ class DatabaseHelper {
   // Product methods
   Future<int> insertProduct(Map<String, dynamic> product) async {
     final db = await database;
-    return await db.insert('products', product, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(
+      'products',
+      product,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<Map<String, dynamic>> getProduct(int id) async {
@@ -113,17 +112,30 @@ class DatabaseHelper {
 
   Future<int> deleteProduct(int id) async {
     final db = await database;
-    return await db.delete(
-      'products',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('products', where: 'id = ?', whereArgs: [id]);
   }
 
   // Category methods
   Future<int> insertCategory(Map<String, dynamic> category) async {
     final db = await database;
-    return await db.insert('categories', category, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(
+      'categories',
+      category,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> batchInsertCategories(List<dynamic> categories) async {
+    final db = await database;
+    final batch = db.batch();
+    for (var category in categories) {
+      batch.insert(
+        'categories',
+        category.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+    await batch.commit(noResult: true);
   }
 
   Future<Map<String, dynamic>> getCategory(int id) async {
@@ -158,16 +170,16 @@ class DatabaseHelper {
 
   Future<int> deleteCategory(int id) async {
     final db = await database;
-    return await db.delete(
-      'categories',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('categories', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> saveCounter(int value) async {
     final db = await database;
-    final data = {'name': 'counter', 'description': 'Counter value', 'is_enabled': value};
+    final data = {
+      'name': 'counter',
+      'description': 'Counter value',
+      'is_enabled': value,
+    };
 
     final rowsAffected = await db.update(
       'features',

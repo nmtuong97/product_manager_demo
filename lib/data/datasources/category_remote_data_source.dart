@@ -1,9 +1,13 @@
 import '../../domain/entities/category.dart';
 
-abstract class CategoryRepository {
+abstract class CategoryRemoteDataSource {
   Future<List<Category>> getCategories();
+
   Future<Category> getCategory(int id);
-  Future<void> addCategory(Category category);
-  Future<void> updateCategory(Category category);
+
+  Future<Category> addCategory(Category category);
+
+  Future<Category> updateCategory(Category category);
+
   Future<void> deleteCategory(int id);
 }

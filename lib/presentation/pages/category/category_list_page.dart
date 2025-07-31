@@ -12,7 +12,7 @@ class CategoryListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
- // Sử dụng CategoryBloc đã được đăng ký trong main.dart
+    // Sử dụng CategoryBloc đã được đăng ký trong main.dart
     context.read<CategoryBloc>().add(LoadCategories());
     return const CategoryListView();
   }
@@ -24,10 +24,11 @@ class CategoryListView extends StatelessWidget {
   void _navigateToAddCategory(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: BlocProvider.of<CategoryBloc>(context),
-          child: const CategoryFormPage(),
-        ),
+        builder:
+            (_) => BlocProvider.value(
+              value: BlocProvider.of<CategoryBloc>(context),
+              child: const CategoryFormPage(),
+            ),
       ),
     );
   }
@@ -35,34 +36,26 @@ class CategoryListView extends StatelessWidget {
   void _navigateToEditCategory(BuildContext context, Category category) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: BlocProvider.of<CategoryBloc>(context),
-          child: CategoryFormPage(category: category),
-        ),
+        builder:
+            (_) => BlocProvider.value(
+              value: BlocProvider.of<CategoryBloc>(context),
+              child: CategoryFormPage(category: category),
+            ),
       ),
     );
   }
-
-
 
   Widget _buildErrorView(BuildContext context, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64.w,
-            color: Colors.red,
-          ),
+          Icon(Icons.error_outline, size: 64.w, color: Colors.red),
           SizedBox(height: 16.h),
           Text(
             'Lỗi: $message',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: Colors.red,
-            ),
+            style: TextStyle(fontSize: 16.sp, color: Colors.red),
           ),
           SizedBox(height: 16.h),
           ElevatedButton(
@@ -92,10 +85,7 @@ class CategoryListView extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Quản lý danh mục',
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         elevation: 2,
@@ -122,17 +112,13 @@ class CategoryListView extends StatelessWidget {
         },
         builder: (context, state) {
           if (state is CategoryLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           } else if (state is CategoryLoaded) {
             return _buildCategoryList(context, state.categories);
           } else if (state is CategoryError) {
             return _buildErrorView(context, state.message);
           }
-          return const Center(
-            child: Text('Chưa có dữ liệu'),
-          );
+          return const Center(child: Text('Chưa có dữ liệu'));
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -149,26 +135,16 @@ class CategoryListView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.category_outlined,
-              size: 64.w,
-              color: Colors.grey,
-            ),
+            Icon(Icons.category_outlined, size: 64.w, color: Colors.grey),
             SizedBox(height: 16.h),
             Text(
               'Chưa có danh mục nào',
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
             ),
             SizedBox(height: 8.h),
             Text(
               'Nhấn nút + để thêm danh mục mới',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             ),
           ],
         ),
@@ -221,10 +197,7 @@ class CategoryListView extends StatelessWidget {
             ),
             title: Text(
               category.name,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,18 +205,12 @@ class CategoryListView extends StatelessWidget {
                 SizedBox(height: 4.h),
                 Text(
                   'Tạo: ${_formatDateTime(category.createdAt)}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
                 ),
                 if (category.updatedAt != category.createdAt)
                   Text(
                     'Cập nhật: ${_formatDateTime(category.updatedAt)}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
                   ),
               ],
             ),
@@ -265,7 +232,9 @@ class CategoryListView extends StatelessWidget {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Xác nhận xóa'),
-          content: Text('Bạn có chắc chắn muốn xóa danh mục "${category.name}"?'),
+          content: Text(
+            'Bạn có chắc chắn muốn xóa danh mục "${category.name}"?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
@@ -274,11 +243,11 @@ class CategoryListView extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                context.read<CategoryBloc>().add(DeleteCategoryEvent(category.id!));
+                context.read<CategoryBloc>().add(
+                  DeleteCategoryEvent(category.id!),
+                );
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Xóa'),
             ),
           ],
