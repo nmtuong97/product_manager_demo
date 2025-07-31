@@ -9,7 +9,7 @@ class GetCategories {
 
   GetCategories(this.repository);
 
-  Future<List<Category>> call() {
-    return repository.getCategories();
+  Future<List<Category>> call([bool forceRefresh = false]) {
+    return repository.getCategories(forceRefresh);
   }
 }

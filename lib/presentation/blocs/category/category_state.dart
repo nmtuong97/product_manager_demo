@@ -8,8 +8,19 @@ class CategoryLoading extends CategoryState {}
 
 class CategoryLoaded extends CategoryState {
   final List<Category> categories;
+  final Set<String> deletingCategoryIds;
 
-  CategoryLoaded(this.categories);
+  CategoryLoaded(this.categories, {this.deletingCategoryIds = const {}});
+
+  CategoryLoaded copyWith({
+    List<Category>? categories,
+    Set<String>? deletingCategoryIds,
+  }) {
+    return CategoryLoaded(
+      categories ?? this.categories,
+      deletingCategoryIds: deletingCategoryIds ?? this.deletingCategoryIds,
+    );
+  }
 }
 
 class CategoryDetailLoaded extends CategoryState {

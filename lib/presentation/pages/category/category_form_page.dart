@@ -39,15 +39,9 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<CategoryBloc, CategoryState>(
       listener: (context, state) {
-        if (state is CategoryLoading) {
-          setState(() {
-            _isLoading = true;
-          });
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        setState(() {
+          _isLoading = state is CategoryLoading;
+        });
 
         if (state is CategoryOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -81,41 +75,51 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             actions: [
               if (_isEditing)
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: _isLoading
+                      ? SizedBox(
+                          width: 24.w,
+                          height: 24.h,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Icon(Icons.delete),
                   onPressed:
                       _isLoading
                           ? null
                           : () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Xác nhận xóa'),
-                                  content: const Text(
-                                    'Bạn có chắc chắn muốn xóa danh mục này?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed:
-                                          () => Navigator.of(context).pop(),
-                                      child: const Text('Hủy'),
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Xác nhận xóa'),
+                                    content: const Text(
+                                      'Bạn có chắc chắn muốn xóa danh mục này?',
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        context.read<CategoryBloc>().add(
-                                          DeleteCategoryEvent(
-                                            widget.category!.id!,
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('Xóa'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Hủy'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          context.read<CategoryBloc>().add(
+                                                DeleteCategoryEvent(
+                                                  widget.category!.id!,
+                                                ),
+                                              );
+                                        },
+                                        child: const Text('Xóa'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                   tooltip: 'Xóa danh mục',
                 ),
             ],

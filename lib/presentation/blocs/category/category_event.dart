@@ -2,7 +2,11 @@ import '../../../domain/entities/category.dart';
 
 abstract class CategoryEvent {}
 
-class LoadCategories extends CategoryEvent {}
+class LoadCategories extends CategoryEvent {
+  final bool forceRefresh;
+
+  LoadCategories({this.forceRefresh = false});
+}
 
 class AddCategoryEvent extends CategoryEvent {
   final Category category;

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/entities/category.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/usecases/get_categories.dart';
@@ -37,7 +38,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   ) async {
     try {
       emit(CategoryLoading());
-      final categories = await getCategories();
+      final categories = await getCategories(event.forceRefresh);
       emit(CategoryLoaded(categories));
     } catch (e) {
       emit(CategoryError('Không thể tải danh sách danh mục: ${e.toString()}'));
@@ -61,15 +62,22 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     AddCategoryEvent event,
     Emitter<CategoryState> emit,
   ) async {
+    emit(CategoryLoading());
     try {
-      emit(CategoryLoading());
+      // Optimistic UI update
+      final currentState = state;
+      if (currentState is CategoryLoaded) {
+        final updatedCategories = List<Category>.from(currentState.categories)
+          ..add(event.category);
+        emit(CategoryLoaded(updatedCategories));
+      }
+
       await addCategory(event.category);
       emit(CategoryOperationSuccess('Thêm danh mục thành công'));
-      // Reload categories after adding
-      final categories = await getCategories();
-      emit(CategoryLoaded(categories));
     } catch (e) {
       emit(CategoryError('Không thể thêm danh mục: ${e.toString()}'));
+      // Revert UI on failure
+      add(LoadCategories(forceRefresh: true));
     }
   }
 
@@ -77,15 +85,23 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     UpdateCategoryEvent event,
     Emitter<CategoryState> emit,
   ) async {
+    emit(CategoryLoading());
     try {
-      emit(CategoryLoading());
+      // Optimistic UI update
+      final currentState = state;
+      if (currentState is CategoryLoaded) {
+        final updatedCategories = currentState.categories.map((c) {
+          return c.id == event.category.id ? event.category : c;
+        }).toList();
+        emit(CategoryLoaded(updatedCategories));
+      }
+
       await updateCategory(event.category);
       emit(CategoryOperationSuccess('Cập nhật danh mục thành công'));
-      // Reload categories after updating
-      final categories = await getCategories();
-      emit(CategoryLoaded(categories));
     } catch (e) {
       emit(CategoryError('Không thể cập nhật danh mục: ${e.toString()}'));
+      // Revert UI on failure
+      add(LoadCategories(forceRefresh: true));
     }
   }
 
@@ -93,15 +109,33 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     DeleteCategoryEvent event,
     Emitter<CategoryState> emit,
   ) async {
-    try {
-      emit(CategoryLoading());
-      await deleteCategory(event.categoryId);
-      emit(CategoryOperationSuccess('Xóa danh mục thành công'));
-      // Reload categories after deleting
-      final categories = await getCategories();
-      emit(CategoryLoaded(categories));
-    } catch (e) {
-      emit(CategoryError('Không thể xóa danh mục: ${e.toString()}'));
+    final currentState = state;
+    if (currentState is CategoryLoaded) {
+      final deletingIds = Set<String>.from(currentState.deletingCategoryIds);
+      deletingIds.add(event.categoryId.toString());
+      emit(currentState.copyWith(deletingCategoryIds: deletingIds));
+
+      try {
+        await deleteCategory(event.categoryId);
+
+        // Remove the deleted category from the list directly
+        final updatedCategories = List<Category>.from(currentState.categories)
+          ..removeWhere((category) => category.id == event.categoryId);
+        
+        final updatedDeletingIds = Set<String>.from(currentState.deletingCategoryIds)
+          ..remove(event.categoryId.toString());
+
+        emit(currentState.copyWith(
+          categories: updatedCategories,
+          deletingCategoryIds: updatedDeletingIds,
+        ));
+      } catch (e) {
+        emit(CategoryError('Không thể xóa danh mục: ${e.toString()}'));
+        // Revert the loading state on failure
+        final revertedIds = Set<String>.from(currentState.deletingCategoryIds);
+        revertedIds.remove(event.categoryId.toString());
+        emit(currentState.copyWith(deletingCategoryIds: revertedIds));
+      }
     }
   }
 }

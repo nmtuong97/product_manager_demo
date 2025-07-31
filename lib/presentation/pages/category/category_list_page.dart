@@ -7,13 +7,22 @@ import '../../../domain/entities/category.dart';
 import '../../blocs/category/category_barrel.dart';
 import 'category_form_page.dart';
 
-class CategoryListPage extends StatelessWidget {
+class CategoryListPage extends StatefulWidget {
   const CategoryListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Sử dụng CategoryBloc đã được đăng ký trong main.dart
+  State<CategoryListPage> createState() => _CategoryListPageState();
+}
+
+class _CategoryListPageState extends State<CategoryListPage> {
+  @override
+  void initState() {
+    super.initState();
     context.read<CategoryBloc>().add(LoadCategories());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return const CategoryListView();
   }
 }
@@ -92,15 +101,7 @@ class CategoryListView extends StatelessWidget {
       ),
       body: BlocConsumer<CategoryBloc, CategoryState>(
         listener: (context, state) {
-          if (state is CategoryOperationSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.green,
-                duration: const Duration(seconds: 2),
-              ),
-            );
-          } else if (state is CategoryError) {
+          if (state is CategoryError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -108,13 +109,19 @@ class CategoryListView extends StatelessWidget {
                 duration: const Duration(seconds: 3),
               ),
             );
+          } else if (state is CategoryOperationSuccess) {
+            context.read<CategoryBloc>().add(LoadCategories(forceRefresh: true));
           }
         },
         builder: (context, state) {
           if (state is CategoryLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CategoryLoaded) {
-            return _buildCategoryList(context, state.categories);
+            return _buildCategoryList(
+              context,
+              state.categories,
+              state.deletingCategoryIds,
+            );
           } else if (state is CategoryError) {
             return _buildErrorView(context, state.message);
           }
@@ -129,7 +136,11 @@ class CategoryListView extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryList(BuildContext context, List<Category> categories) {
+  Widget _buildCategoryList(
+    BuildContext context,
+    List<Category> categories,
+    Set<String> deletingCategoryIds,
+  ) {
     if (categories.isEmpty) {
       return Center(
         child: Column(
@@ -153,21 +164,28 @@ class CategoryListView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<CategoryBloc>().add(LoadCategories());
+        context.read<CategoryBloc>().add(LoadCategories(forceRefresh: true));
       },
       child: ListView.builder(
         padding: EdgeInsets.all(16.w),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
-          return _buildCategoryItem(context, category);
+          final isDeleting = deletingCategoryIds.contains(category.id.toString());
+          return _buildCategoryItem(context, category, isDeleting, key: ValueKey(category.id));
         },
       ),
     );
   }
 
-  Widget _buildCategoryItem(BuildContext context, Category category) {
+  Widget _buildCategoryItem(
+    BuildContext context,
+    Category category,
+    bool isDeleting,
+    {Key? key,}
+  ) {
     return Hero(
+      key: key,
       tag: 'category_${category.id}',
       child: Card(
         margin: EdgeInsets.only(bottom: 12.h),
@@ -214,12 +232,17 @@ class CategoryListView extends StatelessWidget {
                   ),
               ],
             ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                _showDeleteConfirmation(context, category);
-              },
-            ),
+            trailing: isDeleting
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.redAccent),
+                    onPressed: () =>
+                        _showDeleteConfirmation(context, category),
+                  ),
           ),
         ),
       ),
@@ -243,9 +266,9 @@ class CategoryListView extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                context.read<CategoryBloc>().add(
-                  DeleteCategoryEvent(category.id!),
-                );
+                context
+                    .read<CategoryBloc>()
+                    .add(DeleteCategoryEvent(category.id!));
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Xóa'),
