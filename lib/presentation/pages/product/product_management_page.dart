@@ -133,6 +133,24 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           SizedBox(width: 8.w),
         ],
       ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
+            child: _buildActionButtons(),
+          ),
+        ),
+      ),
       body: MultiBlocListener(
         listeners: [
           BlocListener<CategoryBloc, CategoryState>(
@@ -235,8 +253,6 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildFormHeader(),
-                SizedBox(height: 32.h),
                 _buildNameField(),
                 SizedBox(height: 24.h),
                 _buildDescriptionField(),
@@ -247,61 +263,11 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 SizedBox(height: 24.h),
                 _buildCategoryDropdown(),
                 SizedBox(height: 40.h),
-                _buildActionButtons(),
               ],
             ),
           ),
         );
       },
-    );
-  }
-
-  Widget _buildFormHeader() {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: colorScheme.primaryContainer.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: colorScheme.outline.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Icon(
-              _isEditMode ? Icons.edit_rounded : Icons.add_rounded,
-              color: colorScheme.onPrimary,
-              size: 24.w,
-            ),
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isEditMode ? 'Cập nhật thông tin' : 'Thêm sản phẩm mới',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -853,24 +819,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   Widget _buildActionButtons() {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: colorScheme.outline.withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
+    return Row(
         children: [
           Expanded(
             child: OutlinedButton(
@@ -944,7 +893,6 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
             ),
           ),
         ],
-      ),
     );
   }
 
