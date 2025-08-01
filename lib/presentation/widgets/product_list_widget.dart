@@ -158,7 +158,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       'price': product.price,
       'stock': product.quantity,
       'category': _getCategoryName(product.categoryId),
-      'image': product.images,
+      'image': product.thumbnail, // Use thumbnail (first image)
+      'images': product.limitedImages, // Full image list (max 5)
       'createdAt': product.createdAt,
       'updatedAt': product.updatedAt,
     };

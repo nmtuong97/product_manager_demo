@@ -59,9 +59,8 @@ class MockProductInterceptor extends Interceptor {
 
       List<Product> products;
       if (categoryId != null) {
-        products =
-            _mockService
-                .getProductsByCategory(categoryId)
+        final categoryProducts = await _mockService.getProductsByCategory(categoryId);
+        products = categoryProducts
                 .where(
                   (p) =>
                       query.isEmpty ||
@@ -73,7 +72,7 @@ class MockProductInterceptor extends Interceptor {
                 )
                 .toList();
       } else {
-        products = _mockService.searchProducts(query);
+        products = await _mockService.searchProducts(query);
       }
 
       handler.resolve(
@@ -98,7 +97,7 @@ class MockProductInterceptor extends Interceptor {
         return;
       }
 
-      final product = _mockService.getProductById(id);
+      final product = await _mockService.getProductById(id);
       if (product == null) {
         handler.reject(_notFound(options));
         return;
@@ -108,12 +107,12 @@ class MockProductInterceptor extends Interceptor {
     } else {
       // Get all products: /api/products
       final categoryId = queryParams['category_id'] as int?;
-
       List<Product> products;
+
       if (categoryId != null) {
-        products = _mockService.getProductsByCategory(categoryId);
+        products = await _mockService.getProductsByCategory(categoryId);
       } else {
-        products = _mockService.getAllProducts();
+        products = await _mockService.getAllProducts();
       }
 
       handler.resolve(
@@ -137,7 +136,7 @@ class MockProductInterceptor extends Interceptor {
 
     try {
       final product = Product.fromMap(data);
-      final createdProduct = _mockService.addProduct(product);
+      final createdProduct = await _mockService.addProduct(product);
 
       handler.resolve(
         _successResponse(options, {
@@ -177,7 +176,7 @@ class MockProductInterceptor extends Interceptor {
 
     try {
       final product = Product.fromMap({...data, 'id': id});
-      final updatedProduct = _mockService.updateProduct(product);
+      final updatedProduct = await _mockService.updateProduct(product);
 
       if (updatedProduct == null) {
         handler.reject(_notFound(options));
@@ -212,7 +211,7 @@ class MockProductInterceptor extends Interceptor {
       return;
     }
 
-    final deleted = _mockService.deleteProduct(id);
+    final deleted = await _mockService.deleteProduct(id);
     if (!deleted) {
       handler.reject(_notFound(options));
       return;

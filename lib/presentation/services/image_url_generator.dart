@@ -37,4 +37,18 @@ class ImageUrlGenerator {
     final index = hash % _sampleImageUrls.length;
     return _sampleImageUrls[index];
   }
+
+  /// Generate list of image URLs for product (max 5 images)
+  static List<String> generateImageListForProduct(String productName, {int count = 3}) {
+    final hash = productName.hashCode.abs();
+    final List<String> imageList = [];
+    final maxCount = count > 5 ? 5 : count; // Limit to maximum 5 images
+    
+    for (int i = 0; i < maxCount; i++) {
+      final index = (hash + i) % _sampleImageUrls.length;
+      imageList.add(_sampleImageUrls[index]);
+    }
+    
+    return imageList;
+  }
 }

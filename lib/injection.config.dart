@@ -13,6 +13,7 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import 'core/services/initialization_service.dart' as _i492;
 import 'data/datasources/category_local_data_source.dart' as _i77;
 import 'data/datasources/category_local_data_source_impl.dart' as _i983;
 import 'data/datasources/category_remote_data_source.dart' as _i173;
@@ -53,12 +54,14 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
-    gh.factory<_i539.MockProductsService>(() => _i539.MockProductsService());
     gh.singletonAsync<_i443.DatabaseHelper>(
       () => _i443.DatabaseHelper.create(),
     );
     gh.lazySingleton<_i1017.MockCategoriesService>(
       () => _i1017.MockCategoriesService(),
+    );
+    gh.lazySingleton<_i539.MockProductsService>(
+      () => _i539.MockProductsService(),
     );
     gh.factoryAsync<_i247.ProductLocalDataSource>(
       () async => _i1067.ProductLocalDataSourceImpl(
@@ -74,6 +77,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factoryAsync<_i77.CategoryLocalDataSource>(
       () async => _i983.CategoryLocalDataSourceImpl(
         await getAsync<_i443.DatabaseHelper>(),
+      ),
+    );
+    gh.factory<_i492.InitializationService>(
+      () => _i492.InitializationService(
+        gh<_i1017.MockCategoriesService>(),
+        gh<_i539.MockProductsService>(),
       ),
     );
     gh.lazySingleton<_i361.Dio>(

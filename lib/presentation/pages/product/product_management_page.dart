@@ -987,8 +987,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
 
     final now = DateTime.now();
-    final imageUrl = ImageUrlGenerator.generateImageUrlForProduct(
+    final imageList = ImageUrlGenerator.generateImageListForProduct(
       _nameController.text.trim(),
+      count: 3, // Generate 3 images by default
     );
 
     // Parse price from formatted string
@@ -1004,7 +1005,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       price: double.parse(priceDigitsOnly),
       quantity: int.parse(_quantityController.text),
       categoryId: _selectedCategory!.id!,
-      images: imageUrl,
+      images: _isEditMode ? widget.product!.images : imageList,
       createdAt:
           _isEditMode ? widget.product!.createdAt : now.toIso8601String(),
       updatedAt: now.toIso8601String(),

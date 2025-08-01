@@ -1,124 +1,85 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:injectable/injectable.dart';
+import 'package:path_provider/path_provider.dart';
+
 import '../../domain/entities/product.dart';
 import '../../presentation/services/image_url_generator.dart';
 
 /// Service for managing mock product data
 ///
-/// This service provides in-memory storage and management of product data
+/// This service provides persistent storage and management of product data
 /// for development and testing purposes.
-@injectable
+@lazySingleton
 class MockProductsService {
-  final List<Product> _products = [];
+  static const String _fileName = 'products.json';
   int _nextId = 1;
 
-  MockProductsService() {
-    _initializeMockData();
+  MockProductsService();
+
+  /// Initialize the service by creating empty products file if not exists
+  Future<void> init() async {
+    final dbDir = await getApplicationDocumentsDirectory();
+    final dbPath = '${dbDir.path}/$_fileName';
+    final file = File(dbPath);
+
+    if (!await file.exists()) {
+      // Create empty products array
+      await file.writeAsString('[]');
+      _nextId = 1;
+    } else {
+      // Update next ID based on existing products
+      await _updateNextId();
+    }
   }
 
-  /// Initialize with some mock product data
-  void _initializeMockData() {
-    final now = DateTime.now().toIso8601String();
+  Future<void> _updateNextId() async {
+    final products = await _readProducts();
+    if (products.isNotEmpty) {
+      _nextId = products.map((p) => p.id ?? 0).reduce((a, b) => a > b ? a : b) + 1;
+    }
+  }
 
-    _products.addAll([
-      Product(
-        id: 1,
-        name: 'iPhone 15 Pro',
-        description: 'Điện thoại thông minh cao cấp với chip A17 Pro',
-        price: 29990000,
-        quantity: 50,
-        categoryId: 1,
-        images: ImageUrlGenerator.generateImageUrlForProduct('iphone-15-pro'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Product(
-        id: 2,
-        name: 'Samsung Galaxy S24',
-        description: 'Smartphone Android flagship với AI tích hợp',
-        price: 24990000,
-        quantity: 30,
-        categoryId: 1,
-        images: ImageUrlGenerator.generateImageUrlForProduct(
-          'samsung-galaxy-s24',
-        ),
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Product(
-        id: 3,
-        name: 'MacBook Pro M3',
-        description: 'Laptop chuyên nghiệp với chip M3 mạnh mẽ',
-        price: 54990000,
-        quantity: 20,
-        categoryId: 1,
-        images: ImageUrlGenerator.generateImageUrlForProduct('macbook-pro-m3'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Product(
-        id: 4,
-        name: 'Áo sơ mi nam',
-        description: 'Áo sơ mi công sở chất liệu cotton cao cấp',
-        price: 299000,
-        quantity: 100,
-        categoryId: 2,
-        images: ImageUrlGenerator.generateImageUrlForProduct('ao-so-mi-nam'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Product(
-        id: 5,
-        name: 'Quần jeans nữ',
-        description: 'Quần jeans skinny fit thời trang',
-        price: 599000,
-        quantity: 75,
-        categoryId: 2,
-        images: ImageUrlGenerator.generateImageUrlForProduct('quan-jeans-nu'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Product(
-        id: 6,
-        name: 'Lập trình Flutter',
-        description: 'Sách hướng dẫn lập trình ứng dụng di động với Flutter',
-        price: 199000,
-        quantity: 40,
-        categoryId: 3,
-        images: ImageUrlGenerator.generateImageUrlForProduct('sach-flutter'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Product(
-        id: 7,
-        name: 'Clean Code',
-        description: 'Sách về kỹ thuật viết code sạch và dễ bảo trì',
-        price: 299000,
-        quantity: 25,
-        categoryId: 3,
-        images: ImageUrlGenerator.generateImageUrlForProduct('clean-code'),
-        createdAt: now,
-        updatedAt: now,
-      ),
-    ]);
-    _nextId = 8;
+  Future<List<Product>> _readProducts() async {
+    final dbDir = await getApplicationDocumentsDirectory();
+    final dbPath = '${dbDir.path}/$_fileName';
+    final file = File(dbPath);
+
+    if (await file.exists()) {
+      final data = await file.readAsString();
+      final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
+      return jsonList.map((json) => Product.fromMap(json as Map<String, dynamic>)).toList();
+    }
+    return [];
+  }
+
+  Future<void> _writeProducts(List<Product> products) async {
+    final dbDir = await getApplicationDocumentsDirectory();
+    final dbPath = '${dbDir.path}/$_fileName';
+    final file = File(dbPath);
+    final jsonList = products.map((product) => product.toMap()).toList();
+    await file.writeAsString(json.encode(jsonList));
   }
 
   /// Get all products
-  List<Product> getAllProducts() {
-    return List.from(_products);
+  Future<List<Product>> getAllProducts() async {
+    return await _readProducts();
   }
 
   /// Get product by ID
-  Product? getProductById(int id) {
+  Future<Product?> getProductById(int id) async {
+    final products = await _readProducts();
     try {
-      return _products.firstWhere((product) => product.id == id);
+      return products.firstWhere((product) => product.id == id);
     } catch (e) {
       return null;
     }
   }
 
   /// Add new product
-  Product addProduct(Product product) {
+  Future<Product> addProduct(Product product) async {
+    final products = await _readProducts();
     final now = DateTime.now().toIso8601String();
     final newProduct = Product(
       id: _nextId++,
@@ -131,13 +92,15 @@ class MockProductsService {
       createdAt: now,
       updatedAt: now,
     );
-    _products.add(newProduct);
+    products.add(newProduct);
+    await _writeProducts(products);
     return newProduct;
   }
 
   /// Update existing product
-  Product? updateProduct(Product product) {
-    final index = _products.indexWhere((p) => p.id == product.id);
+  Future<Product?> updateProduct(Product product) async {
+    final products = await _readProducts();
+    final index = products.indexWhere((p) => p.id == product.id);
     if (index != -1) {
       final updatedProduct = Product(
         id: product.id,
@@ -150,49 +113,54 @@ class MockProductsService {
         createdAt: product.createdAt,
         updatedAt: DateTime.now().toIso8601String(),
       );
-      _products[index] = updatedProduct;
+      products[index] = updatedProduct;
+      await _writeProducts(products);
       return updatedProduct;
     }
     return null;
   }
 
   /// Delete product by ID
-  bool deleteProduct(int id) {
-    final index = _products.indexWhere((product) => product.id == id);
+  Future<bool> deleteProduct(int id) async {
+    final products = await _readProducts();
+    final index = products.indexWhere((product) => product.id == id);
     if (index != -1) {
-      _products.removeAt(index);
+      products.removeAt(index);
+      await _writeProducts(products);
       return true;
     }
     return false;
   }
 
   /// Search products by name or description
-  List<Product> searchProducts(String query) {
-    if (query.isEmpty) return getAllProducts();
+  Future<List<Product>> searchProducts(String query) async {
+    final products = await _readProducts();
+    if (query.isEmpty) return products;
 
     final lowerQuery = query.toLowerCase();
-    return _products.where((product) {
+    return products.where((product) {
       return product.name.toLowerCase().contains(lowerQuery) ||
           (product.description?.toLowerCase().contains(lowerQuery) ?? false);
     }).toList();
   }
 
   /// Get products by category ID
-  List<Product> getProductsByCategory(int categoryId) {
-    return _products
+  Future<List<Product>> getProductsByCategory(int categoryId) async {
+    final products = await _readProducts();
+    return products
         .where((product) => product.categoryId == categoryId)
         .toList();
   }
 
   /// Clear all products
-  void clearProducts() {
-    _products.clear();
+  Future<void> clearProducts() async {
+    await _writeProducts([]);
   }
 
   /// Add multiple products
-  void addProducts(List<Product> products) {
+  Future<void> addProducts(List<Product> products) async {
     for (final product in products) {
-      addProduct(product);
+      await addProduct(product);
     }
   }
 }

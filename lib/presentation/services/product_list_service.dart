@@ -73,7 +73,7 @@ class ProductListService {
     await Future.delayed(const Duration(milliseconds: 500));
 
     // Get products from mock service and convert to Map format
-    final products = _mockProductsService.getAllProducts();
+    final products = await _mockProductsService.getAllProducts();
     return products.map((product) => _convertProductToMap(product)).toList();
   }
 
@@ -86,7 +86,8 @@ class ProductListService {
       'price': product.price,
       'stock': product.quantity,
       'category': _getCategoryName(product.categoryId),
-      'image': product.images,
+      'image': product.thumbnail, // Use thumbnail (first image)
+      'images': product.limitedImages, // Full image list (max 5)
       'createdAt': product.createdAt,
       'updatedAt': product.updatedAt,
     };
