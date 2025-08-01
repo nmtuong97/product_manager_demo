@@ -58,6 +58,20 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                 _allProducts = state.products;
                 _applyFilters();
               });
+            } else if (state is ProductOperationSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            } else if (state is ProductError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ),
+              );
             }
           },
         ),
@@ -229,6 +243,35 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     );
   }
 
+  void _onProductDelete(Map<String, dynamic> product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận xóa'),
+          content: Text('Bạn có chắc chắn muốn xóa sản phẩm "${product['name']}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                final productId = product['id'];
+                if (productId != null) {
+                  context.read<ProductBloc>().add(DeleteProductEvent(productId));
+                }
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Xóa'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildProductContent(ProductState state) {
     if (state is ProductLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -265,14 +308,23 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       return const ProductEmptyState();
     }
 
+    // Get deleting product IDs from state
+    final deletingProductIds = state is ProductLoaded 
+        ? state.deletingProductIds 
+        : <String>{};
+
     return _isGridView
         ? ProductGridView(
           products: _filteredProducts,
           onProductTap: _onProductTap,
+          onProductDelete: _onProductDelete,
+          deletingProductIds: deletingProductIds,
         )
         : ProductListView(
           products: _filteredProducts,
           onProductTap: _onProductTap,
+          onProductDelete: _onProductDelete,
+          deletingProductIds: deletingProductIds,
         );
   }
 }
