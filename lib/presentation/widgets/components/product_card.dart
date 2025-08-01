@@ -22,9 +22,7 @@ class ProductCard extends StatelessWidget {
   Widget _buildGridCard(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12.r),
@@ -34,9 +32,7 @@ class ProductCard extends StatelessWidget {
             Expanded(
               flex: 3,
               child: _buildProductImage(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(12.r),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
               ),
             ),
             Expanded(
@@ -56,9 +52,7 @@ class ProductCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.only(bottom: 8.h),
       elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8.r),
@@ -74,14 +68,8 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 12.w),
-              Expanded(
-                child: _buildProductInfo(context, isCompact: false),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-                size: 20.w,
-              ),
+              Expanded(child: _buildProductInfo(context, isCompact: false)),
+              Icon(Icons.chevron_right, color: Colors.grey[400], size: 20.w),
             ],
           ),
         ),
@@ -96,33 +84,37 @@ class ProductCard extends StatelessWidget {
         color: Colors.grey[200],
         borderRadius: borderRadius,
       ),
-      child: product['image'] != null
-          ? ClipRRect(
-              borderRadius: borderRadius,
-              child: Image.network(
-                product['image'],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildPlaceholderImage();
-                },
-              ),
-            )
-          : _buildPlaceholderImage(),
+      child:
+          product['image'] != null
+              ? ClipRRect(
+                borderRadius: borderRadius,
+                child: Image.network(
+                  product['image'],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _buildPlaceholderImage();
+                  },
+                ),
+              )
+              : _buildPlaceholderImage(),
     );
   }
 
   Widget _buildProductInfo(BuildContext context, {required bool isCompact}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          product['name'] ?? 'Tên sản phẩm',
-          style: TextStyle(
-            fontSize: isCompact ? 14.sp : 16.sp,
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: Text(
+            product['name'] ?? 'Tên sản phẩm',
+            style: TextStyle(
+              fontSize: isCompact ? 14.sp : 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 4.h),
         Text(
@@ -132,6 +124,8 @@ class ProductCard extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Theme.of(context).primaryColor,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 2.h),
         Text(
@@ -140,6 +134,8 @@ class ProductCard extends StatelessWidget {
             fontSize: isCompact ? 12.sp : 14.sp,
             color: Colors.grey[600],
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -150,16 +146,12 @@ class ProductCard extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       color: Colors.grey[200],
-      child: Icon(
-        Icons.image_outlined,
-        color: Colors.grey[400],
-        size: 24.w,
-      ),
+      child: Icon(Icons.image_outlined, color: Colors.grey[400], size: 24.w),
     );
   }
 
-  String _formatPrice(int price) {
-    return price.toString().replaceAllMapped(
+  String _formatPrice(num price) {
+    return price.toInt().toString().replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
       (Match m) => '${m[1]}.',
     );

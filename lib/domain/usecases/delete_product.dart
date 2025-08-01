@@ -1,5 +1,8 @@
+import 'package:injectable/injectable.dart';
+
 import '../repositories/product_repository.dart';
 
+@injectable
 class DeleteProduct {
   final ProductRepository repository;
 

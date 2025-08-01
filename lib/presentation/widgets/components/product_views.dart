@@ -18,13 +18,17 @@ class ProductGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate responsive aspect ratio based on screen size
+    final screenWidth = 1.sw;
+    final aspectRatio = screenWidth > 600 ? 0.8 : 0.75;
+
     final gridView = GridView.builder(
       padding: EdgeInsets.only(bottom: 80.h),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12.w,
         mainAxisSpacing: 12.h,
-        childAspectRatio: 0.75,
+        childAspectRatio: aspectRatio,
       ),
       itemCount: products.length,
       itemBuilder: (context, index) {
@@ -37,10 +41,7 @@ class ProductGridView extends StatelessWidget {
     );
 
     if (onRefresh != null) {
-      return RefreshIndicator(
-        onRefresh: onRefresh!,
-        child: gridView,
-      );
+      return RefreshIndicator(onRefresh: onRefresh!, child: gridView);
     }
 
     return gridView;
@@ -75,10 +76,7 @@ class ProductListView extends StatelessWidget {
     );
 
     if (onRefresh != null) {
-      return RefreshIndicator(
-        onRefresh: onRefresh!,
-        child: listView,
-      );
+      return RefreshIndicator(onRefresh: onRefresh!, child: listView);
     }
 
     return listView;

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'injection.dart';
 import 'presentation/blocs/category/category_barrel.dart';
+import 'presentation/blocs/product/product_bloc.dart';
 import 'presentation/pages/home_page.dart';
 
 Future<void> main() async {
@@ -20,12 +21,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
+      designSize: const Size(
+        375,
+        812,
+      ), // Updated to iPhone X size for better modern device support
       minTextAdapt: true,
       splitScreenMode: true,
+      ensureScreenSize: true, // Ensure screen size is properly calculated
       builder: (_, child) {
-        return FutureBuilder<CategoryBloc>(
-          future: getIt.getAsync<CategoryBloc>(),
+        return FutureBuilder<List<dynamic>>(
+          future: Future.wait([
+            getIt.getAsync<CategoryBloc>(),
+            getIt.getAsync<ProductBloc>(),
+          ]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const MaterialApp(
@@ -43,8 +51,14 @@ class MyApp extends StatelessWidget {
               );
             }
 
-            return BlocProvider<CategoryBloc>.value(
-              value: snapshot.data!,
+            final categoryBloc = snapshot.data![0] as CategoryBloc;
+            final productBloc = snapshot.data![1] as ProductBloc;
+
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<CategoryBloc>.value(value: categoryBloc),
+                BlocProvider<ProductBloc>.value(value: productBloc),
+              ],
               child: MaterialApp(
                 title: 'Product Manager Demo',
                 theme: ThemeData(

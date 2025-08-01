@@ -124,6 +124,24 @@ class DatabaseHelper {
     return await db.delete('products', where: 'id = ?', whereArgs: [id]);
   }
 
+  Future<void> clearProducts() async {
+    final db = await database;
+    await db.delete('products');
+  }
+
+  Future<void> insertProducts(List<Map<String, dynamic>> products) async {
+    final db = await database;
+    final batch = db.batch();
+    for (var product in products) {
+      batch.insert(
+        'products',
+        product,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+    await batch.commit(noResult: true);
+  }
+
   // Category methods
   Future<int> insertCategory(Map<String, dynamic> category) async {
     final db = await database;
