@@ -19,21 +19,16 @@ import 'data/datasources/category_remote_data_source.dart' as _i173;
 import 'data/datasources/category_remote_data_source_impl.dart' as _i46;
 import 'data/datasources/database_helper.dart' as _i443;
 import 'data/repositories/category_repository_impl.dart' as _i1032;
-import 'data/repositories/counter_repository_impl.dart' as _i86;
 import 'data/services/mock_categories_service.dart' as _i1017;
 import 'data/services/mock_category_interceptor.dart' as _i0;
 import 'domain/repositories/category_repository.dart' as _i615;
-import 'domain/repositories/counter_repository.dart' as _i123;
 import 'domain/usecases/add_category.dart' as _i945;
 import 'domain/usecases/delete_category.dart' as _i425;
 import 'domain/usecases/get_categories.dart' as _i664;
 import 'domain/usecases/get_category.dart' as _i677;
-import 'domain/usecases/get_counter.dart' as _i825;
-import 'domain/usecases/save_counter.dart' as _i647;
 import 'domain/usecases/update_category.dart' as _i173;
 import 'injection.dart' as _i464;
 import 'presentation/blocs/category/category_bloc.dart' as _i815;
-import 'presentation/blocs/counter_bloc.dart' as _i565;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -63,10 +58,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i0.MockCategoryInterceptor>(
       () => _i0.MockCategoryInterceptor(gh<_i1017.MockCategoriesService>()),
     );
-    gh.lazySingletonAsync<_i123.CounterRepository>(
-      () async =>
-          _i86.CounterRepositoryImpl(await getAsync<_i443.DatabaseHelper>()),
-    );
     gh.factoryAsync<_i615.CategoryRepository>(
       () async => _i1032.CategoryRepositoryImpl(
         localDataSource: await getAsync<_i77.CategoryLocalDataSource>(),
@@ -90,18 +81,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factoryAsync<_i425.DeleteCategory>(
       () async =>
           _i425.DeleteCategory(await getAsync<_i615.CategoryRepository>()),
-    );
-    gh.factoryAsync<_i647.SaveCounter>(
-      () async => _i647.SaveCounter(await getAsync<_i123.CounterRepository>()),
-    );
-    gh.factoryAsync<_i825.GetCounter>(
-      () async => _i825.GetCounter(await getAsync<_i123.CounterRepository>()),
-    );
-    gh.factoryAsync<_i565.CounterBloc>(
-      () async => _i565.CounterBloc(
-        await getAsync<_i825.GetCounter>(),
-        await getAsync<_i647.SaveCounter>(),
-      ),
     );
     gh.factoryAsync<_i815.CategoryBloc>(
       () async => _i815.CategoryBloc(

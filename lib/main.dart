@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'injection.dart';
 import 'presentation/blocs/category/category_barrel.dart';
 import 'presentation/pages/home_page.dart';
-import 'presentation/blocs/counter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,46 +43,17 @@ class MyApp extends StatelessWidget {
               );
             }
 
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<CategoryBloc>.value(value: snapshot.data!),
-              ],
-              child: FutureBuilder<CounterBloc>(
-                future: getIt.getAsync<CounterBloc>(),
-                builder: (context, counterSnapshot) {
-                  if (counterSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const MaterialApp(
-                      home: Scaffold(
-                        body: Center(child: CircularProgressIndicator()),
-                      ),
-                    );
-                  }
-
-                  if (counterSnapshot.hasError) {
-                    return MaterialApp(
-                      home: Scaffold(
-                        body: Center(
-                          child: Text('Error: ${counterSnapshot.error}'),
-                        ),
-                      ),
-                    );
-                  }
-
-                  return BlocProvider<CounterBloc>.value(
-                    value: counterSnapshot.data!,
-                    child: MaterialApp(
-                      title: 'Product Manager Demo',
-                      theme: ThemeData(
-                        colorScheme: ColorScheme.fromSeed(
-                          seedColor: Colors.deepPurple,
-                        ),
-                        useMaterial3: true,
-                      ),
-                      home: const HomePage(),
-                    ),
-                  );
-                },
+            return BlocProvider<CategoryBloc>.value(
+              value: snapshot.data!,
+              child: MaterialApp(
+                title: 'Product Manager Demo',
+                theme: ThemeData(
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: Colors.deepPurple,
+                  ),
+                  useMaterial3: true,
+                ),
+                home: const HomePage(),
               ),
             );
           },
