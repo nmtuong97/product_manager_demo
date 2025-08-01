@@ -1,50 +1,74 @@
 [
   {
     "id": 1,
-    "name": "Electronics",
+    "name": "Điện tử",
     "createdAt": "2023-01-01T12:00:00Z",
     "updatedAt": "2023-01-01T12:00:00Z"
   },
   {
     "id": 2,
-    "name": "Books",
+    "name": "Sách",
     "createdAt": "2023-01-02T12:00:00Z",
     "updatedAt": "2023-01-02T12:00:00Z"
   },
   {
     "id": 3,
-    "name": "Clothing",
+    "name": "Thời trang",
     "createdAt": "2023-01-03T12:00:00Z",
     "updatedAt": "2023-01-03T12:00:00Z"
   },
   {
     "id": 4,
-    "name": "Home & Kitchen",
+    "name": "Gia dụng",
     "createdAt": "2023-01-04T12:00:00Z",
     "updatedAt": "2023-01-04T12:00:00Z"
   },
   {
     "id": 5,
-    "name": "Sports & Outdoors",
+    "name": "Thể thao & Dã ngoại",
     "createdAt": "2023-01-05T12:00:00Z",
     "updatedAt": "2023-01-05T12:00:00Z"
   },
   {
     "id": 6,
-    "name": "Toys & Games",
+    "name": "Đồ chơi & Trò chơi",
     "createdAt": "2023-01-06T12:00:00Z",
     "updatedAt": "2023-01-06T12:00:00Z"
   },
   {
     "id": 7,
-    "name": "Health & Personal Care",
+    "name": "Sức khỏe & Chăm sóc cá nhân",
     "createdAt": "2023-01-07T12:00:00Z",
     "updatedAt": "2023-01-07T12:00:00Z"
   },
   {
     "id": 8,
-    "name": "Automotive",
+    "name": "Ô tô & Xe máy",
     "createdAt": "2023-01-08T12:00:00Z",
     "updatedAt": "2023-01-08T12:00:00Z"
+  },
+  {
+    "id": 9,
+    "name": "Làm đẹp & Mỹ phẩm",
+    "createdAt": "2023-01-09T12:00:00Z",
+    "updatedAt": "2023-01-09T12:00:00Z"
+  },
+  {
+    "id": 10,
+    "name": "Máy tính & Laptop",
+    "createdAt": "2023-01-10T12:00:00Z",
+    "updatedAt": "2023-01-10T12:00:00Z"
+  },
+  {
+    "id": 11,
+    "name": "Điện thoại & Phụ kiện",
+    "createdAt": "2023-01-11T12:00:00Z",
+    "updatedAt": "2023-01-11T12:00:00Z"
+  },
+  {
+    "id": 12,
+    "name": "Nhà cửa & Đời sống",
+    "createdAt": "2023-01-12T12:00:00Z",
+    "updatedAt": "2023-01-12T12:00:00Z"
   }
 ]

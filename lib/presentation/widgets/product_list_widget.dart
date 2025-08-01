@@ -5,12 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/product/product_bloc.dart';
 import '../blocs/product/product_event.dart';
 import '../blocs/product/product_state.dart';
+import '../blocs/category/category_bloc.dart';
+import '../blocs/category/category_event.dart';
+import '../blocs/category/category_state.dart';
 import 'components/category_filter.dart';
 import 'components/product_search_bar.dart';
 import 'components/product_states.dart';
 import 'components/product_views.dart';
 import 'components/view_toggle.dart';
 import '../../domain/entities/product.dart';
+import '../../domain/entities/category.dart';
 
 class ProductListWidget extends StatefulWidget {
   const ProductListWidget({super.key});
@@ -22,13 +26,8 @@ class ProductListWidget extends StatefulWidget {
 class _ProductListWidgetState extends State<ProductListWidget> {
   final TextEditingController _searchController = TextEditingController();
 
-  final List<String> _categories = [
-    'Tất cả',
-    'Điện tử',
-    'Thời trang',
-    'Gia dụng',
-    'Sách',
-  ];
+  List<String> _categories = ['Tất cả'];
+  List<Category> _categoryEntities = [];
   String _selectedCategory = 'Tất cả';
   bool _isGridView = true;
   List<Product> _allProducts = [];
@@ -38,6 +37,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   void initState() {
     super.initState();
     _loadProducts();
+    _loadCategories();
   }
 
   @override
@@ -49,15 +49,26 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   // Build method
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProductBloc, ProductState>(
-      listener: (context, state) {
-        if (state is ProductLoaded) {
-          setState(() {
-            _allProducts = state.products;
-            _applyFilters();
-          });
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ProductBloc, ProductState>(
+          listener: (context, state) {
+            if (state is ProductLoaded) {
+              setState(() {
+                _allProducts = state.products;
+                _applyFilters();
+              });
+            }
+          },
+        ),
+        BlocListener<CategoryBloc, CategoryState>(
+          listener: (context, state) {
+            if (state is CategoryLoaded) {
+              _updateCategoriesFromState(state.categories);
+            }
+          },
+        ),
+      ],
       child: Expanded(
         child: Column(
           children: [
@@ -105,6 +116,10 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     context.read<ProductBloc>().add(LoadProducts());
   }
 
+  void _loadCategories() {
+    context.read<CategoryBloc>().add(const LoadCategories());
+  }
+
   void _applyFilters() {
     var filteredProducts = _allProducts;
 
@@ -135,18 +150,30 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
   /// Get category name by ID
   String _getCategoryName(int categoryId) {
-    switch (categoryId) {
-      case 1:
-        return 'Điện tử';
-      case 2:
-        return 'Thời trang';
-      case 3:
-        return 'Gia dụng';
-      case 4:
-        return 'Sách';
-      default:
-        return 'Khác';
-    }
+    final category = _categoryEntities.firstWhere(
+      (cat) => cat.id == categoryId,
+      orElse: () => Category(
+        id: null,
+        name: 'Khác',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );
+    return category.name;
+  }
+
+  /// Update categories list from CategoryBloc state
+  void _updateCategoriesFromState(List<Category> categories) {
+    setState(() {
+      _categoryEntities = categories;
+      _categories = ['Tất cả', ...categories.map((cat) => cat.name).toList()];
+      
+      // Reset selected category if it no longer exists
+      if (!_categories.contains(_selectedCategory)) {
+        _selectedCategory = 'Tất cả';
+        _applyFilters();
+      }
+    });
   }
 
   /// Convert Product entity to Map for UI compatibility
