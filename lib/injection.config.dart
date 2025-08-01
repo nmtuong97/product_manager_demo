@@ -80,12 +80,6 @@ extension GetItInjectableX on _i174.GetIt {
         await getAsync<_i443.DatabaseHelper>(),
       ),
     );
-    gh.factory<_i492.InitializationService>(
-      () => _i492.InitializationService(
-        gh<_i1017.MockCategoriesService>(),
-        gh<_i539.MockProductsService>(),
-      ),
-    );
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(
         gh<_i1017.MockCategoriesService>(),
@@ -150,6 +144,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factoryAsync<_i671.GetProduct>(
       () async => _i671.GetProduct(await getAsync<_i746.ProductRepository>()),
+    );
+    gh.factoryAsync<_i492.InitializationService>(
+      () async => _i492.InitializationService(
+        gh<_i1017.MockCategoriesService>(),
+        gh<_i539.MockProductsService>(),
+        await getAsync<_i615.CategoryRepository>(),
+      ),
     );
     gh.factoryAsync<_i806.ProductBloc>(
       () async => _i806.ProductBloc(

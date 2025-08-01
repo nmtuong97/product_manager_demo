@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'mock_categories_service.dart';
 import '../../domain/entities/category.dart';
 
-const _basePath = '/categories';
+const _basePath = '/api/categories';
 const _categoriesFile = 'categories.json';
 
 @injectable
@@ -18,6 +18,8 @@ class MockCategoryInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final path = options.path;
+    
     await Future.delayed(const Duration(seconds: 1));
 
     if (!options.path.startsWith(_basePath)) {
@@ -25,7 +27,7 @@ class MockCategoryInterceptor extends Interceptor {
     }
 
     final segments = options.path.split('/');
-    final isCollection = segments.length == 2;
+    final isCollection = segments.length == 3; // ['', 'api', 'categories']
 
     if (isCollection) {
       return _handleCollectionRequest(options, handler);

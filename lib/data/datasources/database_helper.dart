@@ -152,13 +152,13 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> batchInsertCategories(List<dynamic> categories) async {
+  Future<void> batchInsertCategories(List<Map<String, dynamic>> categories) async {
     final db = await database;
     final batch = db.batch();
     for (var category in categories) {
       batch.insert(
         'categories',
-        category.toMap(),
+        category,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }

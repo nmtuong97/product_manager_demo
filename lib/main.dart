@@ -31,10 +31,12 @@ class MyApp extends StatelessWidget {
       ensureScreenSize: true, // Ensure screen size is properly calculated
       builder: (_, child) {
         return FutureBuilder<List<dynamic>>(
-          future: getIt<InitializationService>().initialize().then((_) => Future.wait([
-            getIt.getAsync<CategoryBloc>(),
-            getIt.getAsync<ProductBloc>(),
-          ])),
+          future: getIt.getAsync<InitializationService>().then((initService) => 
+            initService.initialize().then((_) => Future.wait([
+              getIt.getAsync<CategoryBloc>(),
+              getIt.getAsync<ProductBloc>(),
+            ]))
+          ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const MaterialApp(
