@@ -25,7 +25,12 @@ class Product {
 
   /// Parse images from various formats (JSON string, List, or single string)
   static List<String> _parseImages(dynamic imagesData) {
-    if (imagesData == null) return [];
+
+    
+    if (imagesData == null) {
+
+      return [];
+    }
     
     if (imagesData is List) {
       // Direct list format (from API or memory)
@@ -34,6 +39,7 @@ class Product {
       try {
         // Try to decode as JSON string (from database)
         final decoded = json.decode(imagesData);
+        
         if (decoded is List) {
           return List<String>.from(decoded);
         } else {
@@ -46,6 +52,7 @@ class Product {
       }
     }
     
+
     return [];
   }
 
@@ -56,6 +63,8 @@ class Product {
   List<String> get limitedImages => images.take(5).toList();
 
   Map<String, dynamic> toMap() {
+    final encodedImages = json.encode(images);
+    
     return {
       'id': id,
       'name': name,
@@ -63,7 +72,7 @@ class Product {
       'price': price,
       'quantity': quantity,
       'categoryId': categoryId,
-      'images': json.encode(images), // Serialize to JSON string for SQLite
+      'images': encodedImages, // Serialize to JSON string for SQLite
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };

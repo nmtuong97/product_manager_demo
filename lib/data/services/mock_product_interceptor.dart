@@ -45,6 +45,22 @@ class MockProductInterceptor extends Interceptor {
     }
   }
 
+  Future<void> _handleClearAllProducts(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    try {
+      await _mockService.clearAllProducts();
+      handler.resolve(
+        _successResponse(options, {
+          'message': 'All products cleared successfully',
+        }),
+      );
+    } catch (e) {
+      handler.reject(_internalServerError(options, e.toString()));
+    }
+  }
+
   Future<void> _handleGetRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
@@ -127,6 +143,69 @@ class MockProductInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final path = options.path;
+    final pathSegments = path.split('/');
+    
+    // Handle clear all products endpoint: /api/products/clear-all
+    if (pathSegments.contains('clear-all')) {
+      await _handleClearAllProducts(options, handler);
+      return;
+    }
+    
+    // Handle image upload endpoint: /api/products/{id}/images
+    if (path.contains('/images')) {
+      final productIdIndex = pathSegments.indexOf('products') + 1;
+      
+      if (productIdIndex >= pathSegments.length) {
+        handler.reject(_badRequest(options, 'Product ID is required'));
+        return;
+      }
+      
+      final idStr = pathSegments[productIdIndex];
+      final id = int.tryParse(idStr);
+      
+
+      
+      if (id == null) {
+
+        handler.reject(_badRequest(options, 'Invalid product ID'));
+        return;
+      }
+      
+      try {
+        // Get the number of images from request data
+        final data = options.data as Map<String, dynamic>?;
+        final imagesList = data?['images'] as List?;
+        final imageCount = imagesList?.length ?? 1;
+        
+
+        
+        final updatedImages = await _mockService.uploadProductImages(id, imageCount: imageCount);
+        
+        if (updatedImages == null) {
+
+          handler.reject(_notFound(options));
+          return;
+        }
+        
+
+        
+        handler.resolve(
+          _successResponse(options, {
+            'data': {
+              'images': updatedImages,
+              'message': 'Images uploaded successfully'
+            },
+          }, statusCode: 200),
+        );
+      } catch (e) {
+
+        handler.reject(_badRequest(options, 'Failed to upload images: $e'));
+      }
+      return;
+    }
+    
+    // Handle regular product creation
     final data = options.data as Map<String, dynamic>?;
 
     if (data == null) {

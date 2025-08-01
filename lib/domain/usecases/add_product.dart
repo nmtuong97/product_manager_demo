@@ -9,7 +9,7 @@ class AddProduct {
 
   AddProduct(this.repository);
 
-  Future<void> call(Product product) {
+  Future<Product> call(Product product) {
     return repository.addProduct(product);
   }
 }

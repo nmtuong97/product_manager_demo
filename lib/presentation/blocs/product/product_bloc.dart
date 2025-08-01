@@ -76,8 +76,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) async {
     emit(ProductAdding());
     try {
-      await _addProduct(event.product);
-      emit(ProductOperationSuccess('Thêm sản phẩm thành công'));
+      final createdProduct = await _addProduct(event.product);
+      emit(ProductOperationSuccess('Thêm sản phẩm thành công', productId: createdProduct.id));
 
       // Reload products after successful addition with force refresh
       add(LoadProducts(forceRefresh: true));

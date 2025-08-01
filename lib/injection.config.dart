@@ -44,6 +44,7 @@ import 'domain/usecases/update_product.dart' as _i249;
 import 'injection.dart' as _i464;
 import 'presentation/blocs/category/category_bloc.dart' as _i815;
 import 'presentation/blocs/product/product_bloc.dart' as _i806;
+import 'presentation/services/image_upload_service.dart' as _i762;
 import 'presentation/services/product_list_service.dart' as _i357;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -57,11 +58,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singletonAsync<_i443.DatabaseHelper>(
       () => _i443.DatabaseHelper.create(),
     );
-    gh.lazySingleton<_i1017.MockCategoriesService>(
-      () => _i1017.MockCategoriesService(),
-    );
     gh.lazySingleton<_i539.MockProductsService>(
       () => _i539.MockProductsService(),
+    );
+    gh.lazySingleton<_i1017.MockCategoriesService>(
+      () => _i1017.MockCategoriesService(),
     );
     gh.factoryAsync<_i247.ProductLocalDataSource>(
       () async => _i1067.ProductLocalDataSourceImpl(
@@ -111,6 +112,9 @@ extension GetItInjectableX on _i174.GetIt {
         localDataSource: await getAsync<_i77.CategoryLocalDataSource>(),
         remoteDataSource: gh<_i173.CategoryRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i762.ImageUploadService>(
+      () => _i762.ImageUploadService(gh<_i361.Dio>()),
     );
     gh.factoryAsync<_i677.GetCategory>(
       () async => _i677.GetCategory(await getAsync<_i615.CategoryRepository>()),

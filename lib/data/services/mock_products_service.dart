@@ -46,11 +46,20 @@ class MockProductsService {
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
 
+
+
     if (await file.exists()) {
       final data = await file.readAsString();
+
+      
       final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
-      return jsonList.map((json) => Product.fromMap(json as Map<String, dynamic>)).toList();
+      final products = jsonList.map((json) => Product.fromMap(json as Map<String, dynamic>)).toList();
+      
+
+      
+      return products;
     }
+
     return [];
   }
 
@@ -59,7 +68,11 @@ class MockProductsService {
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
     final jsonList = products.map((product) => product.toMap()).toList();
+    
+
+    
     await file.writeAsString(json.encode(jsonList));
+
   }
 
   /// Get all products
@@ -162,5 +175,63 @@ class MockProductsService {
     for (final product in products) {
       await addProduct(product);
     }
+  }
+
+  /// Clear all products (for testing/debugging)
+  Future<void> clearAllProducts() async {
+    final dbDir = await getApplicationDocumentsDirectory();
+    final dbPath = '${dbDir.path}/$_fileName';
+    final file = File(dbPath);
+    
+
+    
+    await file.writeAsString('[]');
+    _nextId = 1;
+    
+
+  }
+
+  /// Upload images for a product and return updated image URLs
+  Future<List<String>?> uploadProductImages(int productId, {int imageCount = 1}) async {
+
+    
+    final products = await _readProducts();
+    final index = products.indexWhere((p) => p.id == productId);
+    
+    if (index == -1) {
+
+      return null; // Product not found
+    }
+    
+    final product = products[index];
+
+    
+    // Generate new sample image URLs for the uploaded images
+    final newImageUrls = ImageUrlGenerator.generateImageListForProduct(
+      product.name,
+      count: imageCount, // Generate URLs based on actual uploaded image count
+    );
+    
+
+    
+    // Update the product with new image URLs
+    final updatedProduct = Product(
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: product.quantity,
+      categoryId: product.categoryId,
+      images: newImageUrls,
+      createdAt: product.createdAt,
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+    
+    products[index] = updatedProduct;
+    await _writeProducts(products);
+    
+
+    
+    return newImageUrls;
   }
 }

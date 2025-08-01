@@ -79,18 +79,20 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<void> addProduct(Product product) async {
+  Future<Product> addProduct(Product product) async {
     try {
       // Add to local first
       await _localDataSource.insertProduct(product);
 
       // Try to sync with remote
       try {
-        await _remoteDataSource.createProduct(product);
+        final createdProduct = await _remoteDataSource.createProduct(product);
+        return createdProduct;
       } catch (e) {
         // Log error but don't fail the operation
         // The product is saved locally and will sync later
-        print('Lỗi khi đồng bộ sản phẩm mới với server: $e');
+
+        return product;
       }
     } catch (e) {
       throw Exception('Lỗi khi thêm sản phẩm: $e');
@@ -108,7 +110,7 @@ class ProductRepositoryImpl implements ProductRepository {
         await _remoteDataSource.updateProduct(product);
       } catch (e) {
         // Log error but don't fail the operation
-        print('Lỗi khi đồng bộ cập nhật sản phẩm với server: $e');
+
       }
     } catch (e) {
       throw Exception('Lỗi khi cập nhật sản phẩm: $e');
@@ -126,7 +128,7 @@ class ProductRepositoryImpl implements ProductRepository {
         await _remoteDataSource.deleteProduct(id);
       } catch (e) {
         // Log error but don't fail the operation
-        print('Lỗi khi đồng bộ xóa sản phẩm với server: $e');
+
       }
     } catch (e) {
       throw Exception('Lỗi khi xóa sản phẩm: $e');

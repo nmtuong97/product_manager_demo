@@ -63,11 +63,14 @@ class ProductDetailLoaded extends ProductState {
 class ProductOperationSuccess extends ProductState {
   /// Success message to display
   final String message;
+  
+  /// Optional product ID for operations that create/update products
+  final int? productId;
 
-  const ProductOperationSuccess(this.message);
+  const ProductOperationSuccess(this.message, {this.productId});
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, productId];
 }
 
 /// Error state when any product operation fails

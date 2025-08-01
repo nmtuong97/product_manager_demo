@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,12 +7,14 @@ import 'package:intl/intl.dart';
 
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/product.dart';
+import '../../../injection.dart';
 import '../../blocs/category/category_bloc.dart';
 import '../../blocs/category/category_event.dart';
 import '../../blocs/category/category_state.dart';
 import '../../blocs/product/product_bloc.dart';
 import '../../blocs/product/product_event.dart';
 import '../../blocs/product/product_state.dart';
+import '../../services/image_upload_service.dart';
 import '../../services/image_url_generator.dart';
 
 class ProductManagementPage extends StatefulWidget {
@@ -47,6 +50,12 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   String? _quantityError;
   String? _categoryError;
 
+  // Image management
+  List<File> _selectedImages = [];
+  List<String> _uploadedImageUrls = [];
+  bool _isUploadingImages = false;
+  final ImageUploadService _imageUploadService = getIt<ImageUploadService>();
+
   bool get _isEditMode => widget.product != null;
 
   bool get _isFormValid =>
@@ -81,6 +90,165 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       final formatter = NumberFormat('#,###', 'en_US');
       _priceController.text = formatter.format(product.price.toInt());
       _quantityController.text = product.quantity.toString();
+      // Initialize uploaded image URLs for edit mode
+      _uploadedImageUrls = List.from(product.images);
+    }
+  }
+
+  // Image selection methods
+  Future<void> _showImageSourceDialog() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Chọn từ thư viện'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImageFromGallery();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Chụp ảnh'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImageFromCamera();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Chọn nhiều ảnh'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickMultipleImages();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    try {
+      final File? image = await _imageUploadService.pickImageFromCamera();
+      if (image != null && _selectedImages.length < 5) {
+        setState(() {
+          _selectedImages.add(image);
+        });
+      } else if (_selectedImages.length >= 5) {
+        _showSnackBar('Chỉ có thể chọn tối đa 5 ảnh', isError: true);
+      }
+    } catch (e) {
+      _showSnackBar('Lỗi khi chụp ảnh: $e', isError: true);
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final File? image = await _imageUploadService.pickImageFromGallery();
+      if (image != null && _selectedImages.length < 5) {
+        setState(() {
+          _selectedImages.add(image);
+        });
+      } else if (_selectedImages.length >= 5) {
+        _showSnackBar('Chỉ có thể chọn tối đa 5 ảnh', isError: true);
+      }
+    } catch (e) {
+      _showSnackBar('Lỗi khi chọn ảnh: $e', isError: true);
+    }
+  }
+
+  Future<void> _pickMultipleImages() async {
+    try {
+      final List<File> images = await _imageUploadService.pickMultipleImages();
+      final int availableSlots = 5 - _selectedImages.length;
+      
+      if (images.isNotEmpty) {
+        final List<File> imagesToAdd = images.take(availableSlots).toList();
+        setState(() {
+          _selectedImages.addAll(imagesToAdd);
+        });
+        
+        if (images.length > availableSlots) {
+          _showSnackBar('Chỉ thêm được ${imagesToAdd.length} ảnh. Tối đa 5 ảnh.', isError: true);
+        }
+      }
+    } catch (e) {
+      _showSnackBar('Lỗi khi chọn ảnh: $e', isError: true);
+    }
+  }
+
+  void _removeSelectedImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
+  void _removeUploadedImage(int index) {
+    setState(() {
+      _uploadedImageUrls.removeAt(index);
+    });
+  }
+
+  Future<void> _uploadImages(int productId) async {
+    if (_selectedImages.isEmpty) return;
+    
+    setState(() {
+      _isUploadingImages = true;
+    });
+    
+    try {
+      final List<String> uploadedUrls = await _imageUploadService.uploadProductImages(
+        productId,
+        _selectedImages,
+      );
+      
+      setState(() {
+        _uploadedImageUrls.addAll(uploadedUrls);
+        _selectedImages.clear();
+        _isUploadingImages = false;
+      });
+      
+      _showSnackBar('Upload ảnh thành công!');
+    } catch (e) {
+      setState(() {
+        _isUploadingImages = false;
+      });
+      _showSnackBar('Lỗi khi upload ảnh: $e', isError: true);
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError 
+            ? Theme.of(context).colorScheme.error 
+            : Theme.of(context).colorScheme.primary,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: isError ? 4 : 2),
+      ),
+    );
+  }
+
+  Future<void> _handlePostProductSuccess(ProductOperationSuccess state) async {
+    // Upload images if there are selected images and we have a product ID
+    if (_selectedImages.isNotEmpty && state.productId != null) {
+      await _uploadImages(state.productId!);
+    }
+    
+    // Show success message
+    _showSnackBar(state.message, isError: false);
+    
+    // Navigate back with success result
+    if (mounted) {
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -196,15 +364,8 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 });
 
                 if (state is ProductOperationSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                  Navigator.of(
-                    context,
-                  ).pop(true); // Return true to indicate success
+                  // Handle image upload after successful product creation/update
+                  _handlePostProductSuccess(state);
                 } else if (state is ProductError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -262,6 +423,8 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 _buildQuantityField(),
                 SizedBox(height: 24.h),
                 _buildCategoryDropdown(),
+                SizedBox(height: 24.h),
+                _buildImageSection(),
                 SizedBox(height: 40.h),
               ],
             ),
@@ -816,6 +979,230 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     );
   }
 
+  Widget _buildImageSection() {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Hình ảnh sản phẩm',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        
+        // Add image button
+        if (_selectedImages.length + _uploadedImageUrls.length < 5)
+          Container(
+            width: double.infinity,
+            height: 120.h,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: colorScheme.outline.withOpacity(0.5),
+                width: 1.5,
+                style: BorderStyle.solid,
+              ),
+              borderRadius: BorderRadius.circular(12.r),
+              color: colorScheme.surfaceVariant.withOpacity(0.3),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _showImageSourceDialog,
+                borderRadius: BorderRadius.circular(12.r),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_photo_alternate_outlined,
+                      size: 32.w,
+                      color: colorScheme.primary,
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Thêm ảnh',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      'Tối đa 5 ảnh',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        
+        // Selected images preview
+        if (_selectedImages.isNotEmpty) ...[
+          SizedBox(height: 16.h),
+          Text(
+            'Ảnh đã chọn (${_selectedImages.length})',
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          SizedBox(
+            height: 100.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _selectedImages.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.only(right: 12.w),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: Image.file(
+                          _selectedImages[index],
+                          width: 100.w,
+                          height: 100.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 4.h,
+                        right: 4.w,
+                        child: GestureDetector(
+                          onTap: () => _removeSelectedImage(index),
+                          child: Container(
+                            padding: EdgeInsets.all(4.w),
+                            decoration: BoxDecoration(
+                              color: colorScheme.error,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              size: 16.w,
+                              color: colorScheme.onError,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+        
+        // Uploaded images preview
+        if (_uploadedImageUrls.isNotEmpty) ...[
+          SizedBox(height: 16.h),
+          Text(
+            'Ảnh đã upload (${_uploadedImageUrls.length})',
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          SizedBox(
+            height: 100.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _uploadedImageUrls.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.only(right: 12.w),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: Image.network(
+                          _uploadedImageUrls[index],
+                          width: 100.w,
+                          height: 100.h,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 100.w,
+                              height: 100.h,
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceVariant,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Icon(
+                                Icons.broken_image,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        top: 4.h,
+                        right: 4.w,
+                        child: GestureDetector(
+                          onTap: () => _removeUploadedImage(index),
+                          child: Container(
+                            padding: EdgeInsets.all(4.w),
+                            decoration: BoxDecoration(
+                              color: colorScheme.error,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              size: 16.w,
+                              color: colorScheme.onError,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+        
+        // Upload progress
+        if (_isUploadingImages) ...[
+          SizedBox(height: 16.h),
+          Row(
+            children: [
+              SizedBox(
+                width: 20.w,
+                height: 20.h,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colorScheme.primary,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                'Đang upload ảnh...',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _buildActionButtons() {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -987,10 +1374,20 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
 
     final now = DateTime.now();
-    final imageList = ImageUrlGenerator.generateImageListForProduct(
-      _nameController.text.trim(),
-      count: 3, // Generate 3 images by default
-    );
+    
+    // Use uploaded images or generate default ones
+    List<String> finalImages = [];
+    if (_uploadedImageUrls.isNotEmpty) {
+      finalImages = List.from(_uploadedImageUrls);
+    } else if (_isEditMode && widget.product != null) {
+      finalImages = List.from(widget.product!.images);
+    } else {
+      // Generate default images for new products without uploaded images
+      finalImages = ImageUrlGenerator.generateImageListForProduct(
+        _nameController.text.trim(),
+        count: 3,
+      );
+    }
 
     // Parse price from formatted string
     final String priceDigitsOnly = _priceController.text.replaceAll(
@@ -1005,7 +1402,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       price: double.parse(priceDigitsOnly),
       quantity: int.parse(_quantityController.text),
       categoryId: _selectedCategory!.id!,
-      images: _isEditMode ? widget.product!.images : imageList,
+      images: finalImages,
       createdAt:
           _isEditMode ? widget.product!.createdAt : now.toIso8601String(),
       updatedAt: now.toIso8601String(),
