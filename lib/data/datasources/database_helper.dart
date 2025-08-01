@@ -16,8 +16,9 @@ class DatabaseHelper {
 
       _database = await openDatabase(
         path,
-        version: 1,
+        version: 2,
         onCreate: DatabaseHelper._createDB,
+        onUpgrade: DatabaseHelper._upgradeDB,
       );
     }
 
@@ -61,6 +62,14 @@ class DatabaseHelper {
         updatedAt TEXT NOT NULL
       )
     ''');
+  }
+
+  static Future<void> _upgradeDB(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    // Database upgrade logic if needed
   }
 
   Future<void> close() async {

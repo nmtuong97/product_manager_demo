@@ -52,13 +52,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(gh<_i1017.MockCategoriesService>()),
     );
-    gh.lazySingleton<_i173.CategoryRemoteDataSource>(
-      () => _i46.CategoryRemoteDataSourceImpl(gh<_i361.Dio>()),
-    );
-    gh.lazySingletonAsync<_i77.CategoryLocalDataSource>(
+    gh.factoryAsync<_i77.CategoryLocalDataSource>(
       () async => _i983.CategoryLocalDataSourceImpl(
         await getAsync<_i443.DatabaseHelper>(),
       ),
+    );
+    gh.factory<_i173.CategoryRemoteDataSource>(
+      () => _i46.CategoryRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
     gh.factory<_i0.MockCategoryInterceptor>(
       () => _i0.MockCategoryInterceptor(gh<_i1017.MockCategoriesService>()),
@@ -67,10 +67,10 @@ extension GetItInjectableX on _i174.GetIt {
       () async =>
           _i86.CounterRepositoryImpl(await getAsync<_i443.DatabaseHelper>()),
     );
-    gh.lazySingletonAsync<_i615.CategoryRepository>(
+    gh.factoryAsync<_i615.CategoryRepository>(
       () async => _i1032.CategoryRepositoryImpl(
-        await getAsync<_i77.CategoryLocalDataSource>(),
-        gh<_i173.CategoryRemoteDataSource>(),
+        localDataSource: await getAsync<_i77.CategoryLocalDataSource>(),
+        remoteDataSource: gh<_i173.CategoryRemoteDataSource>(),
       ),
     );
     gh.factoryAsync<_i677.GetCategory>(
@@ -91,15 +91,6 @@ extension GetItInjectableX on _i174.GetIt {
       () async =>
           _i425.DeleteCategory(await getAsync<_i615.CategoryRepository>()),
     );
-    gh.lazySingletonAsync<_i815.CategoryBloc>(
-      () async => _i815.CategoryBloc(
-        await getAsync<_i664.GetCategories>(),
-        await getAsync<_i677.GetCategory>(),
-        await getAsync<_i945.AddCategory>(),
-        await getAsync<_i173.UpdateCategory>(),
-        await getAsync<_i425.DeleteCategory>(),
-      ),
-    );
     gh.factoryAsync<_i647.SaveCounter>(
       () async => _i647.SaveCounter(await getAsync<_i123.CounterRepository>()),
     );
@@ -110,6 +101,15 @@ extension GetItInjectableX on _i174.GetIt {
       () async => _i565.CounterBloc(
         await getAsync<_i825.GetCounter>(),
         await getAsync<_i647.SaveCounter>(),
+      ),
+    );
+    gh.factoryAsync<_i815.CategoryBloc>(
+      () async => _i815.CategoryBloc(
+        getCategories: await getAsync<_i664.GetCategories>(),
+        getCategory: await getAsync<_i677.GetCategory>(),
+        addCategory: await getAsync<_i945.AddCategory>(),
+        updateCategory: await getAsync<_i173.UpdateCategory>(),
+        deleteCategory: await getAsync<_i425.DeleteCategory>(),
       ),
     );
     return this;

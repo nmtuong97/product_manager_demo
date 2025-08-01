@@ -5,74 +5,135 @@ import '../../domain/repositories/category_repository.dart';
 import '../datasources/category_local_data_source.dart';
 import '../datasources/category_remote_data_source.dart';
 
-@LazySingleton(as: CategoryRepository)
+/// Implementation of CategoryRepository following Clean Architecture principles
+///
+/// This repository coordinates between local and remote data sources,
+/// implementing caching strategies and offline-first approach.
+@Injectable(as: CategoryRepository)
 class CategoryRepositoryImpl implements CategoryRepository {
-  final CategoryLocalDataSource local;
-  final CategoryRemoteDataSource remote;
+  final CategoryLocalDataSource _localDataSource;
+  final CategoryRemoteDataSource _remoteDataSource;
 
-  CategoryRepositoryImpl(this.local, this.remote);
+  const CategoryRepositoryImpl({
+    required CategoryLocalDataSource localDataSource,
+    required CategoryRemoteDataSource remoteDataSource,
+  }) : _localDataSource = localDataSource,
+       _remoteDataSource = remoteDataSource;
 
   @override
   Future<void> addCategory(Category category) async {
     try {
-      final newCategory = await remote.addCategory(category);
-      await local.insertCategory(newCategory.toMap());
+      // Add to remote first for data consistency
+      final remoteCategory = await _remoteDataSource.addCategory(category);
+
+      // Cache the result locally
+      await _localDataSource.insertCategory(remoteCategory);
     } catch (e) {
-      await local.insertCategory(category.toMap());
+      // Fallback to local storage if remote fails (offline support)
+      try {
+        await _localDataSource.insertCategory(category);
+      } catch (localError) {
+        throw Exception(
+          'Failed to add category: Remote error: $e, Local error: $localError',
+        );
+      }
     }
   }
 
   @override
   Future<void> deleteCategory(int id) async {
     try {
-      await remote.deleteCategory(id);
-      await local.deleteCategory(id);
-    } catch (e) {
-      await local.deleteCategory(id);
-    }
-  }
+      // Delete from remote first for data consistency
+      await _remoteDataSource.deleteCategory(id);
 
-  @override
-  Future<Category> getCategory(int id) async {
-    final categoryMap = await local.getCategory(id);
-    return Category.fromMap(categoryMap);
+      // Remove from local cache
+      await _localDataSource.deleteCategory(id);
+    } catch (e) {
+      // Fallback to local deletion if remote fails (offline support)
+      try {
+        await _localDataSource.deleteCategory(id);
+      } catch (localError) {
+        throw Exception(
+          'Failed to delete category: Remote error: $e, Local error: $localError',
+        );
+      }
+    }
   }
 
   @override
   Future<List<Category>> getCategories([bool forceRefresh = false]) async {
-    if (forceRefresh) {
+    if (!forceRefresh) {
+      // Offline-first approach: try local cache first
       try {
-        final remoteCategories = await remote.getCategories();
-        await local.batchInsertCategories(remoteCategories);
-        return remoteCategories;
+        final localCategories = await _localDataSource.getCategories();
+        if (localCategories.isNotEmpty) {
+          return localCategories;
+        }
       } catch (e) {
-        // Log the error
-        final localCategories = await local.getCategories();
-        return localCategories.map((map) => Category.fromMap(map)).toList();
+        // Continue to remote if local fails
       }
     }
 
+    // Fetch from remote and update local cache
     try {
-      final localCategories = await local.getCategories();
-      if (localCategories.isNotEmpty) {
-        return localCategories.map((map) => Category.fromMap(map)).toList();
-      }
-    } catch (e) {
-      // Local cache is empty or error, fetch from remote
-    }
+      final remoteCategories = await _remoteDataSource.getCategories();
 
-    final remoteCategories = await remote.getCategories();
-    await local.batchInsertCategories(remoteCategories);
-    return remoteCategories;
+      // Update local cache with fresh data
+      await _localDataSource.batchInsertCategories(remoteCategories);
+
+      return remoteCategories;
+    } catch (e) {
+      // Fallback to local cache if remote fails
+      try {
+        return await _localDataSource.getCategories();
+      } catch (localError) {
+        throw Exception(
+          'Failed to get categories: Remote error: $e, Local error: $localError',
+        );
+      }
+    }
   }
 
   @override
   Future<void> updateCategory(Category category) async {
     try {
-      final updatedCategory = await remote.updateCategory(category);
-      await local.updateCategory(updatedCategory.toMap());
+      // Update remote first for data consistency
+      final updatedCategory = await _remoteDataSource.updateCategory(category);
+
+      // Update local cache with the result
+      await _localDataSource.updateCategory(updatedCategory);
     } catch (e) {
-      await local.updateCategory(category.toMap());
+      // Fallback to local update if remote fails (offline support)
+      try {
+        await _localDataSource.updateCategory(category);
+      } catch (localError) {
+        throw Exception(
+          'Failed to update category: Remote error: $e, Local error: $localError',
+        );
+      }
+    }
+  }
+
+  @override
+  Future<Category> getCategory(int id) async {
+    try {
+      // Try local cache first for better performance
+      final localCategory = await _localDataSource.getCategory(id);
+      return localCategory;
+    } catch (e) {
+      // Fallback to remote if not found locally
+      try {
+        final remoteCategory = await _remoteDataSource.getCategory(id);
+
+        // Cache the result locally for future requests
+        await _localDataSource.insertCategory(remoteCategory);
+
+        return remoteCategory;
+      } catch (remoteError) {
+        throw Exception(
+          'Failed to get category with ID $id: Local error: $e, Remote error: $remoteError',
+        );
+      }
     }
   }
 }

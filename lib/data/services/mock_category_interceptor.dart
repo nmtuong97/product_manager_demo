@@ -86,8 +86,8 @@ class MockCategoryInterceptor extends Interceptor {
     final newCategory = Category(
       id: _nextId++,
       name: data['name'],
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
     final categories = await _mockService.readData(_categoriesFile);
     categories.add(newCategory.toMap());
@@ -118,7 +118,7 @@ class MockCategoryInterceptor extends Interceptor {
       id: id,
       name: data['name'],
       createdAt: categories[index]['createdAt'], // Keep original creation date
-      updatedAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now(),
     );
 
     categories[index] = updatedCategory.toMap();

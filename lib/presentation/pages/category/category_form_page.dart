@@ -5,7 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../domain/entities/category.dart';
 import '../../blocs/category/category_barrel.dart';
 
+/// Form page for adding or editing categories
+///
+/// This page provides a form interface for creating new categories
+/// or editing existing ones. It handles validation, submission,
+/// and provides feedback to the user.
 class CategoryFormPage extends StatefulWidget {
+  /// The category to edit, null if creating a new category
   final Category? category;
 
   const CategoryFormPage({super.key, this.category});
@@ -19,11 +25,13 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   final _nameController = TextEditingController();
   bool _isLoading = false;
 
+  /// Whether this form is in edit mode (true) or create mode (false)
   bool get _isEditing => widget.category != null;
 
   @override
   void initState() {
     super.initState();
+    // Pre-populate form fields if editing an existing category
     if (_isEditing) {
       _nameController.text = widget.category!.name;
     }
@@ -46,8 +54,15 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         if (state is CategoryOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  SizedBox(width: 8.w),
+                  Expanded(child: Text(state.message)),
+                ],
+              ),
               backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
               duration: const Duration(seconds: 2),
             ),
           );
@@ -55,9 +70,21 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         } else if (state is CategoryError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Row(
+                children: [
+                  const Icon(Icons.error, color: Colors.white),
+                  SizedBox(width: 8.w),
+                  Expanded(child: Text(state.message)),
+                ],
+              ),
               backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: 'Thử lại',
+                textColor: Colors.white,
+                onPressed: () => _submitForm(),
+              ),
             ),
           );
         }
@@ -75,51 +102,20 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             actions: [
               if (_isEditing)
                 IconButton(
-                  icon: _isLoading
-                      ? SizedBox(
-                          width: 24.w,
-                          height: 24.h,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2.0,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Icon(Icons.delete),
-                  onPressed:
+                  icon:
                       _isLoading
-                          ? null
-                          : () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Xác nhận xóa'),
-                                    content: const Text(
-                                      'Bạn có chắc chắn muốn xóa danh mục này?',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('Hủy'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          context.read<CategoryBloc>().add(
-                                                DeleteCategoryEvent(
-                                                  widget.category!.id!,
-                                                ),
-                                              );
-                                        },
-                                        child: const Text('Xóa'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                          ? SizedBox(
+                            width: 24.w,
+                            height: 24.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          )
+                          : const Icon(Icons.delete),
+                  onPressed: _isLoading ? null : () => _showDeleteDialog(),
                   tooltip: 'Xóa danh mục',
                 ),
             ],
@@ -130,6 +126,47 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     );
   }
 
+  /// Shows a confirmation dialog before deleting a category
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.warning, color: Theme.of(context).colorScheme.error),
+              SizedBox(width: 8.w),
+              const Text('Xác nhận xóa'),
+            ],
+          ),
+          content: Text(
+            'Bạn có chắc chắn muốn xóa danh mục "${widget.category!.name}"? Hành động này không thể hoàn tác.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Hủy'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.read<CategoryBloc>().add(
+                  DeleteCategoryEvent(widget.category!.id!),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+              child: const Text('Xóa'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Builds the main form widget
   Widget _buildForm(BuildContext context) {
     return Column(
       children: [
@@ -223,11 +260,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         }
         return null;
       },
-      textInputAction: TextInputAction.done,
-      onFieldSubmitted: (_) => _submitForm(context),
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
     );
   }
 
+  /// Builds the information section for editing mode
   Widget _buildInfoSection() {
     final category = widget.category!;
     return Container(
@@ -250,7 +288,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             ),
           ),
           SizedBox(height: 8.h),
-          _buildInfoRow('ID', category.id?.toString() ?? 'N/A'),
+          _buildInfoRow('ID', category.id?.toString() ?? 'Chưa có'),
           _buildInfoRow('Ngày tạo', _formatDateTime(category.createdAt)),
           _buildInfoRow('Ngày cập nhật', _formatDateTime(category.updatedAt)),
         ],
@@ -258,6 +296,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     );
   }
 
+  /// Builds a row for displaying category information
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -282,6 +321,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     );
   }
 
+  /// Builds the action buttons (Cancel and Submit)
   Widget _buildActionButtons(BuildContext context) {
     return Row(
       children: [
@@ -303,7 +343,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         SizedBox(width: 16.w),
         Expanded(
           child: ElevatedButton(
-            onPressed: _isLoading ? null : () => _submitForm(context),
+            onPressed: _isLoading ? null : () => _submitForm(),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
@@ -315,9 +355,11 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     ? SizedBox(
                       height: 20.h,
                       width: 20.w,
-                      child: const CircularProgressIndicator(
+                      child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
                     )
                     : Text(
@@ -333,13 +375,17 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     );
   }
 
-  void _submitForm(BuildContext context) {
+  /// Submits the form after validation
+  void _submitForm() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Dismiss keyboard
+    FocusScope.of(context).unfocus();
+
     final name = _nameController.text.trim();
-    final now = DateTime.now().toIso8601String();
+    final now = DateTime.now();
 
     final category = Category(
       id: _isEditing ? widget.category!.id : null,
@@ -355,12 +401,16 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     }
   }
 
-  String _formatDateTime(String dateTimeString) {
+  /// Formats a datetime for display
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'Chưa có';
+    }
+
     try {
-      final dateTime = DateTime.parse(dateTimeString);
       return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     } catch (e) {
-      return dateTimeString;
+      return 'Chưa có';
     }
   }
 }
