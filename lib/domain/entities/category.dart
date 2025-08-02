@@ -45,9 +45,32 @@ class Category {
     return Category(
       id: map['id'] as int?,
       name: map['name'] as String,
-      createdAt: DateTime.parse(map['createdAt'] as String),
-      updatedAt: DateTime.parse(map['updatedAt'] as String),
+      createdAt: _parseDateTime(map['createdAt']),
+      updatedAt: _parseDateTime(map['updatedAt']),
     );
+  }
+
+  /// Safely parses DateTime from various input types
+  static DateTime _parseDateTime(dynamic value) {
+    if (value == null) {
+      return DateTime.now();
+    }
+    
+    if (value is DateTime) {
+      return value;
+    }
+    
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (e) {
+        // If parsing fails, return current time as fallback
+        return DateTime.now();
+      }
+    }
+    
+    // For any other type, return current time as fallback
+    return DateTime.now();
   }
 
   @override

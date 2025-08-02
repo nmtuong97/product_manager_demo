@@ -1404,8 +1404,8 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       categoryId: _selectedCategory!.id!,
       images: finalImages,
       createdAt:
-          _isEditMode ? widget.product!.createdAt : now.toIso8601String(),
-      updatedAt: now.toIso8601String(),
+          _isEditMode ? widget.product!.createdAt : now,
+      updatedAt: now,
     );
 
     if (_isEditMode) {

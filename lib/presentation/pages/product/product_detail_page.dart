@@ -485,12 +485,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
 
 
-  String _formatDate(String dateString) {
+  String _formatDate(DateTime? dateTime) {
+    if (dateTime == null) return 'N/A';
     try {
-      final date = DateTime.parse(dateString);
-      return DateFormat('dd/MM/yyyy HH:mm').format(date);
+      return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
     } catch (e) {
-      return dateString;
+      return 'N/A';
     }
   }
 }

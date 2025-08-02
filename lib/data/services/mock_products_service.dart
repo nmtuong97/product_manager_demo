@@ -153,7 +153,7 @@ class MockProductsService {
   /// Add new product
   Future<Product> addProduct(Product product) async {
     final products = await _readProducts();
-    final now = DateTime.now().toIso8601String();
+    final now = DateTime.now();
     final newProduct = Product(
       id: _nextId++,
       name: product.name,
@@ -184,7 +184,7 @@ class MockProductsService {
         categoryId: product.categoryId,
         images: product.images,
         createdAt: product.createdAt,
-        updatedAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now(),
       );
       products[index] = updatedProduct;
       await _writeProducts(products);
@@ -235,7 +235,7 @@ class MockProductsService {
     
     // Đọc products hiện tại một lần
     final existingProducts = await _readProducts();
-    final now = DateTime.now().toIso8601String();
+    final now = DateTime.now();
     
     // Tạo tất cả products mới với ID tăng dần
     final newProducts = <Product>[];
@@ -303,7 +303,7 @@ class MockProductsService {
       categoryId: product.categoryId,
       images: newImageUrls,
       createdAt: product.createdAt,
-      updatedAt: DateTime.now().toIso8601String(),
+      updatedAt: DateTime.now(),
     );
 
     products[index] = updatedProduct;

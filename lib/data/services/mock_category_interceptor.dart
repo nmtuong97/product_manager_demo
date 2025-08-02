@@ -119,7 +119,7 @@ class MockCategoryInterceptor extends Interceptor {
     final updatedCategory = Category(
       id: id,
       name: data['name'],
-      createdAt: categories[index]['createdAt'], // Keep original creation date
+      createdAt: DateTime.parse(categories[index]['createdAt']), // Keep original creation date
       updatedAt: DateTime.now(),
     );
 

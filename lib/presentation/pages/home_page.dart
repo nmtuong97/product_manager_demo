@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
     });
     
     final random = Random();
-    final now = DateTime.now().toIso8601String();
+    final now = DateTime.now();
     
     // Tạo danh sách 10 sản phẩm ngẫu nhiên sử dụng ProductTemplateGenerator
     final List<Product> newProducts = [];
