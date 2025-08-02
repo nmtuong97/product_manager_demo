@@ -122,3 +122,4 @@ app.*.symbols
 .metadata
 description.md
 /macos
+lib/injection.config.dart
