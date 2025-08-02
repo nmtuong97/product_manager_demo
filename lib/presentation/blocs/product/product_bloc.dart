@@ -95,78 +95,24 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       await _updateProduct(event.product);
       emit(ProductOperationSuccess('Cập nhật sản phẩm thành công'));
-
-      // Reload products after successful update with force refresh
-      add(LoadProducts(forceRefresh: true));
     } catch (e) {
       emit(ProductError('Không thể cập nhật sản phẩm: ${e.toString()}'));
     }
   }
 
-  /// Handles deleting a product with optimistic UI updates and loading states
+
+
+  /// Handles deleting a product with loading state
   Future<void> _onDeleteProduct(
     DeleteProductEvent event,
     Emitter<ProductState> emit,
   ) async {
-    final currentState = state;
-    if (currentState is ProductLoaded) {
-      final deletingIds = Set<String>.from(currentState.deletingProductIds);
-      deletingIds.add(event.productId.toString());
-      emit(currentState.copyWith(deletingProductIds: deletingIds));
-
-      try {
-        await _deleteProduct(event.productId);
-
-        // Remove the deleted product from the list directly
-        final updatedProducts = currentState.products
-            .where((product) => product.id != event.productId)
-            .toList();
-
-        final updatedDeletingIds = Set<String>.from(
-          currentState.deletingProductIds,
-        );
-        updatedDeletingIds.remove(event.productId.toString());
-
-        emit(ProductLoaded(
-          updatedProducts,
-          deletingProductIds: updatedDeletingIds,
-        ));
-
-        emit(ProductOperationSuccess('Xóa sản phẩm thành công'));
-      } catch (e) {
-        // Remove from deleting state on error
-        final updatedDeletingIds = Set<String>.from(
-          currentState.deletingProductIds,
-        );
-        updatedDeletingIds.remove(event.productId.toString());
-
-        emit(currentState.copyWith(deletingProductIds: updatedDeletingIds));
-        emit(ProductError('Không thể xóa sản phẩm: ${e.toString()}'));
-      }
-    } else {
-      // If not in ProductLoaded state, load products first then delete
-      emit(ProductLoading());
-      try {
-        // Load current products first
-        final products = await _getProducts();
-        
-        // Set up optimistic state with deleting ID
-        final deletingIds = <String>{event.productId.toString()};
-        emit(ProductLoaded(products, deletingProductIds: deletingIds));
-        
-        // Perform deletion
-        await _deleteProduct(event.productId);
-        
-        // Remove the deleted product from the list
-        final updatedProducts = products
-            .where((product) => product.id != event.productId)
-            .toList();
-        
-        emit(ProductLoaded(updatedProducts));
-        emit(ProductOperationSuccess('Xóa sản phẩm thành công'));
-      } catch (e) {
-        emit(ProductError('Không thể xóa sản phẩm: ${e.toString()}'));
-      }
+    emit(ProductDeleting());
+    try {
+      await _deleteProduct(event.productId);
+      emit(ProductOperationSuccess('Xóa sản phẩm thành công'));
+    } catch (e) {
+      emit(ProductError('Không thể xóa sản phẩm: ${e.toString()}'));
     }
   }
 

@@ -15,6 +15,7 @@ import 'components/product_views.dart';
 import 'components/view_toggle.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/entities/category.dart';
+import 'package:product_manager_demo/presentation/pages/product/product_detail_page.dart';
 
 class ProductListWidget extends StatefulWidget {
   const ProductListWidget({super.key});
@@ -234,43 +235,25 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
   // Navigation methods
   void _onProductTap(Map<String, dynamic> product) {
-    // TODO: Navigate to product detail page
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Xem chi tiết: ${product['name']}'),
-        duration: const Duration(seconds: 1),
-      ),
+    // Find the actual Product entity from the product map
+    final productEntity = _allProducts.firstWhere(
+      (p) => p.id == product['id'],
+      orElse: () => throw Exception('Product not found'),
     );
+    
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductDetailPage(product: productEntity),
+      ),
+    ).then((result) {
+      if (result == true) {
+        // Product was updated or deleted, refresh the list
+        _loadProducts();
+      }
+    });
   }
 
-  void _onProductDelete(Map<String, dynamic> product) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Xác nhận xóa'),
-          content: Text('Bạn có chắc chắn muốn xóa sản phẩm "${product['name']}"?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                final productId = product['id'];
-                if (productId != null) {
-                  context.read<ProductBloc>().add(DeleteProductEvent(productId));
-                }
-              },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Xóa'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   Widget _buildProductContent(ProductState state) {
     if (state is ProductLoading) {
@@ -308,23 +291,14 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       return const ProductEmptyState();
     }
 
-    // Get deleting product IDs from state
-    final deletingProductIds = state is ProductLoaded 
-        ? state.deletingProductIds 
-        : <String>{};
-
     return _isGridView
         ? ProductGridView(
           products: _filteredProducts,
           onProductTap: _onProductTap,
-          onProductDelete: _onProductDelete,
-          deletingProductIds: deletingProductIds,
         )
         : ProductListView(
           products: _filteredProducts,
           onProductTap: _onProductTap,
-          onProductDelete: _onProductDelete,
-          deletingProductIds: deletingProductIds,
         );
   }
 }

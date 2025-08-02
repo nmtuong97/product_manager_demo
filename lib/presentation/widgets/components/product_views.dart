@@ -7,16 +7,12 @@ import 'product_card.dart';
 class ProductGridView extends StatelessWidget {
   final List<Map<String, dynamic>> products;
   final Function(Map<String, dynamic>) onProductTap;
-  final Function(Map<String, dynamic>)? onProductDelete;
-  final Set<String> deletingProductIds;
   final Future<void> Function()? onRefresh;
 
   const ProductGridView({
     super.key,
     required this.products,
     required this.onProductTap,
-    this.onProductDelete,
-    this.deletingProductIds = const {},
     this.onRefresh,
   });
 
@@ -37,16 +33,10 @@ class ProductGridView extends StatelessWidget {
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
-        final productId = product['id']?.toString() ?? '';
-        final isDeleting = deletingProductIds.contains(productId);
         
         return ProductCard(
           product: product,
           onTap: () => onProductTap(product),
-          onDelete: onProductDelete != null
-              ? () => onProductDelete!(product)
-              : null,
-          isDeleting: isDeleting,
           isGridView: true,
         );
       },
@@ -64,16 +54,12 @@ class ProductGridView extends StatelessWidget {
 class ProductListView extends StatelessWidget {
   final List<Map<String, dynamic>> products;
   final Function(Map<String, dynamic>) onProductTap;
-  final Function(Map<String, dynamic>)? onProductDelete;
-  final Set<String> deletingProductIds;
   final Future<void> Function()? onRefresh;
 
   const ProductListView({
     super.key,
     required this.products,
     required this.onProductTap,
-    this.onProductDelete,
-    this.deletingProductIds = const {},
     this.onRefresh,
   });
 
@@ -84,16 +70,10 @@ class ProductListView extends StatelessWidget {
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
-        final productId = product['id']?.toString() ?? '';
-        final isDeleting = deletingProductIds.contains(productId);
         
         return ProductCard(
           product: product,
           onTap: () => onProductTap(product),
-          onDelete: onProductDelete != null
-              ? () => onProductDelete!(product)
-              : null,
-          isDeleting: isDeleting,
           isGridView: false,
         );
       },

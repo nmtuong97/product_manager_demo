@@ -28,24 +28,19 @@ class ProductLoaded extends ProductState {
   /// List of loaded products
   final List<Product> products;
 
-  /// Set of product IDs that are currently being deleted
-  final Set<String> deletingProductIds;
-
-  const ProductLoaded(this.products, {this.deletingProductIds = const {}});
+  const ProductLoaded(this.products);
 
   /// Creates a copy of this state with updated values
   ProductLoaded copyWith({
     List<Product>? products,
-    Set<String>? deletingProductIds,
   }) {
     return ProductLoaded(
       products ?? this.products,
-      deletingProductIds: deletingProductIds ?? this.deletingProductIds,
     );
   }
 
   @override
-  List<Object?> get props => [products, deletingProductIds];
+  List<Object?> get props => [products];
 }
 
 /// State when a specific product detail is loaded
@@ -92,4 +87,9 @@ class ProductAdding extends ProductState {
 /// State when updating a product is in progress
 class ProductUpdating extends ProductState {
   const ProductUpdating();
+}
+
+/// State when deleting a product is in progress
+class ProductDeleting extends ProductState {
+  const ProductDeleting();
 }

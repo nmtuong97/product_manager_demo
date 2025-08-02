@@ -59,7 +59,7 @@ class UpdateProductEvent extends ProductEvent {
 
 /// Event to delete a product
 class DeleteProductEvent extends ProductEvent {
-  /// The ID of the product to delete
+  /// The ID of the product to be deleted
   final int productId;
 
   const DeleteProductEvent(this.productId);

@@ -46,16 +46,25 @@ class MockProductsService {
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
 
-
-
     if (await file.exists()) {
       final data = await file.readAsString();
-
+      print('📂 MockProductsService _readProducts:');
+      print('   - File path: $dbPath');
+      print('   - Raw data length: ${data.length}');
       
       final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
-      final products = jsonList.map((json) => Product.fromMap(json as Map<String, dynamic>)).toList();
+      print('   - JSON list length: ${jsonList.length}');
       
-
+      final products = jsonList.map((json) {
+        final productMap = json as Map<String, dynamic>;
+        print('   - Product raw images: ${productMap['images']} (type: ${productMap['images'].runtimeType})');
+        return Product.fromMap(productMap);
+      }).toList();
+      
+      print('   - Products loaded: ${products.length}');
+      for (int i = 0; i < products.length; i++) {
+        print('   - Product $i: ${products[i].name} - Images: ${products[i].images.length}');
+      }
       
       return products;
     }

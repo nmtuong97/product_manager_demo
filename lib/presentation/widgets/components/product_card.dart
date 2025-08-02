@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 /// A reusable product card component that can display in grid or list format
 class ProductCard extends StatelessWidget {
   final Map<String, dynamic> product;
   final VoidCallback onTap;
-  final VoidCallback? onDelete;
   final bool isGridView;
-  final bool isDeleting;
 
   const ProductCard({
     super.key,
     required this.product,
     required this.onTap,
-    this.onDelete,
     this.isGridView = true,
-    this.isDeleting = false,
   });
 
   @override
@@ -30,7 +27,7 @@ class ProductCard extends StatelessWidget {
       child: Stack(
         children: [
           InkWell(
-            onTap: isDeleting ? null : onTap,
+            onTap: onTap,
             borderRadius: BorderRadius.circular(12.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,31 +48,6 @@ class ProductCard extends StatelessWidget {
               ],
             ),
           ),
-          // Delete button
-          if (onDelete != null)
-            Positioned(
-              top: 8.w,
-              right: 8.w,
-              child: _buildDeleteButton(context),
-            ),
-          // Loading overlay
-          if (isDeleting)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.w,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -89,7 +61,7 @@ class ProductCard extends StatelessWidget {
       child: Stack(
         children: [
           InkWell(
-            onTap: isDeleting ? null : onTap,
+            onTap: onTap,
             borderRadius: BorderRadius.circular(8.r),
             child: Padding(
               padding: EdgeInsets.all(12.w),
@@ -104,34 +76,11 @@ class ProductCard extends StatelessWidget {
                   ),
                   SizedBox(width: 12.w),
                   Expanded(child: _buildProductInfo(context, isCompact: false)),
-                  if (onDelete != null) ...[
-                    _buildDeleteButton(context),
-                    SizedBox(width: 8.w),
-                  ],
-                  if (!isDeleting)
-                    Icon(Icons.chevron_right, color: Colors.grey[400], size: 20.w),
+                  Icon(Icons.chevron_right, color: Colors.grey[400], size: 20.w),
                 ],
               ),
             ),
           ),
-          // Loading overlay
-          if (isDeleting)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.w,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -144,19 +93,30 @@ class ProductCard extends StatelessWidget {
         color: Colors.grey[200],
         borderRadius: borderRadius,
       ),
-      child:
-          product['image'] != null
-              ? ClipRRect(
+      child: product['image'] != null
+          ? Hero(
+              tag: 'product_${product['id']}_0', // Use index 0 for thumbnail
+              child: ClipRRect(
                 borderRadius: borderRadius,
-                child: Image.network(
-                  product['image'],
+                child: CachedNetworkImage(
+                  imageUrl: product['image'],
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return _buildPlaceholderImage();
-                  },
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.w,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => _buildPlaceholderImage(),
                 ),
-              )
-              : _buildPlaceholderImage(),
+              ),
+            )
+          : _buildPlaceholderImage(),
     );
   }
 
@@ -217,33 +177,5 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  /// Builds the delete button with proper styling
-  Widget _buildDeleteButton(BuildContext context) {
-    return Container(
-      width: 32.w,
-      height: 32.w,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.error.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isDeleting ? null : onDelete,
-          borderRadius: BorderRadius.circular(16.r),
-          child: Icon(
-            Icons.delete_outline,
-            size: 16.w,
-            color: isDeleting
-                ? Theme.of(context).colorScheme.error.withOpacity(0.5)
-                : Theme.of(context).colorScheme.error,
-          ),
-        ),
-      ),
-    );
-  }
+
 }
