@@ -28,11 +28,13 @@ class ProductSearchBar extends StatefulWidget {
 class _ProductSearchBarState extends State<ProductSearchBar> {
   Timer? _debounceTimer;
   bool _hasText = false;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _hasText = widget.controller.text.isNotEmpty;
+    _focusNode = FocusNode();
     widget.controller.addListener(_onTextChanged);
   }
 
@@ -40,6 +42,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
   void dispose() {
     _debounceTimer?.cancel();
     widget.controller.removeListener(_onTextChanged);
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -81,6 +84,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
       ),
       child: TextField(
         controller: widget.controller,
+        focusNode: _focusNode,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: TextStyle(

@@ -38,6 +38,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   List<Map<String, dynamic>> _products = [];
   bool _isSearching = false;
   String _currentSearchQuery = '';
+  int _currentResultCount = 0;
+  bool _isNavigating = false;
 
   @override
   void initState() {
@@ -45,6 +47,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     _loadProducts();
     _loadCategories();
   }
+
+
 
   @override
   void dispose() {
@@ -63,8 +67,13 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               setState(() {
                 _allProducts = state.products;
                 _products = state.products.map((product) => _convertProductToMap(product)).toList();
+                _currentResultCount = state.products.length;
                 // Apply current filters to the loaded products
                 _applyCurrentFilters();
+              });
+            } else if (state is ProductSearchLoaded) {
+              setState(() {
+                _currentResultCount = state.searchResults.length;
               });
             } else if (state is ProductOperationSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -92,8 +101,13 @@ class _ProductListWidgetState extends State<ProductListWidget> {
         ),
       ],
       child: Expanded(
-        child: Column(
-          children: [
+        child: GestureDetector(
+          onTap: () {
+            // Clear focus when tapping outside search bar
+            FocusScope.of(context).unfocus();
+          },
+          child: Column(
+            children: [
             // Search bar
             ProductSearchBar(
               controller: _searchController,
@@ -116,7 +130,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
             // Search results header
             SearchResultsHeader(
               searchQuery: _currentSearchQuery,
-              resultCount: _filteredProducts.length,
+              resultCount: _currentResultCount,
               selectedCategory: _selectedCategory,
               onClearSearch: () {
                 _searchController.clear();
@@ -127,7 +141,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
             // View toggle
             ViewToggle(
-              productCount: _filteredProducts.length,
+              productCount: _currentResultCount,
               isGridView: _isGridView,
               onViewChanged: _onViewChanged,
             ),
@@ -141,7 +155,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                 },
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -266,16 +281,21 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     }
     
     _filteredProducts = filtered;
+    _currentResultCount = filtered.length;
   }
 
   // Event handlers
   void _onSearchChanged(String value) {
-    _currentSearchQuery = value;
+    setState(() {
+      _currentSearchQuery = value;
+    });
     _performSearch();
   }
 
   void _onSearchCleared() {
-    _currentSearchQuery = '';
+    setState(() {
+      _currentSearchQuery = '';
+    });
     _performSearch();
   }
 
@@ -300,6 +320,10 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       orElse: () => throw Exception('Product not found'),
     );
 
+    setState(() {
+      _isNavigating = true;
+    });
+
     Navigator.of(context)
         .push(
           MaterialPageRoute(
@@ -307,6 +331,17 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           ),
         )
         .then((result) {
+          setState(() {
+            _isNavigating = false;
+          });
+          
+          // Clear focus when returning from detail page to prevent keyboard from showing
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              FocusScope.of(context).unfocus();
+            }
+          });
+          
           if (result == true) {
             // Product was updated or deleted, refresh the list
             _loadProducts();

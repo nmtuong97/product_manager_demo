@@ -47,35 +47,42 @@ class ProductEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Container(
-      height: 400.h,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildEmptyIcon(),
-            SizedBox(height: 16.h),
-            Text(
-              _getEmptyTitle(),
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[600],
+    final content = SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height * 0.6,
+        ),
+        child: IntrinsicHeight(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildEmptyIcon(),
+              SizedBox(height: 16.h),
+              Text(
+                _getEmptyTitle(),
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              _getEmptySubtitle(),
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: Colors.grey[500],
+              SizedBox(height: 8.h),
+              Text(
+                _getEmptySubtitle(),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Colors.grey[500],
+                ),
+                textAlign: TextAlign.center,
+                maxLines: null,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 24.h),
-            _buildActionButtons(),
-          ],
+              SizedBox(height: 24.h),
+              _buildActionButtons(),
+            ],
+          ),
         ),
       ),
     );
@@ -83,10 +90,7 @@ class ProductEmptyState extends StatelessWidget {
     if (onRefresh != null) {
       return RefreshIndicator(
         onRefresh: onRefresh!,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: content,
-        ),
+        child: content,
       );
     }
 
@@ -136,28 +140,35 @@ class ProductEmptyState extends StatelessWidget {
   Widget _buildActionButtons() {
     if (_isSearchResult()) {
       return Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          ElevatedButton.icon(
-            onPressed: onClearSearch,
-            icon: const Icon(Icons.clear),
-            label: const Text('Xóa bộ lọc'),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: onClearSearch,
+              icon: const Icon(Icons.clear),
+              label: const Text('Xóa bộ lọc'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
               ),
             ),
           ),
           if (onAddProduct != null) ...[
             SizedBox(height: 12.h),
-            OutlinedButton.icon(
-              onPressed: onAddProduct,
-              icon: const Icon(Icons.add),
-              label: const Text('Thêm sản phẩm mới'),
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: onAddProduct,
+                icon: const Icon(Icons.add),
+                label: const Text('Thêm sản phẩm mới'),
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
                 ),
               ),
             ),
@@ -167,14 +178,17 @@ class ProductEmptyState extends StatelessWidget {
     }
 
     if (onAddProduct != null) {
-      return ElevatedButton.icon(
-        onPressed: onAddProduct,
-        icon: const Icon(Icons.add),
-        label: const Text('Thêm sản phẩm'),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: onAddProduct,
+          icon: const Icon(Icons.add),
+          label: const Text('Thêm sản phẩm'),
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
           ),
         ),
       );

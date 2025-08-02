@@ -395,11 +395,6 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const Spacer(),
-            IconButton(
-              onPressed: _shareImage,
-              icon: Icon(Icons.share, color: Colors.white, size: 24.w),
-            ),
           ],
         ),
       ),
@@ -470,17 +465,6 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
               ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _shareImage() {
-    // TODO: Implement image sharing functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Tính năng chia sẻ ảnh sẽ được triển khai sau'),
-        backgroundColor: Colors.black87,
-        duration: Duration(seconds: 2),
       ),
     );
   }

@@ -80,11 +80,7 @@ class MockProductInterceptor extends Interceptor {
                 .where(
                   (p) =>
                       query.isEmpty ||
-                      p.name.toLowerCase().contains(query.toLowerCase()) ||
-                      (p.description?.toLowerCase().contains(
-                            query.toLowerCase(),
-                          ) ??
-                          false),
+                      p.name.toLowerCase().contains(query.toLowerCase()),
                 )
                 .toList();
       } else {

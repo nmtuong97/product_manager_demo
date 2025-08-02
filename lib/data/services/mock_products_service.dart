@@ -205,15 +205,14 @@ class MockProductsService {
     return false;
   }
 
-  /// Search products by name or description
+  /// Search products by name only
   Future<List<Product>> searchProducts(String query) async {
     final products = await _readProducts();
     if (query.isEmpty) return products;
 
     final lowerQuery = query.toLowerCase();
     return products.where((product) {
-      return product.name.toLowerCase().contains(lowerQuery) ||
-          (product.description?.toLowerCase().contains(lowerQuery) ?? false);
+      return product.name.toLowerCase().contains(lowerQuery);
     }).toList();
   }
 
