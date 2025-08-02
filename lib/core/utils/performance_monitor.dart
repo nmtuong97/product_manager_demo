@@ -82,97 +82,12 @@ class PerformanceMonitor {
     );
   }
 
-  /// Track database operation performance
-  static void trackDatabaseOperation(
-    String operation,
-    String table,
-    Duration duration,
-  ) {
-    if (!kDebugMode) return;
-
-    final operationKey = 'db_${operation}_$table';
-    _recordMeasurement(operationKey, duration);
-
-    developer.log(
-      'Database $operation on $table took ${duration.inMilliseconds}ms',
-      name: _tag,
-    );
-
-    if (duration.inMilliseconds > 100) {
-      developer.log(
-        'Slow database operation: $operation on $table (${duration.inMilliseconds}ms)',
-        name: _tag,
-        level: 900, // Warning level
-      );
-    }
-  }
-
   /// Track memory usage (simplified)
   static void trackMemoryUsage(String context) {
     if (!kDebugMode) return;
 
     // Note: Actual memory tracking would require platform-specific implementation
-    developer.log(
-      'Memory checkpoint: $context',
-      name: _tag,
-    );
-  }
-
-  /// Get performance statistics for an operation
-  static Map<String, dynamic>? getStats(String operationName) {
-    if (!kDebugMode) return null;
-
-    final measurements = _measurements[operationName];
-    if (measurements == null || measurements.isEmpty) return null;
-
-    final totalMs = measurements.fold<int>(
-      0,
-      (sum, duration) => sum + duration.inMilliseconds,
-    );
-    final avgMs = totalMs / measurements.length;
-    final maxMs = measurements
-        .map((d) => d.inMilliseconds)
-        .reduce((a, b) => a > b ? a : b);
-    final minMs = measurements
-        .map((d) => d.inMilliseconds)
-        .reduce((a, b) => a < b ? a : b);
-
-    return {
-      'operation': operationName,
-      'count': measurements.length,
-      'average_ms': avgMs.round(),
-      'max_ms': maxMs,
-      'min_ms': minMs,
-      'total_ms': totalMs,
-    };
-  }
-
-  /// Print all performance statistics
-  static void printAllStats() {
-    if (!kDebugMode) return;
-
-    developer.log('=== Performance Statistics ===', name: _tag);
-    
-    for (final operationName in _measurements.keys) {
-      final stats = getStats(operationName);
-      if (stats != null) {
-        developer.log(
-          '$operationName: avg=${stats['average_ms']}ms, '
-          'count=${stats['count']}, '
-          'max=${stats['max_ms']}ms, '
-          'min=${stats['min_ms']}ms',
-          name: _tag,
-        );
-      }
-    }
-    
-    developer.log('=== End Performance Statistics ===', name: _tag);
-  }
-
-  /// Clear all performance data
-  static void clearStats() {
-    _measurements.clear();
-    _startTimes.clear();
+    developer.log('Memory checkpoint: $context', name: _tag);
   }
 
   /// Record a measurement for an operation

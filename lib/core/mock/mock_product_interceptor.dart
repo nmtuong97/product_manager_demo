@@ -190,7 +190,7 @@ class MockProductInterceptor extends Interceptor {
               'images': updatedImages,
               'message': 'Images uploaded successfully',
             },
-          },),
+          }),
         );
       } catch (e) {
         handler.reject(_badRequest(options, 'Failed to upload images: $e'));
@@ -213,7 +213,7 @@ class MockProductInterceptor extends Interceptor {
       handler.resolve(
         _successResponse(options, {
           'data': createdProduct.toMap(),
-        }, statusCode: 201,),
+        }, statusCode: 201),
       );
     } catch (e) {
       handler.reject(_badRequest(options, 'Invalid product data: $e'));
@@ -292,7 +292,7 @@ class MockProductInterceptor extends Interceptor {
     handler.resolve(
       _successResponse(options, {
         'message': 'Product deleted successfully',
-      }, statusCode: 204,),
+      }, statusCode: 204),
     );
   }
 

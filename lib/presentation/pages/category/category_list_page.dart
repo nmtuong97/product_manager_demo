@@ -281,7 +281,9 @@ class CategoryListView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<CategoryBloc>().add(const LoadCategories(forceRefresh: true));
+        context.read<CategoryBloc>().add(
+          const LoadCategories(forceRefresh: true),
+        );
       },
       child: ListView.builder(
         padding: EdgeInsets.all(16.w),
