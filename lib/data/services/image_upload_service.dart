@@ -51,10 +51,11 @@ class ImageUploadService {
   /// Pick multiple images from gallery
   Future<List<File>> pickMultipleImages() async {
     try {
-      final List<XFile> images = await _picker.pickMultipleMedia(
+      final List<XFile> images = await _picker.pickMultiImage(
         maxWidth: 1024,
         maxHeight: 1024,
         imageQuality: 85,
+        limit: 5,
       );
 
       return images.map((image) => File(image.path)).toList();

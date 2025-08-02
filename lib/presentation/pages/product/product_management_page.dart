@@ -95,42 +95,89 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
   }
 
-  // Image selection methods
-  Future<void> _showImageSourceDialog() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Wrap(
+  // Image selection methods - Removed bottomsheet, now using direct buttons
+
+  Widget _buildCompactImageButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    required ColorScheme colorScheme,
+  }) {
+    return Container(
+      width: 36.w,
+      height: 36.h,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: colorScheme.outline.withValues(alpha: 0.3),
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(8.r),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8.r),
+          child: Icon(
+            icon,
+            size: 18.w,
+            color: colorScheme.primary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageActionButton({
+    required IconData icon,
+    required String label,
+    required String subtitle,
+    required VoidCallback onTap,
+    required ColorScheme colorScheme,
+  }) {
+    return Container(
+      height: 70.h,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: colorScheme.outline.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+        borderRadius: BorderRadius.circular(10.r),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10.r),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Chọn từ thư viện'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _pickImageFromGallery();
-                },
+              Icon(
+                icon,
+                size: 22.w,
+                color: colorScheme.primary,
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Chụp ảnh'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _pickImageFromCamera();
-                },
+              SizedBox(height: 4.h),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
-                title: const Text('Chọn nhiều ảnh'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _pickMultipleImages();
-                },
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -149,20 +196,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
   }
 
-  Future<void> _pickImageFromGallery() async {
-    try {
-      final File? image = await _imageUploadService.pickImageFromGallery();
-      if (image != null && _selectedImages.length < 5) {
-        setState(() {
-          _selectedImages.add(image);
-        });
-      } else if (_selectedImages.length >= 5) {
-        _showSnackBar('Chỉ có thể chọn tối đa 5 ảnh', isError: true);
-      }
-    } catch (e) {
-      _showSnackBar('Lỗi khi chọn ảnh: $e', isError: true);
-    }
-  }
+  // Removed _pickImageFromGallery - now using _pickMultipleImages for gallery selection
 
   Future<void> _pickMultipleImages() async {
     try {
@@ -997,61 +1031,45 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Hình ảnh sản phẩm',
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Hình ảnh sản phẩm',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            if (_selectedImages.length + _uploadedImageUrls.length < 5)
+              Row(
+                children: [
+                  _buildCompactImageButton(
+                    icon: Icons.photo_library_outlined,
+                    onTap: _pickMultipleImages,
+                    colorScheme: colorScheme,
+                  ),
+                  SizedBox(width: 8.w),
+                  _buildCompactImageButton(
+                    icon: Icons.photo_camera_outlined,
+                    onTap: _pickImageFromCamera,
+                    colorScheme: colorScheme,
+                  ),
+                ],
+              ),
+          ],
         ),
         SizedBox(height: 8.h),
 
-        // Add image button
+        // Image count info
         if (_selectedImages.length + _uploadedImageUrls.length < 5)
-          Container(
-            width: double.infinity,
-            height: 120.h,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.5),
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.circular(12.r),
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: _showImageSourceDialog,
-                borderRadius: BorderRadius.circular(12.r),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_photo_alternate_outlined,
-                      size: 32.w,
-                      color: colorScheme.primary,
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Thêm ảnh',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      'Tối đa 5 ảnh',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+          Center(
+            child: Text(
+              'Tối đa 5 ảnh • ${_selectedImages.length + _uploadedImageUrls.length}/5',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ),
