@@ -17,7 +17,7 @@ class MockProductsService {
   static const String _fileName = 'products.json';
   int _nextId = 1;
 
-  // Completer để đảm bảo chỉ có 1 file operation tại 1 thời điểm
+  // Completer to ensure only 1 file operation at a time
   Completer<void>? _fileOperationCompleter;
 
   MockProductsService();
@@ -46,9 +46,9 @@ class MockProductsService {
     }
   }
 
-  /// Thread-safe file read với retry mechanism
+  /// Thread-safe file read with retry mechanism
   Future<List<Product>> _readProducts() async {
-    // Đợi operation trước đó hoàn thành
+    // Wait for previous operation to complete
     while (_fileOperationCompleter != null &&
         !_fileOperationCompleter!.isCompleted) {
       await _fileOperationCompleter!.future;
@@ -59,7 +59,7 @@ class MockProductsService {
     final file = File(dbPath);
 
     if (await file.exists()) {
-      // Retry mechanism cho việc đọc file
+      // Retry mechanism for file reading
       for (int attempt = 0; attempt < 3; attempt++) {
         try {
           final data = await file.readAsString();
@@ -77,7 +77,7 @@ class MockProductsService {
           if (attempt == 2) {
             return [];
           }
-          // Đợi một chút trước khi retry
+          // Wait a bit before retry
           await Future.delayed(Duration(milliseconds: 100 * (attempt + 1)));
         }
       }
@@ -86,15 +86,15 @@ class MockProductsService {
     return [];
   }
 
-  /// Thread-safe file write với atomic operation
+  /// Thread-safe file write with atomic operation
   Future<void> _writeProducts(List<Product> products) async {
-    // Đợi operation trước đó hoàn thành
+    // Wait for previous operation to complete
     while (_fileOperationCompleter != null &&
         !_fileOperationCompleter!.isCompleted) {
       await _fileOperationCompleter!.future;
     }
 
-    // Tạo completer mới cho operation này
+    // Create new completer for this operation
     _fileOperationCompleter = Completer<void>();
 
     try {
@@ -105,16 +105,16 @@ class MockProductsService {
       final jsonList = products.map((product) => product.toMap()).toList();
       final jsonString = json.encode(jsonList);
 
-      // Atomic write: ghi vào file tạm trước
+      // Atomic write: write to temp file first
       final tempFile = File(tempPath);
       await tempFile.writeAsString(jsonString);
 
-      // Sau đó rename để thay thế file gốc (atomic operation)
+      // Then rename to replace original file (atomic operation)
       await tempFile.rename(dbPath);
     } catch (e) {
       rethrow;
     } finally {
-      // Hoàn thành operation
+      // Complete operation
       _fileOperationCompleter!.complete();
     }
   }
@@ -213,15 +213,15 @@ class MockProductsService {
     await _writeProducts([]);
   }
 
-  /// Add multiple products với batch operation để tránh race condition
+  /// Add multiple products with batch operation to avoid race condition
   Future<void> addProducts(List<Product> products) async {
     if (products.isEmpty) return;
 
-    // Đọc products hiện tại một lần
+    // Read current products once
     final existingProducts = await _readProducts();
     final now = DateTime.now();
 
-    // Tạo tất cả products mới với ID tăng dần
+    // Create all new products with incremental IDs
     final newProducts = <Product>[];
     for (final product in products) {
       final newProduct = Product(
@@ -238,10 +238,10 @@ class MockProductsService {
       newProducts.add(newProduct);
     }
 
-    // Thêm tất cả vào danh sách hiện tại
+    // Add all to current list
     existingProducts.addAll(newProducts);
 
-    // Ghi một lần duy nhất
+    // Write once only
     await _writeProducts(existingProducts);
   }
 
@@ -361,6 +361,8 @@ class MockProductsService {
 
   /// Check if a string is a URL
   bool _isUrl(String path) {
-    return path.startsWith('http://') || path.startsWith('https://') || path.startsWith('assets/');
+    return path.startsWith('http://') ||
+        path.startsWith('https://') ||
+        path.startsWith('assets/');
   }
 }

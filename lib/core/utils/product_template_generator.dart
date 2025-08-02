@@ -9,54 +9,63 @@ class ProductTemplateGenerator {
   /// Product templates organized by category ID
   static const Map<int, List<Map<String, String>>> _productTemplates = {
     1: [
-      // Điện tử
-      {'name': 'Smartphone', 'desc': 'Điện thoại thông minh cao cấp'},
-      {'name': 'Laptop', 'desc': 'Máy tính xách tay hiệu năng cao'},
-      {'name': 'Tai nghe', 'desc': 'Tai nghe không dây chất lượng'},
-      {'name': 'Máy tính bảng', 'desc': 'Tablet đa năng cho công việc'},
-      {'name': 'Smartwatch', 'desc': 'Đồng hồ thông minh đa tính năng'},
-      {'name': 'Camera', 'desc': 'Máy ảnh kỹ thuật số chuyên nghiệp'},
-      {'name': 'Loa Bluetooth', 'desc': 'Loa không dây âm thanh sống động'},
-      {'name': 'Ổ cứng SSD', 'desc': 'Ổ cứng thể rắn tốc độ cao'},
+      // Electronics
+      {'name': 'Smartphone', 'desc': 'Premium smart phone'},
+      {'name': 'Laptop', 'desc': 'High-performance laptop'},
+      {'name': 'Headphones', 'desc': 'Quality wireless headphones'},
+      {'name': 'Tablet', 'desc': 'Versatile tablet for work'},
+      {'name': 'Smartwatch', 'desc': 'Multi-function smart watch'},
+      {'name': 'Camera', 'desc': 'Professional digital camera'},
+      {
+        'name': 'Bluetooth Speaker',
+        'desc': 'Wireless speaker with vivid sound',
+      },
+      {'name': 'SSD Drive', 'desc': 'High-speed solid state drive'},
     ],
     2: [
-      // Sách
+      // Books
       {
-        'name': 'Sách lập trình',
-        'desc': 'Hướng dẫn lập trình từ cơ bản đến nâng cao',
+        'name': 'Programming Book',
+        'desc': 'Programming guide from basic to advanced',
       },
-      {'name': 'Tiểu thuyết', 'desc': 'Tác phẩm văn học hay nhất'},
-      {'name': 'Sách kinh doanh', 'desc': 'Chiến lược kinh doanh hiệu quả'},
+      {'name': 'Novel', 'desc': 'Best literary works'},
+      {'name': 'Business Book', 'desc': 'Effective business strategies'},
       {
-        'name': 'Sách thiếu nhi',
-        'desc': 'Truyện tranh và sách giáo dục cho trẻ',
+        'name': 'Children Book',
+        'desc': 'Comics and educational books for children',
       },
-      {'name': 'Sách tự học', 'desc': 'Kỹ năng phát triển bản thân'},
-      {'name': 'Sách nấu ăn', 'desc': 'Công thức món ngon dễ làm'},
-      {'name': 'Sách lịch sử', 'desc': 'Khám phá những câu chuyện lịch sử'},
-      {'name': 'Sách khoa học', 'desc': 'Kiến thức khoa học phổ thông'},
+      {'name': 'Self-help Book', 'desc': 'Personal development skills'},
+      {'name': 'Cookbook', 'desc': 'Delicious and easy cooking recipes'},
+      {'name': 'History Book', 'desc': 'Explore historical stories'},
+      {'name': 'Science Book', 'desc': 'Popular science knowledge'},
     ],
     3: [
-      // Thời trang
-      {'name': 'Áo thun', 'desc': 'Áo thun cotton cao cấp'},
-      {'name': 'Quần jeans', 'desc': 'Quần jeans thời trang'},
-      {'name': 'Giày sneaker', 'desc': 'Giày thể thao phong cách'},
-      {'name': 'Túi xách', 'desc': 'Túi xách thời trang nữ'},
-      {'name': 'Áo khoác', 'desc': 'Áo khoác phong cách trẻ trung'},
-      {'name': 'Đầm dự tiệc', 'desc': 'Váy đầm sang trọng cho buổi tiệc'},
-      {'name': 'Phụ kiện thời trang', 'desc': 'Trang sức và phụ kiện đẹp'},
-      {'name': 'Giày cao gót', 'desc': 'Giày cao gót thanh lịch'},
+      // Fashion
+      {'name': 'T-shirt', 'desc': 'Premium cotton t-shirt'},
+      {'name': 'Jeans', 'desc': 'Fashionable jeans'},
+      {'name': 'Sneakers', 'desc': 'Stylish sports shoes'},
+      {'name': 'Handbag', 'desc': 'Women fashion handbag'},
+      {'name': 'Jacket', 'desc': 'Youthful style jacket'},
+      {'name': 'Evening Dress', 'desc': 'Elegant dress for parties'},
+      {
+        'name': 'Fashion Accessories',
+        'desc': 'Beautiful jewelry and accessories',
+      },
+      {'name': 'High Heels', 'desc': 'Elegant high heel shoes'},
     ],
     4: [
-      // Gia dụng
-      {'name': 'Nồi cơm điện', 'desc': 'Nồi cơm điện thông minh'},
-      {'name': 'Máy xay sinh tố', 'desc': 'Máy xay đa năng cho gia đình'},
-      {'name': 'Bộ chén đĩa', 'desc': 'Bộ chén đĩa sứ cao cấp'},
-      {'name': 'Máy hút bụi', 'desc': 'Máy hút bụi không dây tiện lợi'},
-      {'name': 'Lò vi sóng', 'desc': 'Lò vi sóng đa chức năng'},
-      {'name': 'Máy giặt mini', 'desc': 'Máy giặt nhỏ gọn tiết kiệm'},
-      {'name': 'Bàn ủi hơi nước', 'desc': 'Bàn ủi công nghệ hơi nước'},
-      {'name': 'Tủ lạnh mini', 'desc': 'Tủ lạnh mini cho văn phòng'},
+      // Home Appliances
+      {'name': 'Rice Cooker', 'desc': 'Smart electric rice cooker'},
+      {'name': 'Blender', 'desc': 'Multi-purpose blender for family'},
+      {'name': 'Dinnerware Set', 'desc': 'Premium porcelain dinnerware set'},
+      {'name': 'Vacuum Cleaner', 'desc': 'Convenient cordless vacuum cleaner'},
+      {'name': 'Microwave', 'desc': 'Multi-function microwave oven'},
+      {
+        'name': 'Mini Washing Machine',
+        'desc': 'Compact energy-saving washing machine',
+      },
+      {'name': 'Steam Iron', 'desc': 'Steam technology iron'},
+      {'name': 'Mini Fridge', 'desc': 'Mini fridge for office'},
     ],
   };
 

@@ -54,7 +54,7 @@ class ProductRepositoryImpl implements ProductRepository {
         return [];
       }
     } catch (e) {
-      throw Exception('Lỗi khi lấy danh sách sản phẩm: $e');
+      throw Exception('Error getting product list: $e');
     }
   }
 
@@ -71,11 +71,11 @@ class ProductRepositoryImpl implements ProductRepository {
           await _localDataSource.insertProduct(remoteProduct);
           return remoteProduct;
         } catch (e) {
-          throw Exception('Không tìm thấy sản phẩm với ID: $id');
+          throw Exception('Product not found with ID: $id');
         }
       }
     } catch (e) {
-      throw Exception('Lỗi khi lấy sản phẩm: $e');
+      throw Exception('Error getting product: $e');
     }
   }
 
@@ -96,7 +96,7 @@ class ProductRepositoryImpl implements ProductRepository {
         return product;
       }
     } catch (e) {
-      throw Exception('Lỗi khi thêm sản phẩm: $e');
+      throw Exception('Error adding product: $e');
     }
   }
 
@@ -117,7 +117,7 @@ class ProductRepositoryImpl implements ProductRepository {
         // The products are saved locally and will sync later
       }
     } catch (e) {
-      throw Exception('Lỗi khi thêm nhiều sản phẩm: $e');
+      throw Exception('Error adding multiple products: $e');
     }
   }
 
@@ -134,7 +134,7 @@ class ProductRepositoryImpl implements ProductRepository {
         // Log error but don't fail the operation
       }
     } catch (e) {
-      throw Exception('Lỗi khi cập nhật sản phẩm: $e');
+      throw Exception('Error updating product: $e');
     }
   }
 
@@ -151,7 +151,7 @@ class ProductRepositoryImpl implements ProductRepository {
         // Log error but don't fail the operation
       }
     } catch (e) {
-      throw Exception('Lỗi khi xóa sản phẩm: $e');
+      throw Exception('Error deleting product: $e');
     }
   }
 
@@ -178,7 +178,7 @@ class ProductRepositoryImpl implements ProductRepository {
           return matchesQuery;
         }).toList();
       } catch (localError) {
-        throw Exception('Lỗi khi tìm kiếm sản phẩm: $e');
+        throw Exception('Error searching products: $e');
       }
     }
   }
@@ -196,7 +196,7 @@ class ProductRepositoryImpl implements ProductRepository {
             .where((product) => product.categoryId == categoryId)
             .toList();
       } catch (localError) {
-        throw Exception('Lỗi khi lấy sản phẩm theo danh mục: $e');
+        throw Exception('Error getting products by category: $e');
       }
     }
   }

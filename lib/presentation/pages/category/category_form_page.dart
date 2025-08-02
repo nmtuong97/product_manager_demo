@@ -80,7 +80,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
               action: SnackBarAction(
-                label: 'Thử lại',
+                label: 'Retry',
                 textColor: Colors.white,
                 onPressed: () => _submitForm(),
               ),
@@ -92,7 +92,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              _isEditing ? 'Chỉnh sửa danh mục' : 'Thêm danh mục',
+              _isEditing ? 'Edit Category' : 'Add New Category',
               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
             ),
             centerTitle: true,
@@ -115,7 +115,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                           )
                           : const Icon(Icons.delete),
                   onPressed: _isLoading ? null : () => _showDeleteDialog(),
-                  tooltip: 'Xóa danh mục',
+                  tooltip: 'Delete Category',
                 ),
             ],
           ),
@@ -135,16 +135,16 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             children: [
               Icon(Icons.warning, color: Theme.of(context).colorScheme.error),
               SizedBox(width: 8.w),
-              const Text('Xác nhận xóa'),
+              const Text('Confirm Deletion'),
             ],
           ),
           content: Text(
-            'Bạn có chắc chắn muốn xóa danh mục "${widget.category!.name}"? Hành động này không thể hoàn tác.',
+            'Are you sure you want to delete category "${widget.category!.name}"? This action cannot be undone.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -157,7 +157,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Theme.of(context).colorScheme.onError,
               ),
-              child: const Text('Xóa'),
+              child: const Text('Delete'),
             ),
           ],
         );
@@ -189,7 +189,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Thông tin danh mục',
+                            'Category Information',
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.bold,
@@ -223,8 +223,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     return TextFormField(
       controller: _nameController,
       decoration: InputDecoration(
-        labelText: 'Tên danh mục *',
-        hintText: 'Nhập tên danh mục',
+        labelText: 'Category Name *',
+        hintText: 'Enter category name',
         prefixIcon: const Icon(Icons.category),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
         enabledBorder: OutlineInputBorder(
@@ -249,13 +249,13 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Vui lòng nhập tên danh mục';
+          return 'Please enter category name';
         }
         if (value.trim().length < 2) {
-          return 'Tên danh mục phải có ít nhất 2 ký tự';
+          return 'Category name must have at least 2 characters';
         }
         if (value.trim().length > 50) {
-          return 'Tên danh mục không được quá 50 ký tự';
+          return 'Category name cannot exceed 50 characters';
         }
         return null;
       },
@@ -279,7 +279,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Thông tin bổ sung',
+            'Additional Information',
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -287,9 +287,9 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             ),
           ),
           SizedBox(height: 8.h),
-          _buildInfoRow('ID', category.id?.toString() ?? 'Chưa có'),
-          _buildInfoRow('Ngày tạo', _formatDateTime(category.createdAt)),
-          _buildInfoRow('Ngày cập nhật', _formatDateTime(category.updatedAt)),
+          _buildInfoRow('ID', category.id?.toString() ?? 'None'),
+          _buildInfoRow('Created Date', _formatDateTime(category.createdAt)),
+          _buildInfoRow('Updated Date', _formatDateTime(category.updatedAt)),
         ],
       ),
     );
@@ -334,7 +334,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
               ),
             ),
             child: Text(
-              'Hủy',
+              'Cancel',
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
           ),
@@ -362,7 +362,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                       ),
                     )
                     : Text(
-                      _isEditing ? 'Cập nhật' : 'Thêm',
+                      _isEditing ? 'Update' : 'Add',
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -403,13 +403,13 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   /// Formats a datetime for display
   String _formatDateTime(DateTime? dateTime) {
     if (dateTime == null) {
-      return 'Chưa có';
+      return 'None';
     }
 
     try {
       return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     } catch (e) {
-      return 'Chưa có';
+      return 'None';
     }
   }
 }

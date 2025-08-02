@@ -25,7 +25,7 @@ class ImageUploadService {
       }
       return null;
     } catch (e) {
-      throw Exception('Không thể chụp ảnh: $e');
+      throw Exception('Cannot take photo: $e');
     }
   }
 
@@ -44,7 +44,7 @@ class ImageUploadService {
       }
       return null;
     } catch (e) {
-      throw Exception('Không thể chọn ảnh: $e');
+      throw Exception('Cannot select image: $e');
     }
   }
 
@@ -60,7 +60,7 @@ class ImageUploadService {
 
       return images.map((image) => File(image.path)).toList();
     } catch (e) {
-      throw Exception('Không thể chọn ảnh: $e');
+      throw Exception('Cannot select images: $e');
     }
   }
 
@@ -87,7 +87,7 @@ class ImageUploadService {
         throw Exception('Upload failed with status: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Không thể upload ảnh: $e');
+      throw Exception('Cannot upload image: $e');
     }
   }
 
@@ -119,10 +119,12 @@ class ImageUploadService {
         final imageUrls = List<String>.from(data['images'] as List);
         return imageUrls;
       } else {
-        throw Exception('Processing failed with status: ${response.statusCode}');
+        throw Exception(
+          'Processing failed with status: ${response.statusCode}',
+        );
       }
     } catch (e) {
-      throw Exception('Không thể xử lý ảnh: $e');
+      throw Exception('Cannot process image: $e');
     }
   }
 

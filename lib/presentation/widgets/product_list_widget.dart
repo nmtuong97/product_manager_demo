@@ -29,9 +29,9 @@ class ProductListWidget extends StatefulWidget {
 class _ProductListWidgetState extends State<ProductListWidget> {
   final TextEditingController _searchController = TextEditingController();
 
-  List<String> _categories = ['Tất cả'];
+  List<String> _categories = ['All'];
   List<Category> _categoryEntities = [];
-  String _selectedCategory = 'Tất cả';
+  String _selectedCategory = 'All';
   bool _isGridView = true;
   List<Product> _allProducts = [];
   List<Map<String, dynamic>> _filteredProducts = [];
@@ -172,7 +172,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   void _performSearch() {
     final query = _currentSearchQuery.trim();
 
-    if (query.isEmpty && _selectedCategory == 'Tất cả') {
+    if (query.isEmpty && _selectedCategory == 'All') {
       // Load all products when no search query and no category filter
       context.read<ProductBloc>().add(const LoadProducts());
       return;
@@ -181,7 +181,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     if (query.isNotEmpty) {
       // Get category ID for search
       int? categoryId;
-      if (_selectedCategory != 'Tất cả') {
+      if (_selectedCategory != 'All') {
         categoryId = _getCategoryId(_selectedCategory);
       }
 
@@ -189,7 +189,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       context.read<ProductBloc>().add(
         SearchProductsEvent(query, categoryId: categoryId),
       );
-    } else if (_selectedCategory != 'Tất cả') {
+    } else if (_selectedCategory != 'All') {
       // Load products by category only
       final categoryId = _getCategoryId(_selectedCategory);
       if (categoryId != null) {
@@ -204,7 +204,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       (cat) => cat.id == categoryId,
       orElse:
           () => Category(
-            name: 'Khác',
+            name: 'Other',
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           ),
@@ -214,7 +214,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
   /// Get category ID by name
   int? _getCategoryId(String categoryName) {
-    if (categoryName == 'Tất cả') return null;
+    if (categoryName == 'All') return null;
 
     try {
       final category = _categoryEntities.firstWhere(
@@ -230,11 +230,11 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   void _updateCategoriesFromState(List<Category> categories) {
     setState(() {
       _categoryEntities = categories;
-      _categories = ['Tất cả', ...categories.map((cat) => cat.name).toList()];
+      _categories = ['All', ...categories.map((cat) => cat.name).toList()];
 
       // Reset selected category if it no longer exists
       if (!_categories.contains(_selectedCategory)) {
-        _selectedCategory = 'Tất cả';
+        _selectedCategory = 'All';
         _performSearch();
       }
     });
@@ -274,7 +274,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     }
 
     // Apply category filter
-    if (_selectedCategory != 'Tất cả') {
+    if (_selectedCategory != 'All') {
       filtered =
           filtered.where((product) {
             return product['category'] == _selectedCategory;
@@ -355,7 +355,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
             Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
             SizedBox(height: 16.h),
             Text(
-              'Có lỗi xảy ra khi tải dữ liệu',
+              'An error occurred while loading data',
               style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
             ),
             SizedBox(height: 8.h),
@@ -367,14 +367,14 @@ class _ProductListWidgetState extends State<ProductListWidget> {
             SizedBox(height: 16.h),
             ElevatedButton(
               onPressed: _loadProducts,
-              child: const Text('Thử lại'),
+              child: const Text('Try Again'),
             ),
           ],
         ),
       );
     }
 
-    // Xử lý trạng thái tìm kiếm
+    // Handle search state
     if (state is ProductSearchLoaded) {
       final displayProducts =
           state.searchResults
@@ -385,13 +385,13 @@ class _ProductListWidgetState extends State<ProductListWidget> {
         return ProductEmptyState(
           searchQuery: state.query,
           selectedCategory:
-              _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+              _selectedCategory != 'All' ? _selectedCategory : null,
           onClearSearch: () {
             _searchController.clear();
             _onSearchCleared();
-            if (_selectedCategory != 'Tất cả') {
+            if (_selectedCategory != 'All') {
               setState(() {
-                _selectedCategory = 'Tất cả';
+                _selectedCategory = 'All';
               });
               _performSearch();
             }
@@ -410,7 +410,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           );
     }
 
-    // Hiển thị danh sách sản phẩm thông thường
+    // Display normal product list
     if (state is ProductLoaded) {
       _allProducts = state.products; // Update local cache
       final displayProducts =
@@ -423,13 +423,13 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           searchQuery:
               _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
           selectedCategory:
-              _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+              _selectedCategory != 'All' ? _selectedCategory : null,
           onClearSearch: () {
             _searchController.clear();
             _onSearchCleared();
-            if (_selectedCategory != 'Tất cả') {
+            if (_selectedCategory != 'All') {
               setState(() {
-                _selectedCategory = 'Tất cả';
+                _selectedCategory = 'All';
               });
               _performSearch();
             }
@@ -448,7 +448,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           );
     }
 
-    // Fallback cho các trạng thái khác
+    // Fallback for other states
     final displayProducts =
         _filteredProducts.isEmpty ? _products : _filteredProducts;
 
@@ -456,16 +456,15 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       return ProductEmptyState(
         searchQuery:
             _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
-        selectedCategory:
-            _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+        selectedCategory: _selectedCategory != 'All' ? _selectedCategory : null,
         onClearSearch: () {
           _searchController.clear();
           _onSearchCleared();
-          if (_selectedCategory != 'Tất cả') {
-            setState(() {
-              _selectedCategory = 'Tất cả';
-            });
-            _performSearch();
+          if (_selectedCategory != 'All') {
+              setState(() {
+                _selectedCategory = 'All';
+              });
+              _performSearch();
           }
         },
       );

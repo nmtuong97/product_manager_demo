@@ -73,7 +73,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           _loadCategoryName();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Sản phẩm đã được cập nhật'),
+              content: Text('Product has been updated'),
               backgroundColor: Colors.green,
             ),
           );
@@ -83,7 +83,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Lỗi: ${state.message}'),
+              content: Text('Error: ${state.message}'),
               backgroundColor: Colors.red,
             ),
           );
@@ -240,7 +240,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           _buildInfoRow(
             icon: Icons.inventory_2_outlined,
             label: 'Tồn kho',
-            value: '${_currentProduct.quantity} sản phẩm',
+            value: '${_currentProduct.quantity} items',
             valueColor:
                 _currentProduct.quantity > 0
                     ? Colors.green[600]
@@ -256,7 +256,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           _buildInfoRow(
             icon: Icons.photo_library_outlined,
             label: 'Hình ảnh',
-            value: '${_currentProduct.images.length} ảnh',
+            value: '${_currentProduct.images.length} photos',
           ),
         ],
       ),
@@ -292,7 +292,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mô tả sản phẩm',
+          'Product Description',
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
@@ -345,7 +345,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     onPressed: _isDeleting ? null : _editProduct,
                     icon: Icon(Icons.edit_outlined, size: 18.w),
                     label: Text(
-                      'Chỉnh sửa',
+                      'Edit',
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
@@ -379,7 +379,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             )
                             : Icon(Icons.delete_outline, size: 18.w),
                     label: Text(
-                      _isDeleting ? 'Đang xóa...' : 'Xóa',
+                      _isDeleting ? 'Deleting...' : 'Delete',
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
@@ -428,14 +428,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Xác nhận xóa'),
+          title: const Text('Confirm Deletion'),
           content: Text(
-            'Bạn có chắc chắn muốn xóa sản phẩm "${_currentProduct.name}"?\n\nHành động này không thể hoàn tác.',
+            'Are you sure you want to delete product "${_currentProduct.name}"?\n\nThis action cannot be undone.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -446,7 +446,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 backgroundColor: Colors.red[600],
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Xóa'),
+              child: const Text('Delete'),
             ),
           ],
         );
@@ -458,7 +458,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     if (_currentProduct.id == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Không thể xóa sản phẩm: ID không hợp lệ'),
+          content: Text('Cannot delete product: Invalid ID'),
           backgroundColor: Colors.red,
         ),
       );

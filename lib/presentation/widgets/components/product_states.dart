@@ -14,7 +14,7 @@ class ProductLoadingState extends StatelessWidget {
           CircularProgressIndicator(strokeWidth: 3.w),
           SizedBox(height: 16.h),
           Text(
-            'Đang tải dữ liệu...',
+            'Loading data...',
             style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
           ),
         ],
@@ -97,28 +97,28 @@ class ProductEmptyState extends StatelessWidget {
 
   String _getEmptyTitle() {
     if (_isSearchResult()) {
-      return 'Không tìm thấy sản phẩm';
+      return 'No products found';
     }
-    return 'Chưa có sản phẩm nào';
+    return 'No products yet';
   }
 
   String _getEmptySubtitle() {
     if (_isSearchResult()) {
-      if (searchQuery?.isNotEmpty == true && selectedCategory != 'Tất cả') {
-        return 'Không có sản phẩm nào phù hợp với "${searchQuery}" trong danh mục "${selectedCategory}"';
+      if (searchQuery?.isNotEmpty == true && selectedCategory != 'All') {
+        return 'No products match "${searchQuery}" in category "${selectedCategory}"';
       } else if (searchQuery?.isNotEmpty == true) {
-        return 'Không có sản phẩm nào phù hợp với "${searchQuery}"';
-      } else if (selectedCategory != 'Tất cả') {
-        return 'Không có sản phẩm nào trong danh mục "${selectedCategory}"';
+        return 'No products match "${searchQuery}"';
+      } else if (selectedCategory != 'All') {
+        return 'No products in category "${selectedCategory}"';
       }
-      return 'Thử tìm kiếm với từ khóa khác';
+      return 'Try searching with different keywords';
     }
-    return 'Hãy thêm sản phẩm đầu tiên của bạn';
+    return 'Add your first product';
   }
 
   bool _isSearchResult() {
     return (searchQuery?.isNotEmpty == true) ||
-        (selectedCategory != null && selectedCategory != 'Tất cả');
+        (selectedCategory != null && selectedCategory != 'All');
   }
 
   Widget _buildActionButtons() {
@@ -131,7 +131,7 @@ class ProductEmptyState extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: onClearSearch,
               icon: const Icon(Icons.clear),
-              label: const Text('Xóa bộ lọc'),
+              label: const Text('Clear Filters'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                 shape: RoundedRectangleBorder(
@@ -147,7 +147,7 @@ class ProductEmptyState extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onAddProduct,
                 icon: const Icon(Icons.add),
-                label: const Text('Thêm sản phẩm mới'),
+                label: const Text('Add New Product'),
                 style: OutlinedButton.styleFrom(
                   padding: EdgeInsets.symmetric(
                     horizontal: 24.w,
@@ -170,7 +170,7 @@ class ProductEmptyState extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: onAddProduct,
           icon: const Icon(Icons.add),
-          label: const Text('Thêm sản phẩm'),
+          label: const Text('Add Product'),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
             shape: RoundedRectangleBorder(

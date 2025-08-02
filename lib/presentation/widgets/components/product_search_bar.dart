@@ -16,7 +16,7 @@ class ProductSearchBar extends StatefulWidget {
     required this.controller,
     this.onChanged,
     this.onClear,
-    this.hintText = 'Tìm kiếm sản phẩm...',
+    this.hintText = 'Search products...',
     this.debounceDuration = const Duration(milliseconds: 300),
     this.isLoading = false,
   });

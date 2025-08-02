@@ -119,7 +119,7 @@ class ProductCard extends StatelessWidget {
       children: [
         Flexible(
           child: Text(
-            product['name'] ?? 'Tên sản phẩm',
+            product['name'] ?? 'Product Name',
             style: TextStyle(
               fontSize: isCompact ? 14.sp : 16.sp,
               fontWeight: FontWeight.w600,
@@ -130,7 +130,7 @@ class ProductCard extends StatelessWidget {
         ),
         SizedBox(height: 4.h),
         Text(
-          '${_formatPrice(product['price'] ?? 0)}đ',
+          '${_formatPrice(product['price'] ?? 0)} VND',
           style: TextStyle(
             fontSize: isCompact ? 16.sp : 18.sp,
             fontWeight: FontWeight.bold,
@@ -141,7 +141,7 @@ class ProductCard extends StatelessWidget {
         ),
         SizedBox(height: 2.h),
         Text(
-          'Tồn kho: ${product['stock'] ?? 0}',
+          'Stock: ${product['stock'] ?? 0}',
           style: TextStyle(
             fontSize: isCompact ? 12.sp : 14.sp,
             color: Colors.grey[600],

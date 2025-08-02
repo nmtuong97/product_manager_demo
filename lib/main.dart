@@ -11,7 +11,7 @@ import 'presentation/pages/home_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
-  // Đợi tất cả dependencies async sẵn sàng
+  // Wait for all async dependencies to be ready
   await getIt.allReady();
   runApp(const MyApp());
 }

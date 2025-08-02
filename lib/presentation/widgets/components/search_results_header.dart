@@ -38,7 +38,7 @@ class SearchResultsHeader extends StatelessWidget {
               text: TextSpan(
                 style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
                 children: [
-                  const TextSpan(text: 'Tìm thấy '),
+                  const TextSpan(text: 'Found '),
                   TextSpan(
                     text: '$resultCount',
                     style: TextStyle(
@@ -46,7 +46,7 @@ class SearchResultsHeader extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  const TextSpan(text: ' sản phẩm cho "'),
+                  const TextSpan(text: ' products for "'),
                   TextSpan(
                     text: searchQuery,
                     style: TextStyle(
@@ -55,8 +55,8 @@ class SearchResultsHeader extends StatelessWidget {
                     ),
                   ),
                   const TextSpan(text: '"'),
-                  if (selectedCategory != 'Tất cả') ...[
-                    const TextSpan(text: ' trong danh mục "'),
+                  if (selectedCategory != 'All') ...[
+                    const TextSpan(text: ' in category "'),
                     TextSpan(
                       text: selectedCategory,
                       style: TextStyle(

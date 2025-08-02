@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     return BlocListener<ProductBloc, ProductState>(
       listener: (context, state) {
         if (state is ProductAdding && _isGeneratingProducts) {
-          // Hiển thị thông báo đang tạo sản phẩm
+          // Show creating products notification
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Row(
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(width: 16),
-                  Text('Đang tạo 10 sản phẩm ngẫu nhiên...'),
+                  Text('Creating 10 random products...'),
                 ],
               ),
               duration: Duration(seconds: 3),
@@ -53,14 +53,14 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _isGeneratingProducts = false;
           });
-          // Hiển thị thông báo thành công
+          // Show success notification
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Row(
                 children: [
                   Icon(Icons.check_circle, color: Colors.white),
                   SizedBox(width: 16),
-                  Text('Đã tạo thành công 10 sản phẩm ngẫu nhiên!'),
+                  Text('Successfully created 10 random products!'),
                 ],
               ),
               backgroundColor: Colors.green,
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _isGeneratingProducts = false;
           });
-          // Hiển thị thông báo lỗi
+          // Show error notification
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                   const Icon(Icons.error, color: Colors.white),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: Text('Lỗi khi tạo sản phẩm: ${state.message}'),
+                    child: Text('Error creating products: ${state.message}'),
                   ),
                 ],
               ),
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Danh sách sản phẩm',
+            'Product List',
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               onPressed: () => _navigateToCategories(context),
               icon: const Icon(Icons.category, color: Colors.white),
-              tooltip: 'Quản lý danh mục',
+              tooltip: 'Manage Categories',
             ),
             IconButton(
               onPressed:
@@ -128,8 +128,8 @@ class _HomePageState extends State<HomePage> {
                       : const Icon(Icons.shuffle, color: Colors.white),
               tooltip:
                   _isGeneratingProducts
-                      ? 'Đang tạo sản phẩm...'
-                      : 'Tạo 10 sản phẩm ngẫu nhiên',
+                      ? 'Creating products...'
+                      : 'Generate 10 random products',
             ),
           ],
         ),
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () => _navigateToProductManagement(context),
           backgroundColor: Theme.of(context).primaryColor,
           child: const Icon(Icons.add, color: Colors.white),
-          tooltip: 'Thêm sản phẩm',
+          tooltip: 'Add Product',
         ),
       ),
     );
@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _generateRandomProducts(BuildContext context) {
-    // Kiểm tra nếu đang tạo sản phẩm thì không cho phép tạo thêm
+    // Check if products are being created, don't allow creating more
     if (_isGeneratingProducts) return;
 
     setState(() {
@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
     final random = Random();
     final now = DateTime.now();
 
-    // Tạo danh sách 10 sản phẩm ngẫu nhiên sử dụng ProductTemplateGenerator
+    // Create list of 10 random products using ProductTemplateGenerator
     final List<Product> newProducts = [];
 
     for (int i = 0; i < 10; i++) {
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
       newProducts.add(product);
     }
 
-    // Thêm tất cả sản phẩm cùng lúc bằng batch operation
+    // Add all products at once using batch operation
     context.read<ProductBloc>().add(AddMultipleProductsEvent(newProducts));
   }
 }

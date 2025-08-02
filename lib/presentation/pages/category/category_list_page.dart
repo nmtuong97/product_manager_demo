@@ -81,7 +81,7 @@ class CategoryListView extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Đã xảy ra lỗi',
+              'An error occurred',
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class CategoryListView extends StatelessWidget {
                 );
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('Thử lại'),
+              label: const Text('Try Again'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
               ),
@@ -120,11 +120,11 @@ class CategoryListView extends StatelessWidget {
 
   /// Formats datetime for display
   String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return 'Chưa có';
+    if (dateTime == null) return 'Not available';
     try {
       return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
     } catch (e) {
-      return 'Chưa có';
+      return 'Not available';
     }
   }
 
@@ -133,7 +133,7 @@ class CategoryListView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Quản lý danh mục',
+          'Manage Categories',
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -146,7 +146,7 @@ class CategoryListView extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.refresh),
-            tooltip: 'Làm mới',
+            tooltip: 'Refresh',
           ),
         ],
       ),
@@ -165,7 +165,7 @@ class CategoryListView extends StatelessWidget {
                 backgroundColor: Theme.of(context).colorScheme.error,
                 behavior: SnackBarBehavior.floating,
                 action: SnackBarAction(
-                  label: 'Thử lại',
+                  label: 'Try Again',
                   textColor: Colors.white,
                   onPressed: () {
                     context.read<CategoryBloc>().add(
@@ -205,7 +205,7 @@ class CategoryListView extends StatelessWidget {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('Đang tải dữ liệu...'),
+                    Text('Loading data...'),
                   ],
                 ),
               );
@@ -231,7 +231,7 @@ class CategoryListView extends StatelessWidget {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Chưa có dữ liệu',
+                      'No data',
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: Theme.of(
@@ -247,7 +247,7 @@ class CategoryListView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToAddCategory(context),
-        tooltip: 'Thêm danh mục mới',
+        tooltip: 'Add New Category',
         child: const Icon(Icons.add),
       ),
     );
@@ -266,12 +266,12 @@ class CategoryListView extends StatelessWidget {
             Icon(Icons.category_outlined, size: 64.w, color: Colors.grey),
             SizedBox(height: 16.h),
             Text(
-              'Chưa có danh mục nào',
+              'No categories yet',
               style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Nhấn nút + để thêm danh mục mới',
+              'Press + button to add new category',
               style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             ),
           ],
@@ -375,7 +375,7 @@ class CategoryListView extends StatelessWidget {
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            'Tạo: ${_formatDateTime(category.createdAt)}',
+                            'Created: ${_formatDateTime(category.createdAt)}',
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: Colors.grey[600],
@@ -394,7 +394,7 @@ class CategoryListView extends StatelessWidget {
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              'Cập nhật: ${_formatDateTime(category.updatedAt)}',
+                              'Updated: ${_formatDateTime(category.updatedAt)}',
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 color: Colors.grey[600],
@@ -425,7 +425,7 @@ class CategoryListView extends StatelessWidget {
                       color: Theme.of(context).colorScheme.error,
                     ),
                     onPressed: () => _showDeleteConfirmation(context, category),
-                    tooltip: 'Xóa danh mục',
+                    tooltip: 'Delete Category',
                   ),
               ],
             ),
@@ -454,7 +454,7 @@ class CategoryListView extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               Text(
-                'Xác nhận xóa',
+                'Confirm Deletion',
                 style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
               ),
             ],
@@ -464,7 +464,7 @@ class CategoryListView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Bạn có chắc chắn muốn xóa danh mục này?',
+                'Are you sure you want to delete this category?',
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -512,7 +512,7 @@ class CategoryListView extends StatelessWidget {
               ),
               SizedBox(height: 12.h),
               Text(
-                'Hành động này không thể hoàn tác.',
+                'This action cannot be undone.',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.error,
@@ -525,7 +525,7 @@ class CategoryListView extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
               child: Text(
-                'Hủy',
+                'Cancel',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -550,7 +550,7 @@ class CategoryListView extends StatelessWidget {
                 children: [
                   Icon(Icons.delete_outline, size: 16.w),
                   SizedBox(width: 4.w),
-                  const Text('Xóa'),
+                  const Text('Delete'),
                 ],
               ),
             ),

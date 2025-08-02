@@ -121,7 +121,7 @@ class CachedProductImage extends StatelessWidget {
             Icon(Icons.broken_image, size: 48.w, color: Colors.grey[400]),
             SizedBox(height: 8.h),
             Text(
-              'Lỗi tải ảnh',
+              'Image loading error',
               style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
             ),
           ],

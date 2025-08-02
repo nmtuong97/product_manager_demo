@@ -1,73 +1,73 @@
 [
   {
     "id": 1,
-    "name": "Điện tử",
+    "name": "Electronics",
     "createdAt": "2023-01-01T12:00:00Z",
     "updatedAt": "2023-01-01T12:00:00Z"
   },
   {
     "id": 2,
-    "name": "Sách",
+    "name": "Books",
     "createdAt": "2023-01-02T12:00:00Z",
     "updatedAt": "2023-01-02T12:00:00Z"
   },
   {
     "id": 3,
-    "name": "Thời trang",
+    "name": "Fashion",
     "createdAt": "2023-01-03T12:00:00Z",
     "updatedAt": "2023-01-03T12:00:00Z"
   },
   {
     "id": 4,
-    "name": "Gia dụng",
+    "name": "Home & Garden",
     "createdAt": "2023-01-04T12:00:00Z",
     "updatedAt": "2023-01-04T12:00:00Z"
   },
   {
     "id": 5,
-    "name": "Thể thao & Dã ngoại",
+    "name": "Sports & Outdoors",
     "createdAt": "2023-01-05T12:00:00Z",
     "updatedAt": "2023-01-05T12:00:00Z"
   },
   {
     "id": 6,
-    "name": "Đồ chơi & Trò chơi",
+    "name": "Toys & Games",
     "createdAt": "2023-01-06T12:00:00Z",
     "updatedAt": "2023-01-06T12:00:00Z"
   },
   {
     "id": 7,
-    "name": "Sức khỏe & Chăm sóc cá nhân",
+    "name": "Health & Personal Care",
     "createdAt": "2023-01-07T12:00:00Z",
     "updatedAt": "2023-01-07T12:00:00Z"
   },
   {
     "id": 8,
-    "name": "Ô tô & Xe máy",
+    "name": "Automotive",
     "createdAt": "2023-01-08T12:00:00Z",
     "updatedAt": "2023-01-08T12:00:00Z"
   },
   {
     "id": 9,
-    "name": "Làm đẹp & Mỹ phẩm",
+    "name": "Beauty & Cosmetics",
     "createdAt": "2023-01-09T12:00:00Z",
     "updatedAt": "2023-01-09T12:00:00Z"
   },
   {
     "id": 10,
-    "name": "Máy tính & Laptop",
+    "name": "Computers & Laptops",
     "createdAt": "2023-01-10T12:00:00Z",
     "updatedAt": "2023-01-10T12:00:00Z"
   },
   {
     "id": 11,
-    "name": "Điện thoại & Phụ kiện",
+    "name": "Phones & Accessories",
     "createdAt": "2023-01-11T12:00:00Z",
     "updatedAt": "2023-01-11T12:00:00Z"
   },
   {
     "id": 12,
-    "name": "Nhà cửa & Đời sống",
+    "name": "Home & Living",
     "createdAt": "2023-01-12T12:00:00Z",
     "updatedAt": "2023-01-12T12:00:00Z"
   }

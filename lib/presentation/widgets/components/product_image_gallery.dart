@@ -64,7 +64,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Không có hình ảnh',
+              'No images',
               style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
             ),
           ],
@@ -100,7 +100,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
       decoration: BoxDecoration(color: Colors.grey[100]),
       child: CachedProductImage(
         imageUrl: imageUrl,
-        // Không set heroTag ở đây vì đã có Hero widget bên ngoài
+        // Don't set heroTag here because there's already a Hero widget outside
         width: double.infinity,
         height: double.infinity,
       ),
@@ -296,7 +296,7 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
                     Icon(Icons.broken_image, size: 64.w, color: Colors.white54),
                     SizedBox(height: 16.h),
                     Text(
-                      'Không thể tải ảnh',
+                      'Cannot load image',
                       style: TextStyle(fontSize: 16.sp, color: Colors.white54),
                     ),
                   ],
@@ -379,7 +379,7 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Text(
-                  'Pinch để zoom out',
+                  'Pinch to zoom out',
                   style: TextStyle(color: Colors.white, fontSize: 12.sp),
                 ),
               )

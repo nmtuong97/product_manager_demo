@@ -66,7 +66,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
       emit(ProductLoaded(sortedProducts));
     } catch (e) {
-      emit(ProductError('Không thể tải danh sách sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error loading product list: ${e.toString()}'));
     }
   }
 
@@ -80,7 +80,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final product = await _getProduct(event.productId);
       emit(ProductDetailLoaded(product));
     } catch (e) {
-      emit(ProductError('Không thể tải thông tin sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error loading product information: ${e.toString()}'));
     }
   }
 
@@ -94,7 +94,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final createdProduct = await _addProduct(event.product);
       emit(
         ProductOperationSuccess(
-          'Thêm sản phẩm thành công',
+          'Product added successfully',
           productId: createdProduct.id,
         ),
       );
@@ -102,7 +102,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       // Reload products after successful addition with force refresh
       add(const LoadProducts(forceRefresh: true));
     } catch (e) {
-      emit(ProductError('Không thể thêm sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error adding product: ${e.toString()}'));
     }
   }
 
@@ -116,14 +116,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       await _addMultipleProducts(event.products);
       emit(
         ProductOperationSuccess(
-          'Thêm ${event.products.length} sản phẩm thành công',
+          'Added ${event.products.length} products successfully',
         ),
       );
 
       // Reload products after successful addition with force refresh
       add(const LoadProducts(forceRefresh: true));
     } catch (e) {
-      emit(ProductError('Không thể thêm nhiều sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error adding multiple products: ${e.toString()}'));
     }
   }
 
@@ -135,9 +135,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(const ProductUpdating());
     try {
       await _updateProduct(event.product);
-      emit(const ProductOperationSuccess('Cập nhật sản phẩm thành công'));
+      emit(const ProductOperationSuccess('Product updated successfully'));
     } catch (e) {
-      emit(ProductError('Không thể cập nhật sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error updating product: ${e.toString()}'));
     }
   }
 
@@ -149,9 +149,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(const ProductDeleting());
     try {
       await _deleteProduct(event.productId);
-      emit(const ProductOperationSuccess('Xóa sản phẩm thành công'));
+      emit(const ProductOperationSuccess('Product deleted successfully'));
     } catch (e) {
-      emit(ProductError('Không thể xóa sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error deleting product: ${e.toString()}'));
     }
   }
 
@@ -190,7 +190,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         ),
       );
     } catch (e) {
-      emit(ProductError('Không thể tìm kiếm sản phẩm: ${e.toString()}'));
+      emit(ProductError('Error searching products: ${e.toString()}'));
     }
   }
 
@@ -202,14 +202,17 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(const ProductLoading());
     try {
       final products = await _getProducts();
-      final filteredProducts = products
-          .where((product) => product.categoryId == event.categoryId)
-          .toList()
-        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending (newest first)
+      final filteredProducts =
+          products
+              .where((product) => product.categoryId == event.categoryId)
+              .toList()
+            ..sort(
+              (a, b) => b.updatedAt.compareTo(a.updatedAt),
+            ); // Sort by updatedAt descending (newest first)
       emit(ProductLoaded(filteredProducts));
     } catch (e) {
       emit(
-        ProductError('Không thể tải sản phẩm theo danh mục: ${e.toString()}'),
+        ProductError('Error filtering products by category: ${e.toString()}'),
       );
     }
   }

@@ -20,7 +20,7 @@ class ViewToggle extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Sản phẩm ($productCount)',
+          'Products ($productCount)',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,

@@ -22,9 +22,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final List<dynamic> data = response.data['data'] ?? [];
       return data.map((json) => Product.fromMap(json)).toList();
     } on DioException catch (e) {
-      throw Exception('Lỗi khi lấy danh sách sản phẩm từ server: ${e.message}');
+      throw Exception('Error getting product list from server: ${e.message}');
     } catch (e) {
-      throw Exception('Lỗi không xác định khi lấy danh sách sản phẩm: $e');
+      throw Exception('Unknown error getting product list: $e');
     }
   }
 
@@ -35,11 +35,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       return Product.fromMap(response.data['data']);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        throw Exception('Không tìm thấy sản phẩm với ID: $id');
+        throw Exception('Product not found with ID: $id');
       }
-      throw Exception('Lỗi khi lấy sản phẩm từ server: ${e.message}');
+      throw Exception('Error getting product from server: ${e.message}');
     } catch (e) {
-      throw Exception('Lỗi không xác định khi lấy sản phẩm: $e');
+      throw Exception('Unknown error getting product: $e');
     }
   }
 
@@ -49,9 +49,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final response = await _dio.post(_baseUrl, data: product.toMap());
       return Product.fromMap(response.data['data']);
     } on DioException catch (e) {
-      throw Exception('Lỗi khi tạo sản phẩm trên server: ${e.message}');
+      throw Exception('Error creating product on server: ${e.message}');
     } catch (e) {
-      throw Exception('Lỗi không xác định khi tạo sản phẩm: $e');
+      throw Exception('Unknown error creating product: $e');
     }
   }
 
@@ -59,7 +59,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   Future<Product> updateProduct(Product product) async {
     try {
       if (product.id == null) {
-        throw Exception('ID sản phẩm không được để trống khi cập nhật');
+        throw Exception('Product ID cannot be empty when updating');
       }
       final response = await _dio.put(
         '$_baseUrl/${product.id}',
@@ -68,11 +68,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       return Product.fromMap(response.data['data']);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        throw Exception('Không tìm thấy sản phẩm với ID: ${product.id}');
+        throw Exception('Product not found with ID: ${product.id}');
       }
-      throw Exception('Lỗi khi cập nhật sản phẩm trên server: ${e.message}');
+      throw Exception('Error updating product on server: ${e.message}');
     } catch (e) {
-      throw Exception('Lỗi không xác định khi cập nhật sản phẩm: $e');
+      throw Exception('Unknown error updating product: $e');
     }
   }
 
@@ -82,11 +82,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       await _dio.delete('$_baseUrl/$id');
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        throw Exception('Không tìm thấy sản phẩm với ID: $id');
+        throw Exception('Product not found with ID: $id');
       }
-      throw Exception('Lỗi khi xóa sản phẩm trên server: ${e.message}');
+      throw Exception('Error deleting product on server: ${e.message}');
     } catch (e) {
-      throw Exception('Lỗi không xác định khi xóa sản phẩm: $e');
+      throw Exception('Unknown error deleting product: $e');
     }
   }
 
@@ -106,9 +106,9 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final List<dynamic> data = response.data['data'] ?? [];
       return data.map((json) => Product.fromMap(json)).toList();
     } on DioException catch (e) {
-      throw Exception('Lỗi khi tìm kiếm sản phẩm trên server: ${e.message}');
+      throw Exception('Error searching products on server: ${e.message}');
     } catch (e) {
-      throw Exception('Lỗi không xác định khi tìm kiếm sản phẩm: $e');
+      throw Exception('Unknown error searching products: $e');
     }
   }
 
@@ -124,10 +124,10 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       return data.map((json) => Product.fromMap(json)).toList();
     } on DioException catch (e) {
       throw Exception(
-        'Lỗi khi lấy sản phẩm theo danh mục từ server: ${e.message}',
+        'Error getting products by category from server: ${e.message}',
       );
     } catch (e) {
-      throw Exception('Lỗi không xác định khi lấy sản phẩm theo danh mục: $e');
+      throw Exception('Unknown error getting products by category: $e');
     }
   }
 }

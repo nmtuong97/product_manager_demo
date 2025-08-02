@@ -54,7 +54,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
       emit(CategoryLoaded(sortedCategories));
     } catch (e) {
-      emit(CategoryError('Không thể tải danh sách danh mục: ${e.toString()}'));
+      emit(CategoryError('Unable to load category list: ${e.toString()}'));
     }
   }
 
@@ -68,7 +68,9 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       final category = await _getCategory(event.categoryId);
       emit(CategoryDetailLoaded(category));
     } catch (e) {
-      emit(CategoryError('Không thể tải thông tin danh mục: ${e.toString()}'));
+      emit(
+        CategoryError('Unable to load category information: ${e.toString()}'),
+      );
     }
   }
 
@@ -82,16 +84,19 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       // Optimistic UI update
       final currentState = state;
       if (currentState is CategoryLoaded) {
-        final updatedCategories = List<Category>.from(currentState.categories)
-          ..add(event.category)
-          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending
+        final updatedCategories =
+            List<Category>.from(currentState.categories)
+              ..add(event.category)
+              ..sort(
+                (a, b) => b.updatedAt.compareTo(a.updatedAt),
+              ); // Sort by updatedAt descending
         emit(CategoryLoaded(updatedCategories));
       }
 
       await _addCategory(event.category);
-      emit(const CategoryOperationSuccess('Thêm danh mục thành công'));
+      emit(const CategoryOperationSuccess('Category added successfully'));
     } catch (e) {
-      emit(CategoryError('Không thể thêm danh mục: ${e.toString()}'));
+      emit(CategoryError('Unable to add category: ${e.toString()}'));
       // Revert UI on failure
       add(const LoadCategories(forceRefresh: true));
     }
@@ -109,16 +114,18 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       if (currentState is CategoryLoaded) {
         final updatedCategories =
             currentState.categories.map((c) {
-              return c.id == event.category.id ? event.category : c;
-            }).toList()
-          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending
+                return c.id == event.category.id ? event.category : c;
+              }).toList()
+              ..sort(
+                (a, b) => b.updatedAt.compareTo(a.updatedAt),
+              ); // Sort by updatedAt descending
         emit(CategoryLoaded(updatedCategories));
       }
 
       await _updateCategory(event.category);
-      emit(const CategoryOperationSuccess('Cập nhật danh mục thành công'));
+      emit(const CategoryOperationSuccess('Category updated successfully'));
     } catch (e) {
-      emit(CategoryError('Không thể cập nhật danh mục: ${e.toString()}'));
+      emit(CategoryError('Unable to update category: ${e.toString()}'));
       // Revert UI on failure
       add(const LoadCategories(forceRefresh: true));
     }
@@ -139,9 +146,12 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         await _deleteCategory(event.categoryId);
 
         // Remove the deleted category from the list directly
-        final updatedCategories = List<Category>.from(currentState.categories)
-          ..removeWhere((category) => category.id == event.categoryId)
-          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending
+        final updatedCategories =
+            List<Category>.from(currentState.categories)
+              ..removeWhere((category) => category.id == event.categoryId)
+              ..sort(
+                (a, b) => b.updatedAt.compareTo(a.updatedAt),
+              ); // Sort by updatedAt descending
 
         final updatedDeletingIds = Set<String>.from(
           currentState.deletingCategoryIds,
@@ -154,7 +164,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
           ),
         );
       } catch (e) {
-        emit(CategoryError('Không thể xóa danh mục: ${e.toString()}'));
+        emit(CategoryError('Unable to delete category: ${e.toString()}'));
         // Revert the loading state on failure
         final revertedIds = Set<String>.from(currentState.deletingCategoryIds);
         revertedIds.remove(event.categoryId.toString());

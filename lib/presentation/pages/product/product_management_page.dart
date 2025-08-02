@@ -118,11 +118,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(8.r),
-          child: Icon(
-            icon,
-            size: 18.w,
-            color: colorScheme.primary,
-          ),
+          child: Icon(icon, size: 18.w, color: colorScheme.primary),
         ),
       ),
     );
@@ -153,11 +149,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 22.w,
-                color: colorScheme.primary,
-              ),
+              Icon(icon, size: 22.w, color: colorScheme.primary),
               SizedBox(height: 4.h),
               Text(
                 label,
@@ -189,7 +181,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           _selectedImages.add(image);
         });
       } else if (_selectedImages.length >= 5) {
-        _showSnackBar('Chỉ có thể chọn tối đa 5 ảnh', isError: true);
+        _showSnackBar('Tối đa 5 hình ảnh có thể được chọn', isError: true);
       }
     } catch (e) {
       _showSnackBar('Lỗi khi chụp ảnh: $e', isError: true);
@@ -211,13 +203,13 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
 
         if (images.length > availableSlots) {
           _showSnackBar(
-            'Chỉ thêm được ${imagesToAdd.length} ảnh. Tối đa 5 ảnh.',
+            'Only ${imagesToAdd.length} images added. Maximum 5 images.',
             isError: true,
           );
         }
       }
     } catch (e) {
-      _showSnackBar('Lỗi khi chọn ảnh: $e', isError: true);
+      _showSnackBar('Error selecting images: $e', isError: true);
     }
   }
 
@@ -250,12 +242,12 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         _isUploadingImages = false;
       });
 
-      _showSnackBar('Upload ảnh thành công!');
+      _showSnackBar('Images uploaded successfully!');
     } catch (e) {
       setState(() {
         _isUploadingImages = false;
       });
-      _showSnackBar('Lỗi khi upload ảnh: $e', isError: true);
+      _showSnackBar('Error uploading images: $e', isError: true);
     }
   }
 
@@ -278,7 +270,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       setState(() {
         _isUploadingImages = false;
       });
-      _showSnackBar('Lỗi khi xử lý ảnh: $e', isError: true);
+      _showSnackBar('Error processing images: $e', isError: true);
       rethrow;
     }
   }
@@ -342,7 +334,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          _isEditMode ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới',
+          _isEditMode ? 'Edit Product' : 'Add New Product',
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.w600,
@@ -364,7 +356,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 Icons.auto_fix_high_rounded,
                 color: colorScheme.primary,
               ),
-              tooltip: 'Tạo dữ liệu mẫu',
+              tooltip: 'Generate Sample Data',
               onPressed: _generateRandomProduct,
             ),
           SizedBox(width: 8.w),
@@ -404,7 +396,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                                   ? _categories.first
                                   : Category(
                                     id: 1,
-                                    name: 'Mặc định',
+                                    name: 'Default',
                                     createdAt: DateTime.now(),
                                     updatedAt: DateTime.now(),
                                   ),
@@ -465,7 +457,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 CircularProgressIndicator(color: colorScheme.primary),
                 SizedBox(height: 16.h),
                 Text(
-                  'Đang tải danh mục...',
+                  'Loading categories...',
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: colorScheme.onSurfaceVariant,
@@ -510,7 +502,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tên sản phẩm *',
+          'Product Name *',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
@@ -522,7 +514,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           controller: _nameController,
           focusNode: _nameFocusNode,
           decoration: InputDecoration(
-            hintText: 'Nhập tên sản phẩm',
+            hintText: 'Enter product name',
             hintStyle: TextStyle(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
@@ -598,9 +590,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   void _validateName(String value) {
     setState(() {
       if (value.trim().isEmpty) {
-        _nameError = 'Tên sản phẩm là bắt buộc';
+        _nameError = 'Product name is required';
       } else if (value.trim().length > 100) {
-        _nameError = 'Tên sản phẩm không được vượt quá 100 ký tự';
+        _nameError = 'Product name cannot exceed 100 characters';
       } else {
         _nameError = null;
       }
@@ -614,7 +606,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mô tả sản phẩm *',
+          'Product Description *',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
@@ -626,7 +618,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           controller: _descriptionController,
           focusNode: _descriptionFocusNode,
           decoration: InputDecoration(
-            hintText: 'Nhập mô tả chi tiết về sản phẩm',
+            hintText: 'Enter detailed product description',
             hintStyle: TextStyle(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
@@ -706,9 +698,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   void _validateDescription(String value) {
     setState(() {
       if (value.trim().isEmpty) {
-        _descriptionError = 'Mô tả sản phẩm là bắt buộc';
+        _descriptionError = 'Product description is required';
       } else if (value.trim().length > 500) {
-        _descriptionError = 'Mô tả không được vượt quá 500 ký tự';
+        _descriptionError = 'Description cannot exceed 500 characters';
       } else {
         _descriptionError = null;
       }
@@ -722,7 +714,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Giá bán *',
+          'Price *',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
@@ -787,7 +779,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                       : colorScheme.onSurfaceVariant,
               size: 20.w,
             ),
-            suffixText: 'VNĐ',
+            suffixText: 'VND',
             suffixStyle: TextStyle(
               fontSize: 14.sp,
               color: colorScheme.onSurfaceVariant,
@@ -815,15 +807,15 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   void _validatePrice(String value) {
     setState(() {
       if (value.trim().isEmpty) {
-        _priceError = 'Giá sản phẩm là bắt buộc';
+        _priceError = 'Product price is required';
       } else {
         // Remove formatting to get raw number
         final String digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), '');
         final price = double.tryParse(digitsOnly);
         if (price == null || price <= 0) {
-          _priceError = 'Giá phải là số dương';
+          _priceError = 'Price must be a positive number';
         } else if (price % 1000 != 0) {
-          _priceError = 'Giá phải là bội số của 1000';
+          _priceError = 'Price must be a multiple of 1000';
         } else {
           _priceError = null;
         }
@@ -838,7 +830,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tồn kho *',
+          'Stock *',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
@@ -912,7 +904,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                             : colorScheme.onSurfaceVariant,
                     size: 20.w,
                   ),
-                  suffixText: 'cái',
+                  suffixText: 'pcs',
                   suffixStyle: TextStyle(
                     fontSize: 14.sp,
                     color: colorScheme.onSurfaceVariant,
@@ -940,13 +932,13 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   void _validateQuantity(String value) {
     setState(() {
       if (value.trim().isEmpty) {
-        _quantityError = 'Số lượng tồn kho là bắt buộc';
+        _quantityError = 'Stock quantity is required';
       } else {
         final quantity = int.tryParse(value);
         if (quantity == null || quantity < 0) {
-          _quantityError = 'Tồn kho phải là số không âm';
+          _quantityError = 'Stock must be a non-negative number';
         } else if (quantity > 10000) {
-          _quantityError = 'Tồn kho không được vượt quá 10000';
+          _quantityError = 'Stock cannot exceed 10000';
         } else {
           _quantityError = null;
         }
@@ -961,7 +953,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Danh mục sản phẩm *',
+          'Product Category *',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
@@ -972,7 +964,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         DropdownButtonFormField<Category>(
           value: _selectedCategory,
           decoration: InputDecoration(
-            hintText: 'Chọn danh mục',
+            hintText: 'Select category',
             hintStyle: TextStyle(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
@@ -1044,7 +1036,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           onChanged: (Category? value) {
             setState(() {
               _selectedCategory = value;
-              _categoryError = value == null ? 'Vui lòng chọn danh mục' : null;
+              _categoryError = value == null ? 'Please select a category' : null;
             });
           },
           style: TextStyle(fontSize: 14.sp, color: colorScheme.onSurface),
@@ -1068,7 +1060,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Hình ảnh sản phẩm',
+              'Product Images',
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
@@ -1099,7 +1091,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         if (_selectedImages.length + _uploadedImageUrls.length < 5)
           Center(
             child: Text(
-              'Tối đa 5 ảnh • ${_selectedImages.length + _uploadedImageUrls.length}/5',
+              'Maximum 5 images • ${_selectedImages.length + _uploadedImageUrls.length}/5',
               style: TextStyle(
                 fontSize: 12.sp,
                 color: colorScheme.onSurfaceVariant,
@@ -1111,7 +1103,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         if (_selectedImages.isNotEmpty) ...[
           SizedBox(height: 16.h),
           Text(
-            'Ảnh đã chọn (${_selectedImages.length})',
+            'Selected images (${_selectedImages.length})',
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
@@ -1169,7 +1161,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         if (_uploadedImageUrls.isNotEmpty) ...[
           SizedBox(height: 16.h),
           Text(
-            'Ảnh đã upload (${_uploadedImageUrls.length})',
+            'Uploaded images (${_uploadedImageUrls.length})',
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
@@ -1252,7 +1244,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               ),
               SizedBox(width: 12.w),
               Text(
-                'Đang upload ảnh...',
+                'Uploading images...',
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: colorScheme.onSurfaceVariant,
@@ -1282,7 +1274,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               foregroundColor: colorScheme.onSurface,
             ),
             child: Text(
-              'Hủy',
+              'Cancel',
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
           ),
@@ -1331,7 +1323,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                         ),
                         SizedBox(width: 8.w),
                         Text(
-                          _isEditMode ? 'Cập nhật' : 'Thêm mới',
+                          _isEditMode ? 'Update' : 'Add New',
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -1358,27 +1350,27 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       'Sony WH-1000XM5',
       'Nintendo Switch OLED',
       'PlayStation 5',
-      'Áo thun cotton',
-      'Quần jeans slim fit',
-      'Giày sneaker Nike',
-      'Túi xách da thật',
-      'Đồng hồ thông minh',
-      'Máy ảnh Canon EOS',
-      'Tai nghe gaming',
-      'Bàn phím cơ RGB',
-      'Chuột gaming wireless',
-      'Màn hình 4K 27 inch',
+      'Cotton T-shirt',
+      'Slim fit jeans',
+      'Nike sneakers',
+      'Genuine leather bag',
+      'Smart watch',
+      'Canon EOS camera',
+      'Gaming headset',
+      'RGB mechanical keyboard',
+      'Wireless gaming mouse',
+      '27-inch 4K monitor',
     ];
 
     final descriptions = [
-      'Sản phẩm chất lượng cao với thiết kế hiện đại và tính năng vượt trội',
-      'Được làm từ chất liệu cao cấp, bền bỉ và thân thiện với môi trường',
-      'Phù hợp cho mọi lứa tuổi với nhiều tính năng tiện ích',
-      'Thiết kế sang trọng, phong cách và đầy tính thẩm mỹ',
-      'Công nghệ tiên tiến mang lại trải nghiệm tuyệt vời cho người dùng',
-      'Sản phẩm được ưa chuộng với độ bền cao và giá cả hợp lý',
-      'Tính năng đa dạng, dễ sử dụng và phù hợp với xu hướng hiện đại',
-      'Chất lượng đảm bảo với dịch vụ hậu mãi tốt',
+      'High-quality product with modern design and outstanding features',
+      'Made from premium materials, durable and environmentally friendly',
+      'Suitable for all ages with many convenient features',
+      'Luxurious, stylish design full of aesthetics',
+      'Advanced technology brings excellent user experience',
+      'Popular product with high durability and reasonable price',
+      'Diverse features, easy to use and suitable for modern trends',
+      'Guaranteed quality with good after-sales service',
     ];
 
     final nameIndex = random % productNames.length;
@@ -1391,7 +1383,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     _priceController.text = price.toString();
     _quantityController.text = quantity.toString();
 
-    // Chọn category ngẫu nhiên nếu có
+    // Select random category if available
     if (_categories.isNotEmpty) {
       final categoryIndex = random % _categories.length;
       setState(() {
@@ -1401,7 +1393,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Đã tạo dữ liệu mẫu thành công!'),
+        content: Text('Sample data generated successfully!'),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 2),
       ),
@@ -1417,14 +1409,14 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
 
     if (_selectedCategory == null) {
       setState(() {
-        _categoryError = 'Vui lòng chọn danh mục';
+        _categoryError = 'Please select a category';
       });
     }
 
     if (!_isFormValid) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Vui lòng kiểm tra lại thông tin đã nhập'),
+          content: const Text('Please check the entered information'),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -1446,8 +1438,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     if (_isEditMode && widget.product != null) {
       // For update mode, process images first if there are changes
       List<String> finalImages;
-      
-      if (_selectedImages.isNotEmpty || !_listsEqual(_uploadedImageUrls, widget.product!.images)) {
+
+      if (_selectedImages.isNotEmpty ||
+          !_listsEqual(_uploadedImageUrls, widget.product!.images)) {
         // There are image changes, process them
         try {
           finalImages = await _processImagesForUpdate(widget.product!.id!);
