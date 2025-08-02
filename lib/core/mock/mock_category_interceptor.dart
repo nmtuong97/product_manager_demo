@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'mock_categories_service.dart';
+import '../../data/services/mock_categories_service.dart';
 import '../../domain/entities/category.dart';
 
 const _basePath = '/api/categories';

@@ -331,7 +331,6 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           ),
         )
         .then((result) {
-
           // Clear focus when returning from detail page to prevent keyboard from showing
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {

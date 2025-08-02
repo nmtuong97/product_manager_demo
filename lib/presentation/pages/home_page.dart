@@ -9,7 +9,7 @@ import '../../domain/entities/product.dart';
 import '../blocs/product/product_bloc.dart';
 import '../blocs/product/product_event.dart';
 import '../blocs/product/product_state.dart';
-import '../services/image_url_generator.dart';
+import '../../domain/services/image_url_generator.dart';
 import '../widgets/product_list_widget.dart';
 import 'category/category_list_page.dart';
 import 'product/product_management_page.dart';

@@ -13,6 +13,8 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import 'core/mock/mock_category_interceptor.dart' as _i383;
+import 'core/mock/mock_product_interceptor.dart' as _i169;
 import 'core/services/initialization_service.dart' as _i492;
 import 'data/datasources/category_local_data_source.dart' as _i77;
 import 'data/datasources/category_local_data_source_impl.dart' as _i983;
@@ -25,9 +27,8 @@ import 'data/datasources/product_remote_data_source.dart' as _i307;
 import 'data/datasources/product_remote_data_source_impl.dart' as _i826;
 import 'data/repositories/category_repository_impl.dart' as _i1032;
 import 'data/repositories/product_repository_impl.dart' as _i707;
+import 'data/services/image_upload_service.dart' as _i387;
 import 'data/services/mock_categories_service.dart' as _i1017;
-import 'data/services/mock_category_interceptor.dart' as _i0;
-import 'data/services/mock_product_interceptor.dart' as _i555;
 import 'data/services/mock_products_service.dart' as _i539;
 import 'domain/repositories/category_repository.dart' as _i615;
 import 'domain/repositories/product_repository.dart' as _i746;
@@ -46,7 +47,6 @@ import 'domain/usecases/update_product.dart' as _i249;
 import 'injection.dart' as _i464;
 import 'presentation/blocs/category/category_bloc.dart' as _i815;
 import 'presentation/blocs/product/product_bloc.dart' as _i806;
-import 'presentation/services/image_upload_service.dart' as _i762;
 import 'presentation/services/product_list_service.dart' as _i357;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -74,8 +74,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i357.ProductListService>(
       () => _i357.ProductListService(gh<_i539.MockProductsService>()),
     );
-    gh.factory<_i555.MockProductInterceptor>(
-      () => _i555.MockProductInterceptor(gh<_i539.MockProductsService>()),
+    gh.factory<_i169.MockProductInterceptor>(
+      () => _i169.MockProductInterceptor(gh<_i539.MockProductsService>()),
     );
     gh.factoryAsync<_i77.CategoryLocalDataSource>(
       () async => _i983.CategoryLocalDataSourceImpl(
@@ -94,8 +94,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i173.CategoryRemoteDataSource>(
       () => _i46.CategoryRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
-    gh.factory<_i0.MockCategoryInterceptor>(
-      () => _i0.MockCategoryInterceptor(gh<_i1017.MockCategoriesService>()),
+    gh.factory<_i383.MockCategoryInterceptor>(
+      () => _i383.MockCategoryInterceptor(gh<_i1017.MockCategoriesService>()),
     );
     gh.factoryAsync<_i746.ProductRepository>(
       () async => _i707.ProductRepositoryImpl(
@@ -109,8 +109,8 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i173.CategoryRemoteDataSource>(),
       ),
     );
-    gh.factory<_i762.ImageUploadService>(
-      () => _i762.ImageUploadService(gh<_i361.Dio>()),
+    gh.factory<_i387.ImageUploadService>(
+      () => _i387.ImageUploadService(gh<_i361.Dio>()),
     );
     gh.factoryAsync<_i677.GetCategory>(
       () async => _i677.GetCategory(await getAsync<_i615.CategoryRepository>()),

@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'core/mock/mock_category_interceptor.dart';
+import 'core/mock/mock_product_interceptor.dart';
 import 'data/services/mock_categories_service.dart';
-import 'data/services/mock_category_interceptor.dart';
 import 'data/services/mock_products_service.dart';
-import 'data/services/mock_product_interceptor.dart';
 
 import 'injection.config.dart';
 

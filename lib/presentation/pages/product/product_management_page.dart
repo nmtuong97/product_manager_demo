@@ -14,8 +14,8 @@ import '../../blocs/category/category_state.dart';
 import '../../blocs/product/product_bloc.dart';
 import '../../blocs/product/product_event.dart';
 import '../../blocs/product/product_state.dart';
-import '../../services/image_upload_service.dart';
-import '../../services/image_url_generator.dart';
+import '../../../data/services/image_upload_service.dart';
+import '../../../domain/services/image_url_generator.dart';
 
 class ProductManagementPage extends StatefulWidget {
   final Product? product; // null for add, non-null for edit
@@ -493,7 +493,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.3,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -595,7 +597,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.3,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -701,7 +705,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.3,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -937,7 +943,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.3,
+            ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,

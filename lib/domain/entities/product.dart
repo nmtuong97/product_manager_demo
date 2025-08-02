@@ -15,7 +15,7 @@ class Product {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Product({
+  const Product({
     this.id,
     required this.name,
     required this.description,

@@ -132,7 +132,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildImageGallery() {
-
     if (_currentProduct.images.isEmpty) {
       return Container(
         color: Colors.grey[200],

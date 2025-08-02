@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../domain/entities/product.dart';
-import '../../presentation/services/image_url_generator.dart';
+import '../../domain/services/image_url_generator.dart';
 
 /// Service for managing mock product data
 ///

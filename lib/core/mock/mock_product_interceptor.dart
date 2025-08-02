@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'mock_products_service.dart';
+import '../../data/services/mock_products_service.dart';
 import '../../domain/entities/product.dart';
 
 const _basePath = '/products';
