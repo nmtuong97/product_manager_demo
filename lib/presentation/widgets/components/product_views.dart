@@ -37,7 +37,6 @@ class ProductGridView extends StatelessWidget {
         return ProductCard(
           product: product,
           onTap: () => onProductTap(product),
-          isGridView: true,
         );
       },
     );

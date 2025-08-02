@@ -103,7 +103,6 @@ class ProductCard extends StatelessWidget {
           product['image'] != null
               ? CachedProductImage(
                 imageUrl: product['image'],
-                fit: BoxFit.cover,
                 borderRadius: borderRadius,
                 heroTag:
                     'product_${product['id']}_0', // Use index 0 for thumbnail

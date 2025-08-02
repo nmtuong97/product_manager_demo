@@ -51,7 +51,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   String? _categoryError;
 
   // Image management
-  List<File> _selectedImages = [];
+  final List<File> _selectedImages = [];
   List<String> _uploadedImageUrls = [];
   bool _isUploadingImages = false;
   final ImageUploadService _imageUploadService = getIt<ImageUploadService>();
@@ -246,7 +246,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
 
     // Show success message
-    _showSnackBar(state.message, isError: false);
+    _showSnackBar(state.message);
 
     // Navigate back with success result
     if (mounted) {
@@ -1016,7 +1016,6 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               border: Border.all(
                 color: colorScheme.outline.withValues(alpha: 0.5),
                 width: 1.5,
-                style: BorderStyle.solid,
               ),
               borderRadius: BorderRadius.circular(12.r),
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),

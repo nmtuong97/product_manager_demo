@@ -186,7 +186,6 @@ class _HomePageState extends State<HomePage> {
 
       final productName = '${template['name']} ${random.nextInt(1000) + 1}';
       final product = Product(
-        id: null,
         name: productName,
         description: template['desc']!,
         price: (random.nextInt(10000) + 100) * 1000.0, // 100k - 10M

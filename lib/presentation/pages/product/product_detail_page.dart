@@ -370,7 +370,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             ? SizedBox(
                               width: 18.w,
                               height: 18.w,
-                              child: CircularProgressIndicator(
+                              child: const CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   Colors.white,

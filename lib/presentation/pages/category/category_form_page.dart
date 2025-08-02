@@ -79,7 +79,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
               ),
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 4),
               action: SnackBarAction(
                 label: 'Thử lại',
                 textColor: Colors.white,

@@ -40,7 +40,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
        _updateProduct = updateProduct,
        _deleteProduct = deleteProduct,
        _searchProducts = searchProducts,
-       super(ProductInitial()) {
+       super(const ProductInitial()) {
     on<LoadProducts>(_onLoadProducts);
     on<LoadProductById>(_onLoadProductById);
     on<AddProductEvent>(_onAddProduct);
@@ -58,7 +58,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     try {
-      emit(ProductLoading());
+      emit(const ProductLoading());
       final products = await _getProducts(forceRefresh: event.forceRefresh);
       emit(ProductLoaded(products));
     } catch (e) {
@@ -72,7 +72,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     try {
-      emit(ProductLoading());
+      emit(const ProductLoading());
       final product = await _getProduct(event.productId);
       emit(ProductDetailLoaded(product));
     } catch (e) {
@@ -85,7 +85,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     AddProductEvent event,
     Emitter<ProductState> emit,
   ) async {
-    emit(ProductAdding());
+    emit(const ProductAdding());
     try {
       final createdProduct = await _addProduct(event.product);
       emit(
@@ -96,7 +96,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       );
 
       // Reload products after successful addition with force refresh
-      add(LoadProducts(forceRefresh: true));
+      add(const LoadProducts(forceRefresh: true));
     } catch (e) {
       emit(ProductError('Không thể thêm sản phẩm: ${e.toString()}'));
     }
@@ -107,7 +107,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     AddMultipleProductsEvent event,
     Emitter<ProductState> emit,
   ) async {
-    emit(ProductAdding());
+    emit(const ProductAdding());
     try {
       await _addMultipleProducts(event.products);
       emit(
@@ -117,7 +117,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       );
 
       // Reload products after successful addition with force refresh
-      add(LoadProducts(forceRefresh: true));
+      add(const LoadProducts(forceRefresh: true));
     } catch (e) {
       emit(ProductError('Không thể thêm nhiều sản phẩm: ${e.toString()}'));
     }
@@ -128,10 +128,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     UpdateProductEvent event,
     Emitter<ProductState> emit,
   ) async {
-    emit(ProductUpdating());
+    emit(const ProductUpdating());
     try {
       await _updateProduct(event.product);
-      emit(ProductOperationSuccess('Cập nhật sản phẩm thành công'));
+      emit(const ProductOperationSuccess('Cập nhật sản phẩm thành công'));
     } catch (e) {
       emit(ProductError('Không thể cập nhật sản phẩm: ${e.toString()}'));
     }
@@ -142,10 +142,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     DeleteProductEvent event,
     Emitter<ProductState> emit,
   ) async {
-    emit(ProductDeleting());
+    emit(const ProductDeleting());
     try {
       await _deleteProduct(event.productId);
-      emit(ProductOperationSuccess('Xóa sản phẩm thành công'));
+      emit(const ProductOperationSuccess('Xóa sản phẩm thành công'));
     } catch (e) {
       emit(ProductError('Không thể xóa sản phẩm: ${e.toString()}'));
     }
@@ -156,7 +156,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     ResetProductState event,
     Emitter<ProductState> emit,
   ) {
-    emit(ProductInitial());
+    emit(const ProductInitial());
   }
 
   /// Handles searching products with loading state
@@ -165,7 +165,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     if (event.query.trim().isEmpty) {
-      emit(ProductInitial());
+      emit(const ProductInitial());
       return;
     }
 
@@ -192,7 +192,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     LoadProductsByCategory event,
     Emitter<ProductState> emit,
   ) async {
-    emit(ProductLoading());
+    emit(const ProductLoading());
     try {
       final products = await _getProducts();
       final filteredProducts =

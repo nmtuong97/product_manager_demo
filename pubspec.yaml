@@ -35,6 +35,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   injectable_generator: ^2.3.2
+  integration_test:
+    sdk: flutter
   mockito: ^5.4.4
 
 flutter:

@@ -190,7 +190,7 @@ class MockProductInterceptor extends Interceptor {
               'images': updatedImages,
               'message': 'Images uploaded successfully',
             },
-          }, statusCode: 200,),
+          },),
         );
       } catch (e) {
         handler.reject(_badRequest(options, 'Failed to upload images: $e'));

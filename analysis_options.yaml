@@ -2,8 +2,33 @@ analyzer:
   exclude: [ build/**, lib/**.freezed.dart, lib/**/*.g.dart, lib/**/*.gr.dart, passkeys/**, lib/**/*.config.dart ]
 linter:
   rules:
+    # Existing rules
     prefer_relative_imports: true
     always_use_package_imports: false
     public_member_api_docs: false
     require_trailing_commas: true
+    
+    # Performance rules
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    
+    # Code Quality rules
+    prefer_final_fields: true
+    unnecessary_null_checks: true
+    use_key_in_widget_constructors: true
+    sized_box_for_whitespace: true
+    
+    # Additional best practices
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    avoid_redundant_argument_values: true
+    prefer_if_null_operators: true
+    prefer_null_aware_operators: true
+    unnecessary_null_aware_assignments: true
+    prefer_collection_literals: true
+    prefer_spread_collections: true
+    prefer_for_elements_to_map_fromIterable: true
+    prefer_inlined_adds: true
     

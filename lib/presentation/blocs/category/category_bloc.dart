@@ -33,7 +33,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
        _addCategory = addCategory,
        _updateCategory = updateCategory,
        _deleteCategory = deleteCategory,
-       super(CategoryInitial()) {
+       super(const CategoryInitial()) {
     on<LoadCategories>(_onLoadCategories);
     on<LoadCategoryById>(_onLoadCategoryById);
     on<AddCategoryEvent>(_onAddCategory);
@@ -47,7 +47,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     Emitter<CategoryState> emit,
   ) async {
     try {
-      emit(CategoryLoading());
+      emit(const CategoryLoading());
       final categories = await _getCategories(event.forceRefresh);
       emit(CategoryLoaded(categories));
     } catch (e) {
@@ -61,7 +61,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     Emitter<CategoryState> emit,
   ) async {
     try {
-      emit(CategoryLoading());
+      emit(const CategoryLoading());
       final category = await _getCategory(event.categoryId);
       emit(CategoryDetailLoaded(category));
     } catch (e) {
@@ -74,7 +74,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     AddCategoryEvent event,
     Emitter<CategoryState> emit,
   ) async {
-    emit(CategoryLoading());
+    emit(const CategoryLoading());
     try {
       // Optimistic UI update
       final currentState = state;
@@ -85,11 +85,11 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       }
 
       await _addCategory(event.category);
-      emit(CategoryOperationSuccess('Thêm danh mục thành công'));
+      emit(const CategoryOperationSuccess('Thêm danh mục thành công'));
     } catch (e) {
       emit(CategoryError('Không thể thêm danh mục: ${e.toString()}'));
       // Revert UI on failure
-      add(LoadCategories(forceRefresh: true));
+      add(const LoadCategories(forceRefresh: true));
     }
   }
 
@@ -98,7 +98,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     UpdateCategoryEvent event,
     Emitter<CategoryState> emit,
   ) async {
-    emit(CategoryLoading());
+    emit(const CategoryLoading());
     try {
       // Optimistic UI update
       final currentState = state;
@@ -111,11 +111,11 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       }
 
       await _updateCategory(event.category);
-      emit(CategoryOperationSuccess('Cập nhật danh mục thành công'));
+      emit(const CategoryOperationSuccess('Cập nhật danh mục thành công'));
     } catch (e) {
       emit(CategoryError('Không thể cập nhật danh mục: ${e.toString()}'));
       // Revert UI on failure
-      add(LoadCategories(forceRefresh: true));
+      add(const LoadCategories(forceRefresh: true));
     }
   }
 

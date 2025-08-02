@@ -100,7 +100,6 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
       decoration: BoxDecoration(color: Colors.grey[100]),
       child: CachedProductImage(
         imageUrl: imageUrl,
-        fit: BoxFit.cover,
         // Không set heroTag ở đây vì đã có Hero widget bên ngoài
         width: double.infinity,
         height: double.infinity,
@@ -185,8 +184,6 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
             },
           );
         },
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },

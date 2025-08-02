@@ -36,7 +36,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   List<Product> _allProducts = [];
   List<Map<String, dynamic>> _filteredProducts = [];
   List<Map<String, dynamic>> _products = [];
-  bool _isSearching = false;
+  final bool _isSearching = false;
   String _currentSearchQuery = '';
   int _currentResultCount = 0;
 
@@ -113,9 +113,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                 controller: _searchController,
                 onChanged: _onSearchChanged,
                 onClear: _onSearchCleared,
-                hintText: 'Tìm kiếm sản phẩm...',
                 isLoading: _isSearching,
-                debounceDuration: const Duration(milliseconds: 300),
               ),
               SizedBox(height: 16.h),
 
@@ -164,7 +162,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
   // Business logic methods
   void _loadProducts() {
-    context.read<ProductBloc>().add(LoadProducts());
+    context.read<ProductBloc>().add(const LoadProducts());
   }
 
   void _loadCategories() {
@@ -176,7 +174,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
     if (query.isEmpty && _selectedCategory == 'Tất cả') {
       // Load all products when no search query and no category filter
-      context.read<ProductBloc>().add(LoadProducts());
+      context.read<ProductBloc>().add(const LoadProducts());
       return;
     }
 
@@ -206,7 +204,6 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       (cat) => cat.id == categoryId,
       orElse:
           () => Category(
-            id: null,
             name: 'Khác',
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),

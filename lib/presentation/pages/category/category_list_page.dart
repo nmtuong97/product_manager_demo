@@ -163,7 +163,6 @@ class CategoryListView extends StatelessWidget {
                   ],
                 ),
                 backgroundColor: Theme.of(context).colorScheme.error,
-                duration: const Duration(seconds: 4),
                 behavior: SnackBarBehavior.floating,
                 action: SnackBarAction(
                   label: 'Thử lại',
@@ -282,7 +281,7 @@ class CategoryListView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<CategoryBloc>().add(LoadCategories(forceRefresh: true));
+        context.read<CategoryBloc>().add(const LoadCategories(forceRefresh: true));
       },
       child: ListView.builder(
         padding: EdgeInsets.all(16.w),

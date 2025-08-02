@@ -51,7 +51,6 @@ class ProductEmptyState extends StatelessWidget {
         child: IntrinsicHeight(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildEmptyIcon(),
               SizedBox(height: 16.h),
@@ -69,7 +68,6 @@ class ProductEmptyState extends StatelessWidget {
                 _getEmptySubtitle(),
                 style: TextStyle(fontSize: 16.sp, color: Colors.grey[500]),
                 textAlign: TextAlign.center,
-                maxLines: null,
               ),
               SizedBox(height: 24.h),
               _buildActionButtons(),
