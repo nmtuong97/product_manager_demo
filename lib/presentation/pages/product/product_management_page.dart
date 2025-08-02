@@ -168,15 +168,18 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     try {
       final List<File> images = await _imageUploadService.pickMultipleImages();
       final int availableSlots = 5 - _selectedImages.length;
-      
+
       if (images.isNotEmpty) {
         final List<File> imagesToAdd = images.take(availableSlots).toList();
         setState(() {
           _selectedImages.addAll(imagesToAdd);
         });
-        
+
         if (images.length > availableSlots) {
-          _showSnackBar('Chỉ thêm được ${imagesToAdd.length} ảnh. Tối đa 5 ảnh.', isError: true);
+          _showSnackBar(
+            'Chỉ thêm được ${imagesToAdd.length} ảnh. Tối đa 5 ảnh.',
+            isError: true,
+          );
         }
       }
     } catch (e) {
@@ -198,23 +201,21 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
 
   Future<void> _uploadImages(int productId) async {
     if (_selectedImages.isEmpty) return;
-    
+
     setState(() {
       _isUploadingImages = true;
     });
-    
+
     try {
-      final List<String> uploadedUrls = await _imageUploadService.uploadProductImages(
-        productId,
-        _selectedImages,
-      );
-      
+      final List<String> uploadedUrls = await _imageUploadService
+          .uploadProductImages(productId, _selectedImages);
+
       setState(() {
         _uploadedImageUrls.addAll(uploadedUrls);
         _selectedImages.clear();
         _isUploadingImages = false;
       });
-      
+
       _showSnackBar('Upload ảnh thành công!');
     } catch (e) {
       setState(() {
@@ -228,9 +229,10 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError 
-            ? Theme.of(context).colorScheme.error 
-            : Theme.of(context).colorScheme.primary,
+        backgroundColor:
+            isError
+                ? Theme.of(context).colorScheme.error
+                : Theme.of(context).colorScheme.primary,
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: isError ? 4 : 2),
       ),
@@ -242,10 +244,10 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     if (_selectedImages.isNotEmpty && state.productId != null) {
       await _uploadImages(state.productId!);
     }
-    
+
     // Show success message
     _showSnackBar(state.message, isError: false);
-    
+
     // Navigate back with success result
     if (mounted) {
       Navigator.of(context).pop(true);
@@ -306,7 +308,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           color: colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withOpacity(0.1),
+              color: colorScheme.shadow.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, -2),
             ),
@@ -455,7 +457,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           decoration: InputDecoration(
             hintText: 'Nhập tên sản phẩm',
             hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
             ),
             border: OutlineInputBorder(
@@ -468,7 +470,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 color:
                     _nameError != null
                         ? colorScheme.error
-                        : colorScheme.outline.withOpacity(0.5),
+                        : colorScheme.outline.withValues(alpha: 0.5),
                 width: 1.5,
               ),
             ),
@@ -491,7 +493,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -557,7 +559,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           decoration: InputDecoration(
             hintText: 'Nhập mô tả chi tiết về sản phẩm',
             hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
             ),
             border: OutlineInputBorder(
@@ -570,7 +572,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 color:
                     _descriptionError != null
                         ? colorScheme.error
-                        : colorScheme.outline.withOpacity(0.5),
+                        : colorScheme.outline.withValues(alpha: 0.5),
                 width: 1.5,
               ),
             ),
@@ -593,7 +595,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -663,7 +665,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           decoration: InputDecoration(
             hintText: '0',
             hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
             ),
             border: OutlineInputBorder(
@@ -676,7 +678,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 color:
                     _priceError != null
                         ? colorScheme.error
-                        : colorScheme.outline.withOpacity(0.5),
+                        : colorScheme.outline.withValues(alpha: 0.5),
                 width: 1.5,
               ),
             ),
@@ -699,7 +701,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -780,7 +782,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 decoration: InputDecoration(
                   hintText: '0',
                   hintStyle: TextStyle(
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                     fontSize: 14.sp,
                   ),
                   border: OutlineInputBorder(
@@ -796,7 +798,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                       color:
                           _quantityError != null
                               ? colorScheme.error
-                              : colorScheme.outline.withOpacity(0.5),
+                              : colorScheme.outline.withValues(alpha: 0.5),
                       width: 1.5,
                     ),
                   ),
@@ -822,7 +824,9 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                     borderSide: BorderSide(color: colorScheme.error, width: 2),
                   ),
                   filled: true,
-                  fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                  fillColor: colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.3,
+                  ),
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16.w,
                     vertical: 16.h,
@@ -897,7 +901,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           decoration: InputDecoration(
             hintText: 'Chọn danh mục',
             hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 14.sp,
             ),
             border: OutlineInputBorder(
@@ -910,7 +914,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                 color:
                     _categoryError != null
                         ? colorScheme.error
-                        : colorScheme.outline.withOpacity(0.5),
+                        : colorScheme.outline.withValues(alpha: 0.5),
                 width: 1.5,
               ),
             ),
@@ -933,7 +937,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               borderSide: BorderSide(color: colorScheme.error, width: 2),
             ),
             filled: true,
-            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16.w,
               vertical: 16.h,
@@ -994,7 +998,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           ),
         ),
         SizedBox(height: 8.h),
-        
+
         // Add image button
         if (_selectedImages.length + _uploadedImageUrls.length < 5)
           Container(
@@ -1002,12 +1006,12 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
             height: 120.h,
             decoration: BoxDecoration(
               border: Border.all(
-                color: colorScheme.outline.withOpacity(0.5),
+                color: colorScheme.outline.withValues(alpha: 0.5),
                 width: 1.5,
                 style: BorderStyle.solid,
               ),
               borderRadius: BorderRadius.circular(12.r),
-              color: colorScheme.surfaceVariant.withOpacity(0.3),
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
             ),
             child: Material(
               color: Colors.transparent,
@@ -1044,7 +1048,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
               ),
             ),
           ),
-        
+
         // Selected images preview
         if (_selectedImages.isNotEmpty) ...[
           SizedBox(height: 16.h),
@@ -1102,7 +1106,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
             ),
           ),
         ],
-        
+
         // Uploaded images preview
         if (_uploadedImageUrls.isNotEmpty) ...[
           SizedBox(height: 16.h),
@@ -1137,7 +1141,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
                               width: 100.w,
                               height: 100.h,
                               decoration: BoxDecoration(
-                                color: colorScheme.surfaceVariant,
+                                color: colorScheme.surfaceContainerHighest,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               child: Icon(
@@ -1174,7 +1178,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
             ),
           ),
         ],
-        
+
         // Upload progress
         if (_isUploadingImages) ...[
           SizedBox(height: 16.h),
@@ -1207,79 +1211,79 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                side: BorderSide(color: colorScheme.outline, width: 1.5),
-                foregroundColor: colorScheme.onSurface,
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Text(
-                'Hủy',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-              ),
+              side: BorderSide(color: colorScheme.outline, width: 1.5),
+              foregroundColor: colorScheme.onSurface,
+            ),
+            child: Text(
+              'Hủy',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
           ),
-          SizedBox(width: 16.w),
-          Expanded(
-            flex: 2,
-            child: ElevatedButton(
-              onPressed: (_isLoading || !_isFormValid) ? null : _handleSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _isFormValid
-                        ? colorScheme.primary
-                        : colorScheme.surfaceVariant,
-                foregroundColor:
-                    _isFormValid
-                        ? colorScheme.onPrimary
-                        : colorScheme.onSurfaceVariant,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: _isFormValid ? 2 : 0,
-                shadowColor: colorScheme.shadow.withOpacity(0.3),
+        ),
+        SizedBox(width: 16.w),
+        Expanded(
+          flex: 2,
+          child: ElevatedButton(
+            onPressed: (_isLoading || !_isFormValid) ? null : _handleSubmit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  _isFormValid
+                      ? colorScheme.primary
+                      : colorScheme.surfaceContainerHighest,
+              foregroundColor:
+                  _isFormValid
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurfaceVariant,
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child:
-                  _isLoading
-                      ? SizedBox(
-                        height: 20.h,
-                        width: 20.w,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.onPrimary,
+              elevation: _isFormValid ? 2 : 0,
+              shadowColor: colorScheme.shadow.withValues(alpha: 0.3),
+            ),
+            child:
+                _isLoading
+                    ? SizedBox(
+                      height: 20.h,
+                      width: 20.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          colorScheme.onPrimary,
+                        ),
+                      ),
+                    )
+                    : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _isEditMode
+                              ? Icons.update_rounded
+                              : Icons.add_rounded,
+                          size: 20.w,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          _isEditMode ? 'Cập nhật' : 'Thêm mới',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      )
-                      : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            _isEditMode
-                                ? Icons.update_rounded
-                                : Icons.add_rounded,
-                            size: 20.w,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            _isEditMode ? 'Cập nhật' : 'Thêm mới',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-            ),
+                      ],
+                    ),
           ),
-        ],
+        ),
+      ],
     );
   }
 
@@ -1374,7 +1378,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
 
     final now = DateTime.now();
-    
+
     // Use uploaded images or generate default ones
     List<String> finalImages = [];
     if (_uploadedImageUrls.isNotEmpty) {
@@ -1403,8 +1407,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       quantity: int.parse(_quantityController.text),
       categoryId: _selectedCategory!.id!,
       images: finalImages,
-      createdAt:
-          _isEditMode ? widget.product!.createdAt : now,
+      createdAt: _isEditMode ? widget.product!.createdAt : now,
       updatedAt: now,
     );
 

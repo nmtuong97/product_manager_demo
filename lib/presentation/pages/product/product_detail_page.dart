@@ -111,11 +111,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       leading: Container(
         margin: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -132,15 +132,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget _buildImageGallery() {
-    print('📱 ProductDetailPage _buildImageGallery:');
-    print('   - Product ID: ${_currentProduct.id}');
-    print('   - Product name: ${_currentProduct.name}');
-    print('   - Product images count: ${_currentProduct.images.length}');
-    print('   - Product images: ${_currentProduct.images}');
-    print(
-      '   - Product limitedImages count: ${_currentProduct.limitedImages.length}',
-    );
-    print('   - Product limitedImages: ${_currentProduct.limitedImages}');
 
     if (_currentProduct.images.isEmpty) {
       return Container(
@@ -206,7 +197,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Text(
@@ -338,7 +329,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -348,7 +339,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             Row(
               children: [
                 Expanded(
@@ -482,8 +472,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
     context.read<ProductBloc>().add(DeleteProductEvent(_currentProduct.id!));
   }
-
-
 
   String _formatDate(DateTime? dateTime) {
     if (dateTime == null) return 'N/A';

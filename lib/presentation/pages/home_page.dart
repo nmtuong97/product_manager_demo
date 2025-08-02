@@ -105,30 +105,31 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               onPressed: () => _navigateToCategories(context),
-              icon: const Icon(
-                Icons.category,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.category, color: Colors.white),
               tooltip: 'Quản lý danh mục',
             ),
             IconButton(
-              onPressed: _isGeneratingProducts ? null : () => _generateRandomProducts(context),
-              icon: _isGeneratingProducts
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : const Icon(
-                      Icons.shuffle,
-                      color: Colors.white,
-                    ),
-              tooltip: _isGeneratingProducts 
-                  ? 'Đang tạo sản phẩm...' 
-                  : 'Tạo 10 sản phẩm ngẫu nhiên',
+              onPressed:
+                  _isGeneratingProducts
+                      ? null
+                      : () => _generateRandomProducts(context),
+              icon:
+                  _isGeneratingProducts
+                      ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                      : const Icon(Icons.shuffle, color: Colors.white),
+              tooltip:
+                  _isGeneratingProducts
+                      ? 'Đang tạo sản phẩm...'
+                      : 'Tạo 10 sản phẩm ngẫu nhiên',
             ),
           ],
         ),
@@ -136,64 +137,53 @@ class _HomePageState extends State<HomePage> {
           color: Colors.grey[50],
           child: Padding(
             padding: EdgeInsets.all(16.w),
-            child: const Column(
-              children: [
-                ProductListWidget(),
-              ],
-            ),
+            child: const Column(children: [ProductListWidget()]),
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _navigateToProductManagement(context),
           backgroundColor: Theme.of(context).primaryColor,
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.add, color: Colors.white),
           tooltip: 'Thêm sản phẩm',
         ),
       ),
     );
   }
 
-
-
   void _navigateToCategories(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const CategoryListPage(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const CategoryListPage()));
   }
 
   void _navigateToProductManagement(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ProductManagementPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const ProductManagementPage()),
     );
   }
 
   void _generateRandomProducts(BuildContext context) {
     // Kiểm tra nếu đang tạo sản phẩm thì không cho phép tạo thêm
     if (_isGeneratingProducts) return;
-    
+
     setState(() {
       _isGeneratingProducts = true;
     });
-    
+
     final random = Random();
     final now = DateTime.now();
-    
+
     // Tạo danh sách 10 sản phẩm ngẫu nhiên sử dụng ProductTemplateGenerator
     final List<Product> newProducts = [];
-    
+
     for (int i = 0; i < 10; i++) {
       final categoryIds = ProductTemplateGenerator.availableCategoryIds;
       final randomCategoryId = categoryIds[random.nextInt(categoryIds.length)];
-      final templates = ProductTemplateGenerator.getTemplatesForCategory(randomCategoryId);
+      final templates = ProductTemplateGenerator.getTemplatesForCategory(
+        randomCategoryId,
+      );
       final template = templates[random.nextInt(templates.length)];
-      
+
       final productName = '${template['name']} ${random.nextInt(1000) + 1}';
       final product = Product(
         id: null,
@@ -202,14 +192,17 @@ class _HomePageState extends State<HomePage> {
         price: (random.nextInt(10000) + 100) * 1000.0, // 100k - 10M
         quantity: random.nextInt(100) + 1, // 1-100
         categoryId: randomCategoryId,
-        images: ImageUrlGenerator.generateImageListForProduct(productName, count: random.nextInt(3) + 1),
+        images: ImageUrlGenerator.generateImageListForProduct(
+          productName,
+          count: random.nextInt(3) + 1,
+        ),
         createdAt: now,
         updatedAt: now,
       );
-      
+
       newProducts.add(product);
     }
-    
+
     // Thêm tất cả sản phẩm cùng lúc bằng batch operation
     context.read<ProductBloc>().add(AddMultipleProductsEvent(newProducts));
   }

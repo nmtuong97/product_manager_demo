@@ -24,7 +24,7 @@ class CategoryFilter extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
           final isSelected = category == selectedCategory;
-          
+
           return Padding(
             padding: EdgeInsets.only(right: 8.w),
             child: FilterChip(

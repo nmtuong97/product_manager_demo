@@ -115,7 +115,6 @@ class ProductRepositoryImpl implements ProductRepository {
       } catch (e) {
         // Log error but don't fail the operation
         // The products are saved locally and will sync later
-        print('⚠️ Failed to sync multiple products to remote: $e');
       }
     } catch (e) {
       throw Exception('Lỗi khi thêm nhiều sản phẩm: $e');
@@ -133,7 +132,6 @@ class ProductRepositoryImpl implements ProductRepository {
         await _remoteDataSource.updateProduct(product);
       } catch (e) {
         // Log error but don't fail the operation
-
       }
     } catch (e) {
       throw Exception('Lỗi khi cập nhật sản phẩm: $e');
@@ -151,7 +149,6 @@ class ProductRepositoryImpl implements ProductRepository {
         await _remoteDataSource.deleteProduct(id);
       } catch (e) {
         // Log error but don't fail the operation
-
       }
     } catch (e) {
       throw Exception('Lỗi khi xóa sản phẩm: $e');
@@ -162,15 +159,19 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<List<Product>> searchProducts(String query, {int? categoryId}) async {
     try {
       // Always search from remote API for real-time results
-      return await _remoteDataSource.searchProducts(query, categoryId: categoryId);
+      return await _remoteDataSource.searchProducts(
+        query,
+        categoryId: categoryId,
+      );
     } catch (e) {
       // Fallback to local search if remote fails with Vietnamese diacritic support
       try {
         final localProducts = await _localDataSource.getProducts();
         return localProducts.where((product) {
-          final matchesQuery = TextUtils.matchesSearch(product.name, query) ||
-              TextUtils.matchesSearch(product.description ?? '', query);
-          
+          final matchesQuery =
+              TextUtils.matchesSearch(product.name, query) ||
+              TextUtils.matchesSearch(product.description, query);
+
           if (categoryId != null) {
             return matchesQuery && product.categoryId == categoryId;
           }
@@ -191,7 +192,9 @@ class ProductRepositoryImpl implements ProductRepository {
       // Fallback to local data
       try {
         final localProducts = await _localDataSource.getProducts();
-        return localProducts.where((product) => product.categoryId == categoryId).toList();
+        return localProducts
+            .where((product) => product.categoryId == categoryId)
+            .toList();
       } catch (localError) {
         throw Exception('Lỗi khi lấy sản phẩm theo danh mục: $e');
       }

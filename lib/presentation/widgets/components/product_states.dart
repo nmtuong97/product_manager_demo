@@ -11,16 +11,11 @@ class ProductLoadingState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            strokeWidth: 3.w,
-          ),
+          CircularProgressIndicator(strokeWidth: 3.w),
           SizedBox(height: 16.h),
           Text(
             'Đang tải dữ liệu...',
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -72,10 +67,7 @@ class ProductEmptyState extends StatelessWidget {
               SizedBox(height: 8.h),
               Text(
                 _getEmptySubtitle(),
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 16.sp, color: Colors.grey[500]),
                 textAlign: TextAlign.center,
                 maxLines: null,
               ),
@@ -88,10 +80,7 @@ class ProductEmptyState extends StatelessWidget {
     );
 
     if (onRefresh != null) {
-      return RefreshIndicator(
-        onRefresh: onRefresh!,
-        child: content,
-      );
+      return RefreshIndicator(onRefresh: onRefresh!, child: content);
     }
 
     return content;
@@ -99,11 +88,7 @@ class ProductEmptyState extends StatelessWidget {
 
   Widget _buildEmptyIcon() {
     if (_isSearchResult()) {
-      return Icon(
-        Icons.search_off,
-        size: 80.w,
-        color: Colors.grey[400],
-      );
+      return Icon(Icons.search_off, size: 80.w, color: Colors.grey[400]);
     }
     return Icon(
       Icons.inventory_2_outlined,
@@ -134,7 +119,8 @@ class ProductEmptyState extends StatelessWidget {
   }
 
   bool _isSearchResult() {
-    return (searchQuery?.isNotEmpty == true) || (selectedCategory != null && selectedCategory != 'Tất cả');
+    return (searchQuery?.isNotEmpty == true) ||
+        (selectedCategory != null && selectedCategory != 'Tất cả');
   }
 
   Widget _buildActionButtons() {
@@ -165,7 +151,10 @@ class ProductEmptyState extends StatelessWidget {
                 icon: const Icon(Icons.add),
                 label: const Text('Thêm sản phẩm mới'),
                 style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 12.h,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.r),
                   ),

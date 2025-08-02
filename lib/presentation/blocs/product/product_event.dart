@@ -88,7 +88,7 @@ class ResetProductState extends ProductEvent {
 class SearchProductsEvent extends ProductEvent {
   /// The search query string
   final String query;
-  
+
   /// Optional category filter
   final int? categoryId;
 

@@ -19,7 +19,7 @@ class ImageUploadService {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         return File(image.path);
       }
@@ -38,7 +38,7 @@ class ImageUploadService {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         return File(image.path);
       }
@@ -56,7 +56,7 @@ class ImageUploadService {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      
+
       return images.map((image) => File(image.path)).toList();
     } catch (e) {
       throw Exception('Không thể chọn ảnh: $e');
@@ -64,19 +64,20 @@ class ImageUploadService {
   }
 
   /// Upload images to server (mock)
-  Future<List<String>> uploadProductImages(int productId, List<File> images) async {
+  Future<List<String>> uploadProductImages(
+    int productId,
+    List<File> images,
+  ) async {
     try {
       // Simulate upload delay
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // Call mock API endpoint
       final response = await _dio.post(
         '/api/products/$productId/images',
-        data: {
-          'images': images.map((file) => file.path).toList(),
-        },
+        data: {'images': images.map((file) => file.path).toList()},
       );
-      
+
       if (response.statusCode == 200) {
         final data = response.data['data'] as Map<String, dynamic>;
         final imageUrls = List<String>.from(data['images'] as List);

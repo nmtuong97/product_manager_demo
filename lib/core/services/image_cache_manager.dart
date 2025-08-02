@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 /// Custom cache manager for product images with optimized settings
 class ProductImageCacheManager {
   static const String _cacheKey = 'product_images';
-  
+
   static final CacheManager _cacheManager = CacheManager(
     Config(
       _cacheKey,
@@ -29,7 +28,6 @@ class ProductImageCacheManager {
   /// Get cache size in bytes
   static Future<int> getCacheSize() async {
     try {
-      final files = await _cacheManager.getFileFromCache(_cacheKey);
       // For simplicity, return 0 as cache size calculation requires more complex implementation
       // In production, you might want to implement a more sophisticated cache size calculation
       return 0;
@@ -80,25 +78,20 @@ class CachedProductImage extends StatelessWidget {
       fit: fit,
       width: width,
       height: height,
-      placeholder: placeholder != null 
-          ? (context, url) => placeholder!
-          : (context, url) => _buildDefaultPlaceholder(context, url),
-      errorWidget: (context, url, error) => 
-          errorWidget ?? _buildDefaultErrorWidget(),
+      placeholder:
+          placeholder != null
+              ? (context, url) => placeholder!
+              : (context, url) => _buildDefaultPlaceholder(context, url),
+      errorWidget:
+          (context, url, error) => errorWidget ?? _buildDefaultErrorWidget(),
     );
 
     if (borderRadius != null) {
-      imageWidget = ClipRRect(
-        borderRadius: borderRadius!,
-        child: imageWidget,
-      );
+      imageWidget = ClipRRect(borderRadius: borderRadius!, child: imageWidget);
     }
 
     if (heroTag != null) {
-      imageWidget = Hero(
-        tag: heroTag!,
-        child: imageWidget,
-      );
+      imageWidget = Hero(tag: heroTag!, child: imageWidget);
     }
 
     return imageWidget;
@@ -125,18 +118,11 @@ class CachedProductImage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.broken_image,
-              size: 48.w,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.broken_image, size: 48.w, color: Colors.grey[400]),
             SizedBox(height: 8.h),
             Text(
               'Lỗi tải ảnh',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
             ),
           ],
         ),

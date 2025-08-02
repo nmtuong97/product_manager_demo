@@ -28,9 +28,6 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
   Future<Product> getProduct(int id) async {
     try {
       final map = await _databaseHelper.getProduct(id);
-      if (map == null) {
-        throw Exception('Không tìm thấy sản phẩm với ID: $id');
-      }
       return Product.fromMap(map);
     } catch (e) {
       throw Exception('Lỗi khi lấy sản phẩm từ local storage: $e');

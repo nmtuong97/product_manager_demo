@@ -23,31 +23,22 @@ class SearchResultsHeader extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.05),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: Theme.of(context).primaryColor.withOpacity(0.2),
+          color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.search,
-            size: 16.w,
-            color: Theme.of(context).primaryColor,
-          ),
+          Icon(Icons.search, size: 16.w, color: Theme.of(context).primaryColor),
           SizedBox(width: 8.w),
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey[700],
-                ),
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
                 children: [
-                  TextSpan(
-                    text: 'Tìm thấy ',
-                  ),
+                  TextSpan(text: 'Tìm thấy '),
                   TextSpan(
                     text: '$resultCount',
                     style: TextStyle(
@@ -55,9 +46,7 @@ class SearchResultsHeader extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  TextSpan(
-                    text: ' sản phẩm cho "',
-                  ),
+                  TextSpan(text: ' sản phẩm cho "'),
                   TextSpan(
                     text: searchQuery,
                     style: TextStyle(
@@ -65,13 +54,9 @@ class SearchResultsHeader extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  TextSpan(
-                    text: '"',
-                  ),
+                  TextSpan(text: '"'),
                   if (selectedCategory != 'Tất cả') ...[
-                    TextSpan(
-                      text: ' trong danh mục "',
-                    ),
+                    TextSpan(text: ' trong danh mục "'),
                     TextSpan(
                       text: selectedCategory,
                       style: TextStyle(
@@ -79,9 +64,7 @@ class SearchResultsHeader extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
-                    TextSpan(
-                      text: '"',
-                    ),
+                    TextSpan(text: '"'),
                   ],
                 ],
               ),
@@ -97,11 +80,7 @@ class SearchResultsHeader extends StatelessWidget {
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(4.r),
                 ),
-                child: Icon(
-                  Icons.close,
-                  size: 14.w,
-                  color: Colors.grey[600],
-                ),
+                child: Icon(Icons.close, size: 14.w, color: Colors.grey[600]),
               ),
             ),
           ],

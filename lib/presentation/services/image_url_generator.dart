@@ -39,27 +39,22 @@ class ImageUrlGenerator {
   }
 
   /// Generate list of image URLs for product (max 5 images)
-  static List<String> generateImageListForProduct(String productName, {int count = 1}) {
-
-    
-    
+  static List<String> generateImageListForProduct(
+    String productName, {
+    int count = 1,
+  }) {
     final hash = productName.hashCode.abs();
     final List<String> imageList = [];
     final maxCount = count > 5 ? 5 : count; // Limit to maximum 5 images
-    print('   - Final count (after limit check): $maxCount');
-    
+
     // Ensure we generate unique URLs by adding timestamp for uniqueness
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    print('   - Timestamp: $timestamp');
-    print('   - Product hash: $hash');
-    
+
     for (int i = 0; i < maxCount; i++) {
       final index = (hash + i + timestamp) % _sampleImageUrls.length;
       final uniqueUrl = '${_sampleImageUrls[index]}&t=${timestamp + i}';
-      print('   - Generated URL $i: $uniqueUrl');
       imageList.add(uniqueUrl);
     }
-    
 
     return imageList;
   }

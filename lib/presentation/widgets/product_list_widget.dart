@@ -16,7 +16,7 @@ import 'components/view_toggle.dart';
 import 'components/search_results_header.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/entities/category.dart';
-import 'package:product_manager_demo/presentation/pages/product/product_detail_page.dart';
+import '../pages/product/product_detail_page.dart';
 import '../../core/utils/text_utils.dart';
 
 class ProductListWidget extends StatefulWidget {
@@ -39,7 +39,6 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   bool _isSearching = false;
   String _currentSearchQuery = '';
   int _currentResultCount = 0;
-  bool _isNavigating = false;
 
   @override
   void initState() {
@@ -47,8 +46,6 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     _loadProducts();
     _loadCategories();
   }
-
-
 
   @override
   void dispose() {
@@ -66,7 +63,10 @@ class _ProductListWidgetState extends State<ProductListWidget> {
             if (state is ProductLoaded) {
               setState(() {
                 _allProducts = state.products;
-                _products = state.products.map((product) => _convertProductToMap(product)).toList();
+                _products =
+                    state.products
+                        .map((product) => _convertProductToMap(product))
+                        .toList();
                 _currentResultCount = state.products.length;
                 // Apply current filters to the loaded products
                 _applyCurrentFilters();
@@ -108,53 +108,53 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           },
           child: Column(
             children: [
-            // Search bar
-            ProductSearchBar(
-              controller: _searchController,
-              onChanged: _onSearchChanged,
-              onClear: _onSearchCleared,
-              hintText: 'Tìm kiếm sản phẩm...',
-              isLoading: _isSearching,
-              debounceDuration: const Duration(milliseconds: 300),
-            ),
-            SizedBox(height: 16.h),
+              // Search bar
+              ProductSearchBar(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                onClear: _onSearchCleared,
+                hintText: 'Tìm kiếm sản phẩm...',
+                isLoading: _isSearching,
+                debounceDuration: const Duration(milliseconds: 300),
+              ),
+              SizedBox(height: 16.h),
 
-            // Category filter
-            CategoryFilter(
-              categories: _categories,
-              selectedCategory: _selectedCategory,
-              onCategorySelected: _onCategorySelected,
-            ),
-            SizedBox(height: 16.h),
+              // Category filter
+              CategoryFilter(
+                categories: _categories,
+                selectedCategory: _selectedCategory,
+                onCategorySelected: _onCategorySelected,
+              ),
+              SizedBox(height: 16.h),
 
-            // Search results header
-            SearchResultsHeader(
-              searchQuery: _currentSearchQuery,
-              resultCount: _currentResultCount,
-              selectedCategory: _selectedCategory,
-              onClearSearch: () {
-                _searchController.clear();
-                _onSearchCleared();
-              },
-            ),
-            if (_currentSearchQuery.isNotEmpty) SizedBox(height: 12.h),
-
-            // View toggle
-            ViewToggle(
-              productCount: _currentResultCount,
-              isGridView: _isGridView,
-              onViewChanged: _onViewChanged,
-            ),
-            SizedBox(height: 16.h),
-
-            // Product content
-            Expanded(
-              child: BlocBuilder<ProductBloc, ProductState>(
-                builder: (context, state) {
-                  return _buildProductContent(state);
+              // Search results header
+              SearchResultsHeader(
+                searchQuery: _currentSearchQuery,
+                resultCount: _currentResultCount,
+                selectedCategory: _selectedCategory,
+                onClearSearch: () {
+                  _searchController.clear();
+                  _onSearchCleared();
                 },
               ),
-            ),
+              if (_currentSearchQuery.isNotEmpty) SizedBox(height: 12.h),
+
+              // View toggle
+              ViewToggle(
+                productCount: _currentResultCount,
+                isGridView: _isGridView,
+                onViewChanged: _onViewChanged,
+              ),
+              SizedBox(height: 16.h),
+
+              // Product content
+              Expanded(
+                child: BlocBuilder<ProductBloc, ProductState>(
+                  builder: (context, state) {
+                    return _buildProductContent(state);
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -173,22 +173,24 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
   void _performSearch() {
     final query = _currentSearchQuery.trim();
-    
+
     if (query.isEmpty && _selectedCategory == 'Tất cả') {
       // Load all products when no search query and no category filter
       context.read<ProductBloc>().add(LoadProducts());
       return;
     }
-    
+
     if (query.isNotEmpty) {
       // Get category ID for search
       int? categoryId;
       if (_selectedCategory != 'Tất cả') {
         categoryId = _getCategoryId(_selectedCategory);
       }
-      
+
       // Perform API search
-      context.read<ProductBloc>().add(SearchProductsEvent(query, categoryId: categoryId));
+      context.read<ProductBloc>().add(
+        SearchProductsEvent(query, categoryId: categoryId),
+      );
     } else if (_selectedCategory != 'Tất cả') {
       // Load products by category only
       final categoryId = _getCategoryId(_selectedCategory);
@@ -216,7 +218,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   /// Get category ID by name
   int? _getCategoryId(String categoryName) {
     if (categoryName == 'Tất cả') return null;
-    
+
     try {
       final category = _categoryEntities.firstWhere(
         (cat) => cat.name == categoryName,
@@ -260,26 +262,28 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   /// Apply current search and category filters to loaded products without dispatching events
   void _applyCurrentFilters() {
     final query = _currentSearchQuery.trim();
-    
+
     List<Map<String, dynamic>> filtered = _products;
-    
+
     // Apply search filter with Vietnamese diacritic support
     if (query.isNotEmpty) {
-      filtered = filtered.where((product) {
-        final name = product['name']?.toString() ?? '';
-        final description = product['description']?.toString() ?? '';
-        return TextUtils.matchesSearch(name, query) || 
-               TextUtils.matchesSearch(description, query);
-      }).toList();
+      filtered =
+          filtered.where((product) {
+            final name = product['name']?.toString() ?? '';
+            final description = product['description']?.toString() ?? '';
+            return TextUtils.matchesSearch(name, query) ||
+                TextUtils.matchesSearch(description, query);
+          }).toList();
     }
-    
+
     // Apply category filter
     if (_selectedCategory != 'Tất cả') {
-      filtered = filtered.where((product) {
-        return product['category'] == _selectedCategory;
-      }).toList();
+      filtered =
+          filtered.where((product) {
+            return product['category'] == _selectedCategory;
+          }).toList();
     }
-    
+
     _filteredProducts = filtered;
     _currentResultCount = filtered.length;
   }
@@ -320,10 +324,6 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       orElse: () => throw Exception('Product not found'),
     );
 
-    setState(() {
-      _isNavigating = true;
-    });
-
     Navigator.of(context)
         .push(
           MaterialPageRoute(
@@ -331,17 +331,14 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           ),
         )
         .then((result) {
-          setState(() {
-            _isNavigating = false;
-          });
-          
+
           // Clear focus when returning from detail page to prevent keyboard from showing
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               FocusScope.of(context).unfocus();
             }
           });
-          
+
           if (result == true) {
             // Product was updated or deleted, refresh the list
             _loadProducts();
@@ -383,14 +380,16 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
     // Xử lý trạng thái tìm kiếm
     if (state is ProductSearchLoaded) {
-      final displayProducts = state.searchResults
-          .map((product) => _convertProductToMap(product))
-          .toList();
-      
+      final displayProducts =
+          state.searchResults
+              .map((product) => _convertProductToMap(product))
+              .toList();
+
       if (displayProducts.isEmpty) {
         return ProductEmptyState(
           searchQuery: state.query,
-          selectedCategory: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+          selectedCategory:
+              _selectedCategory != 'Tất cả' ? _selectedCategory : null,
           onClearSearch: () {
             _searchController.clear();
             _onSearchCleared();
@@ -403,7 +402,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           },
         );
       }
-      
+
       return _isGridView
           ? ProductGridView(
             products: displayProducts,
@@ -418,14 +417,17 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     // Hiển thị danh sách sản phẩm thông thường
     if (state is ProductLoaded) {
       _allProducts = state.products; // Update local cache
-      final displayProducts = state.products
-          .map((product) => _convertProductToMap(product))
-          .toList();
-      
+      final displayProducts =
+          state.products
+              .map((product) => _convertProductToMap(product))
+              .toList();
+
       if (displayProducts.isEmpty) {
         return ProductEmptyState(
-          searchQuery: _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
-          selectedCategory: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+          searchQuery:
+              _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
+          selectedCategory:
+              _selectedCategory != 'Tất cả' ? _selectedCategory : null,
           onClearSearch: () {
             _searchController.clear();
             _onSearchCleared();
@@ -438,7 +440,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
           },
         );
       }
-      
+
       return _isGridView
           ? ProductGridView(
             products: displayProducts,
@@ -451,33 +453,36 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     }
 
     // Fallback cho các trạng thái khác
-     final displayProducts = _filteredProducts.isEmpty ? _products : _filteredProducts;
-     
-     if (displayProducts.isEmpty) {
-       return ProductEmptyState(
-         searchQuery: _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
-         selectedCategory: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
-         onClearSearch: () {
-           _searchController.clear();
-           _onSearchCleared();
-           if (_selectedCategory != 'Tất cả') {
-             setState(() {
-               _selectedCategory = 'Tất cả';
-             });
-             _performSearch();
-           }
-         },
-       );
-     }
+    final displayProducts =
+        _filteredProducts.isEmpty ? _products : _filteredProducts;
 
-     return _isGridView
-         ? ProductGridView(
-           products: displayProducts,
-           onProductTap: _onProductTap,
-         )
-         : ProductListView(
-           products: displayProducts,
-           onProductTap: _onProductTap,
-         );
+    if (displayProducts.isEmpty) {
+      return ProductEmptyState(
+        searchQuery:
+            _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
+        selectedCategory:
+            _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+        onClearSearch: () {
+          _searchController.clear();
+          _onSearchCleared();
+          if (_selectedCategory != 'Tất cả') {
+            setState(() {
+              _selectedCategory = 'Tất cả';
+            });
+            _performSearch();
+          }
+        },
+      );
     }
+
+    return _isGridView
+        ? ProductGridView(
+          products: displayProducts,
+          onProductTap: _onProductTap,
+        )
+        : ProductListView(
+          products: displayProducts,
+          onProductTap: _onProductTap,
+        );
+  }
 }

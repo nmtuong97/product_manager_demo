@@ -16,7 +16,7 @@ class TextUtils {
     'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ự': 'u', 'ử': 'u', 'ữ': 'u',
     'ỳ': 'y', 'ý': 'y', 'ỵ': 'y', 'ỷ': 'y', 'ỹ': 'y',
     'đ': 'd',
-    
+
     // Uppercase vowels
     'À': 'A', 'Á': 'A', 'Ạ': 'A', 'Ả': 'A', 'Ã': 'A',
     'Â': 'A', 'Ầ': 'A', 'Ấ': 'A', 'Ậ': 'A', 'Ẩ': 'A', 'Ẫ': 'A',
@@ -34,7 +34,7 @@ class TextUtils {
   };
 
   /// Removes Vietnamese diacritics from text for search normalization
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// TextUtils.removeDiacritics('Điện thoại') // returns 'Dien thoai'
@@ -42,16 +42,16 @@ class TextUtils {
   /// ```
   static String removeDiacritics(String text) {
     String result = text;
-    
+
     _vietnameseDiacritics.forEach((diacritic, replacement) {
       result = result.replaceAll(diacritic, replacement);
     });
-    
+
     return result;
   }
 
   /// Normalizes text for search by removing diacritics and converting to lowercase
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// TextUtils.normalizeForSearch('Điện Thoại') // returns 'dien thoai'
@@ -62,7 +62,7 @@ class TextUtils {
   }
 
   /// Checks if search query matches text with diacritic-insensitive comparison
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// TextUtils.matchesSearch('Điện thoại', 'dien') // returns true
@@ -71,10 +71,10 @@ class TextUtils {
   /// ```
   static bool matchesSearch(String text, String query) {
     if (query.isEmpty) return true;
-    
+
     final normalizedText = normalizeForSearch(text);
     final normalizedQuery = normalizeForSearch(query);
-    
+
     return normalizedText.contains(normalizedQuery);
   }
 }

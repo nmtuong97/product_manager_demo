@@ -33,7 +33,10 @@ class ViewToggle extends StatelessWidget {
               onPressed: () => onViewChanged(true),
               icon: Icon(
                 Icons.grid_view,
-                color: isGridView ? Theme.of(context).primaryColor : Colors.grey[500],
+                color:
+                    isGridView
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey[500],
                 size: 20.w,
               ),
             ),
@@ -41,7 +44,10 @@ class ViewToggle extends StatelessWidget {
               onPressed: () => onViewChanged(false),
               icon: Icon(
                 Icons.list,
-                color: !isGridView ? Theme.of(context).primaryColor : Colors.grey[500],
+                color:
+                    !isGridView
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey[500],
                 size: 20.w,
               ),
             ),

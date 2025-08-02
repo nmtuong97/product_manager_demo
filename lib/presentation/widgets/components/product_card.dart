@@ -99,15 +99,17 @@ class ProductCard extends StatelessWidget {
         color: Colors.grey[200],
         borderRadius: borderRadius,
       ),
-      child: product['image'] != null
-          ? CachedProductImage(
-              imageUrl: product['image'],
-              fit: BoxFit.cover,
-              borderRadius: borderRadius,
-              heroTag: 'product_${product['id']}_0', // Use index 0 for thumbnail
-              errorWidget: _buildPlaceholderImage(),
-            )
-          : _buildPlaceholderImage(),
+      child:
+          product['image'] != null
+              ? CachedProductImage(
+                imageUrl: product['image'],
+                fit: BoxFit.cover,
+                borderRadius: borderRadius,
+                heroTag:
+                    'product_${product['id']}_0', // Use index 0 for thumbnail
+                errorWidget: _buildPlaceholderImage(),
+              )
+              : _buildPlaceholderImage(),
     );
   }
 

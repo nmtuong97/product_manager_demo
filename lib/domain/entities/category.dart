@@ -55,11 +55,11 @@ class Category {
     if (value == null) {
       return DateTime.now();
     }
-    
+
     if (value is DateTime) {
       return value;
     }
-    
+
     if (value is String) {
       try {
         return DateTime.parse(value);
@@ -68,7 +68,7 @@ class Category {
         return DateTime.now();
       }
     }
-    
+
     // For any other type, return current time as fallback
     return DateTime.now();
   }

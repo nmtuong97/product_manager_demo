@@ -56,9 +56,10 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data as List<dynamic>;
-        final categories = data
-            .map((item) => Category.fromMap(item as Map<String, dynamic>))
-            .toList();
+        final categories =
+            data
+                .map((item) => Category.fromMap(item as Map<String, dynamic>))
+                .toList();
         return categories;
       } else {
         throw Exception(

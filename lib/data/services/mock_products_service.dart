@@ -16,7 +16,7 @@ import '../../presentation/services/image_url_generator.dart';
 class MockProductsService {
   static const String _fileName = 'products.json';
   int _nextId = 1;
-  
+
   // Completer để đảm bảo chỉ có 1 file operation tại 1 thời điểm
   Completer<void>? _fileOperationCompleter;
 
@@ -49,10 +49,11 @@ class MockProductsService {
   /// Thread-safe file read với retry mechanism
   Future<List<Product>> _readProducts() async {
     // Đợi operation trước đó hoàn thành
-    while (_fileOperationCompleter != null && !_fileOperationCompleter!.isCompleted) {
+    while (_fileOperationCompleter != null &&
+        !_fileOperationCompleter!.isCompleted) {
       await _fileOperationCompleter!.future;
     }
-    
+
     final dbDir = await getApplicationDocumentsDirectory();
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
@@ -62,33 +63,18 @@ class MockProductsService {
       for (int attempt = 0; attempt < 3; attempt++) {
         try {
           final data = await file.readAsString();
-          print('📂 MockProductsService _readProducts (attempt ${attempt + 1}):');
-          print('   - File path: $dbPath');
-          print('   - Raw data length: ${data.length}');
 
           final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
-          print('   - JSON list length: ${jsonList.length}');
 
-          final products = jsonList.map((json) {
-            final productMap = json as Map<String, dynamic>;
-            print(
-              '   - Product raw images: ${productMap['images']} (type: ${productMap['images'].runtimeType})',
-            );
-            return Product.fromMap(productMap);
-          }).toList();
-
-          print('   - Products loaded: ${products.length}');
-          for (int i = 0; i < products.length; i++) {
-            print(
-              '   - Product $i: ${products[i].name} - Images: ${products[i].images.length}',
-            );
-          }
+          final products =
+              jsonList.map((json) {
+                final productMap = json as Map<String, dynamic>;
+                return Product.fromMap(productMap);
+              }).toList();
 
           return products;
         } catch (e) {
-          print('⚠️ Read attempt ${attempt + 1} failed: $e');
           if (attempt == 2) {
-            print('❌ All read attempts failed, returning empty list');
             return [];
           }
           // Đợi một chút trước khi retry
@@ -103,31 +89,29 @@ class MockProductsService {
   /// Thread-safe file write với atomic operation
   Future<void> _writeProducts(List<Product> products) async {
     // Đợi operation trước đó hoàn thành
-    while (_fileOperationCompleter != null && !_fileOperationCompleter!.isCompleted) {
+    while (_fileOperationCompleter != null &&
+        !_fileOperationCompleter!.isCompleted) {
       await _fileOperationCompleter!.future;
     }
-    
+
     // Tạo completer mới cho operation này
     _fileOperationCompleter = Completer<void>();
-    
+
     try {
       final dbDir = await getApplicationDocumentsDirectory();
       final dbPath = '${dbDir.path}/$_fileName';
       final tempPath = '${dbPath}.tmp';
-      
+
       final jsonList = products.map((product) => product.toMap()).toList();
       final jsonString = json.encode(jsonList);
-      
+
       // Atomic write: ghi vào file tạm trước
       final tempFile = File(tempPath);
       await tempFile.writeAsString(jsonString);
-      
+
       // Sau đó rename để thay thế file gốc (atomic operation)
       await tempFile.rename(dbPath);
-      
-      print('✅ Successfully wrote ${products.length} products to file');
     } catch (e) {
-      print('❌ Error writing products to file: $e');
       rethrow;
     } finally {
       // Hoàn thành operation
@@ -232,11 +216,11 @@ class MockProductsService {
   /// Add multiple products với batch operation để tránh race condition
   Future<void> addProducts(List<Product> products) async {
     if (products.isEmpty) return;
-    
+
     // Đọc products hiện tại một lần
     final existingProducts = await _readProducts();
     final now = DateTime.now();
-    
+
     // Tạo tất cả products mới với ID tăng dần
     final newProducts = <Product>[];
     for (final product in products) {
@@ -253,14 +237,12 @@ class MockProductsService {
       );
       newProducts.add(newProduct);
     }
-    
+
     // Thêm tất cả vào danh sách hiện tại
     existingProducts.addAll(newProducts);
-    
+
     // Ghi một lần duy nhất
     await _writeProducts(existingProducts);
-    
-    print('✅ Successfully added ${products.length} products in batch');
   }
 
   /// Clear all products (for testing/debugging)

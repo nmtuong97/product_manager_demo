@@ -25,9 +25,6 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
   @override
   void initState() {
     super.initState();
-    print('🖼️ ProductImageGallery initState:');
-    print('   - Total images received: ${widget.images.length}');
-    print('   - Images list: ${widget.images}');
     _pageController = PageController(initialPage: widget.initialIndex);
     _currentIndex = widget.initialIndex;
   }
@@ -120,7 +117,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(20.r),
           ),
           child: Row(
@@ -136,7 +133,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                   color:
                       _currentIndex == index
                           ? Colors.white
-                          : Colors.white.withOpacity(0.4),
+                          : Colors.white.withValues(alpha: 0.4),
                 ),
               ),
             ),
@@ -155,7 +152,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
+          color: Colors.black.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Text(
@@ -292,27 +289,18 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
               placeholder: Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2.w,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Colors.white,
-                  ),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
               errorWidget: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.broken_image,
-                      size: 64.w,
-                      color: Colors.white54,
-                    ),
+                    Icon(Icons.broken_image, size: 64.w, color: Colors.white54),
                     SizedBox(height: 16.h),
                     Text(
                       'Không thể tải ảnh',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.white54,
-                      ),
+                      style: TextStyle(fontSize: 16.sp, color: Colors.white54),
                     ),
                   ],
                 ),
@@ -340,7 +328,7 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
           ),
         ),
         child: Row(
@@ -380,7 +368,7 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
           ),
         ),
         child: Row(
@@ -390,7 +378,7 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Text(
@@ -420,7 +408,7 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
                         color:
                             _currentIndex == index
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.4),
+                                : Colors.white.withValues(alpha: 0.4),
                       ),
                     ),
                   ),

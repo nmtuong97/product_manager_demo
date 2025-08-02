@@ -75,8 +75,11 @@ class MockProductInterceptor extends Interceptor {
 
       List<Product> products;
       if (categoryId != null) {
-        final categoryProducts = await _mockService.getProductsByCategory(categoryId);
-        products = categoryProducts
+        final categoryProducts = await _mockService.getProductsByCategory(
+          categoryId,
+        );
+        products =
+            categoryProducts
                 .where(
                   (p) =>
                       query.isEmpty ||
@@ -141,66 +144,60 @@ class MockProductInterceptor extends Interceptor {
   ) async {
     final path = options.path;
     final pathSegments = path.split('/');
-    
+
     // Handle clear all products endpoint: /api/products/clear-all
     if (pathSegments.contains('clear-all')) {
       await _handleClearAllProducts(options, handler);
       return;
     }
-    
+
     // Handle image upload endpoint: /api/products/{id}/images
     if (path.contains('/images')) {
       final productIdIndex = pathSegments.indexOf('products') + 1;
-      
+
       if (productIdIndex >= pathSegments.length) {
         handler.reject(_badRequest(options, 'Product ID is required'));
         return;
       }
-      
+
       final idStr = pathSegments[productIdIndex];
       final id = int.tryParse(idStr);
-      
 
-      
       if (id == null) {
-
         handler.reject(_badRequest(options, 'Invalid product ID'));
         return;
       }
-      
+
       try {
         // Get the number of images from request data
         final data = options.data as Map<String, dynamic>?;
         final imagesList = data?['images'] as List?;
         final imageCount = imagesList?.length ?? 1;
-        
 
-        
-        final updatedImages = await _mockService.uploadProductImages(id, imageCount: imageCount);
-        
+        final updatedImages = await _mockService.uploadProductImages(
+          id,
+          imageCount: imageCount,
+        );
+
         if (updatedImages == null) {
-
           handler.reject(_notFound(options));
           return;
         }
-        
 
-        
         handler.resolve(
           _successResponse(options, {
             'data': {
               'images': updatedImages,
-              'message': 'Images uploaded successfully'
+              'message': 'Images uploaded successfully',
             },
-          }, statusCode: 200),
+          }, statusCode: 200,),
         );
       } catch (e) {
-
         handler.reject(_badRequest(options, 'Failed to upload images: $e'));
       }
       return;
     }
-    
+
     // Handle regular product creation
     final data = options.data as Map<String, dynamic>?;
 
@@ -216,7 +213,7 @@ class MockProductInterceptor extends Interceptor {
       handler.resolve(
         _successResponse(options, {
           'data': createdProduct.toMap(),
-        }, statusCode: 201),
+        }, statusCode: 201,),
       );
     } catch (e) {
       handler.reject(_badRequest(options, 'Invalid product data: $e'));
@@ -295,7 +292,7 @@ class MockProductInterceptor extends Interceptor {
     handler.resolve(
       _successResponse(options, {
         'message': 'Product deleted successfully',
-      }, statusCode: 204),
+      }, statusCode: 204,),
     );
   }
 

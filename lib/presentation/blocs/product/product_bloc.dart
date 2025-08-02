@@ -171,12 +171,17 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     emit(ProductSearching(event.query));
     try {
-      final searchResults = await _searchProducts(event.query, categoryId: event.categoryId);
-      emit(ProductSearchLoaded(
-        searchResults: searchResults,
-        query: event.query,
+      final searchResults = await _searchProducts(
+        event.query,
         categoryId: event.categoryId,
-      ));
+      );
+      emit(
+        ProductSearchLoaded(
+          searchResults: searchResults,
+          query: event.query,
+          categoryId: event.categoryId,
+        ),
+      );
     } catch (e) {
       emit(ProductError('Không thể tìm kiếm sản phẩm: ${e.toString()}'));
     }
@@ -190,10 +195,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductLoading());
     try {
       final products = await _getProducts();
-      final filteredProducts = products.where((product) => product.categoryId == event.categoryId).toList();
+      final filteredProducts =
+          products
+              .where((product) => product.categoryId == event.categoryId)
+              .toList();
       emit(ProductLoaded(filteredProducts));
     } catch (e) {
-      emit(ProductError('Không thể tải sản phẩm theo danh mục: ${e.toString()}'));
+      emit(
+        ProductError('Không thể tải sản phẩm theo danh mục: ${e.toString()}'),
+      );
     }
   }
 }

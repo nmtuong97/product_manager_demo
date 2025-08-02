@@ -58,7 +58,7 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
   void _onSearchChanged(String value) {
     // Cancel previous timer
     _debounceTimer?.cancel();
-    
+
     // Start new timer for debouncing
     _debounceTimer = Timer(widget.debounceDuration, () {
       widget.onChanged?.call(value);
@@ -78,7 +78,10 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: _hasText ? Theme.of(context).primaryColor.withOpacity(0.3) : Colors.grey[300]!,
+          color:
+              _hasText
+                  ? Theme.of(context).primaryColor.withValues(alpha: 0.3)
+                  : Colors.grey[300]!,
           width: _hasText ? 1.5 : 1.0,
         ),
       ),
@@ -87,39 +90,41 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
         focusNode: _focusNode,
         decoration: InputDecoration(
           hintText: widget.hintText,
-          hintStyle: TextStyle(
-            fontSize: 16.sp,
-            color: Colors.grey[500],
-          ),
-          prefixIcon: widget.isLoading
-              ? Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: SizedBox(
-                    width: 16.w,
-                    height: 16.w,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor,
+          hintStyle: TextStyle(fontSize: 16.sp, color: Colors.grey[500]),
+          prefixIcon:
+              widget.isLoading
+                  ? Padding(
+                    padding: EdgeInsets.all(12.w),
+                    child: SizedBox(
+                      width: 16.w,
+                      height: 16.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                )
-              : Icon(
-                  Icons.search,
-                  color: _hasText ? Theme.of(context).primaryColor : Colors.grey[500],
-                  size: 20.w,
-                ),
-          suffixIcon: _hasText
-              ? IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: Colors.grey[500],
+                  )
+                  : Icon(
+                    Icons.search,
+                    color:
+                        _hasText
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey[500],
                     size: 20.w,
                   ),
-                  onPressed: _onClearPressed,
-                )
-              : null,
+          suffixIcon:
+              _hasText
+                  ? IconButton(
+                    icon: Icon(
+                      Icons.clear,
+                      color: Colors.grey[500],
+                      size: 20.w,
+                    ),
+                    onPressed: _onClearPressed,
+                  )
+                  : null,
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,

@@ -94,10 +94,10 @@ class ProductDeleting extends ProductState {
 class ProductSearchLoaded extends ProductState {
   /// List of search results
   final List<Product> searchResults;
-  
+
   /// The search query that produced these results
   final String query;
-  
+
   /// Optional category filter applied
   final int? categoryId;
 
@@ -128,7 +128,7 @@ class ProductSearchLoaded extends ProductState {
 class ProductSearching extends ProductState {
   /// The current search query
   final String query;
-  
+
   const ProductSearching(this.query);
 
   @override
