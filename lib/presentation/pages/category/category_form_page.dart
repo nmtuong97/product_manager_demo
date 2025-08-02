@@ -98,68 +98,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             centerTitle: true,
             elevation: 0,
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            actions: [
-              if (_isEditing)
-                IconButton(
-                  icon:
-                      _isLoading
-                          ? SizedBox(
-                            width: 24.w,
-                            height: 24.h,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.0,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ),
-                          )
-                          : const Icon(Icons.delete),
-                  onPressed: _isLoading ? null : () => _showDeleteDialog(),
-                  tooltip: 'Delete Category',
-                ),
-            ],
           ),
           body: _buildForm(context),
-        );
-      },
-    );
-  }
-
-  /// Shows a confirmation dialog before deleting a category
-  void _showDeleteDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.warning, color: Theme.of(context).colorScheme.error),
-              SizedBox(width: 8.w),
-              const Text('Confirm Deletion'),
-            ],
-          ),
-          content: Text(
-            'Are you sure you want to delete category "${widget.category!.name}"? This action cannot be undone.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.read<CategoryBloc>().add(
-                  DeleteCategoryEvent(widget.category!.id!),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-              ),
-              child: const Text('Delete'),
-            ),
-          ],
         );
       },
     );

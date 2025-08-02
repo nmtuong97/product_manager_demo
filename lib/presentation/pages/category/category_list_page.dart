@@ -313,7 +313,7 @@ class CategoryListView extends StatelessWidget {
   }) {
     return Hero(
       key: key,
-      tag: 'category_${category.id}',
+      tag: 'category_${category.id ?? category.hashCode}',
       child: Card(
         margin: EdgeInsets.only(bottom: 12.h),
         elevation: 2,
