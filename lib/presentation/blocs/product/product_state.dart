@@ -31,12 +31,8 @@ class ProductLoaded extends ProductState {
   const ProductLoaded(this.products);
 
   /// Creates a copy of this state with updated values
-  ProductLoaded copyWith({
-    List<Product>? products,
-  }) {
-    return ProductLoaded(
-      products ?? this.products,
-    );
+  ProductLoaded copyWith({List<Product>? products}) {
+    return ProductLoaded(products ?? this.products);
   }
 
   @override
@@ -58,7 +54,7 @@ class ProductDetailLoaded extends ProductState {
 class ProductOperationSuccess extends ProductState {
   /// Success message to display
   final String message;
-  
+
   /// Optional product ID for operations that create/update products
   final int? productId;
 

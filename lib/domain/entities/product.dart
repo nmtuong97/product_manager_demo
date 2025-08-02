@@ -28,12 +28,12 @@ class Product {
     print('🔍 Product._parseImages called:');
     print('   - Input data: $imagesData');
     print('   - Input type: ${imagesData.runtimeType}');
-    
+
     if (imagesData == null) {
       print('   - Result: [] (null input)');
       return [];
     }
-    
+
     if (imagesData is List) {
       // Direct list format (from API or memory)
       final result = List<String>.from(imagesData);
@@ -44,10 +44,12 @@ class Product {
         // Try to decode as JSON string (for backward compatibility)
         final decoded = json.decode(imagesData);
         print('   - Decoded JSON: $decoded (type: ${decoded.runtimeType})');
-        
+
         if (decoded is List) {
           final result = List<String>.from(decoded);
-          print('   - Result: $result (from JSON list, length: ${result.length})');
+          print(
+            '   - Result: $result (from JSON list, length: ${result.length})',
+          );
           return result;
         } else {
           // Single string format (backward compatibility)
@@ -61,7 +63,7 @@ class Product {
         return [imagesData];
       }
     }
-    
+
     print('   - Result: [] (unknown type)');
     return [];
   }
@@ -80,7 +82,9 @@ class Product {
       'price': price,
       'quantity': quantity,
       'categoryId': categoryId,
-      'images': jsonEncode(images), // Serialize to JSON string for database storage
+      'images': jsonEncode(
+        images,
+      ), // Serialize to JSON string for database storage
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };

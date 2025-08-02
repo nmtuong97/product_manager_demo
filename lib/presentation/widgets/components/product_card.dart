@@ -35,7 +35,9 @@ class ProductCard extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: _buildProductImage(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(12.r),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -76,7 +78,11 @@ class ProductCard extends StatelessWidget {
                   ),
                   SizedBox(width: 12.w),
                   Expanded(child: _buildProductInfo(context, isCompact: false)),
-                  Icon(Icons.chevron_right, color: Colors.grey[400], size: 20.w),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey[400],
+                    size: 20.w,
+                  ),
                 ],
               ),
             ),
@@ -93,30 +99,33 @@ class ProductCard extends StatelessWidget {
         color: Colors.grey[200],
         borderRadius: borderRadius,
       ),
-      child: product['image'] != null
-          ? Hero(
-              tag: 'product_${product['id']}_0', // Use index 0 for thumbnail
-              child: ClipRRect(
-                borderRadius: borderRadius,
-                child: CachedNetworkImage(
-                  imageUrl: product['image'],
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.w,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor,
+      child:
+          product['image'] != null
+              ? Hero(
+                tag: 'product_${product['id']}_0', // Use index 0 for thumbnail
+                child: ClipRRect(
+                  borderRadius: borderRadius,
+                  child: CachedNetworkImage(
+                    imageUrl: product['image'],
+                    fit: BoxFit.cover,
+                    placeholder:
+                        (context, url) => Container(
+                          color: Colors.grey[200],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.w,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                    errorWidget:
+                        (context, url, error) => _buildPlaceholderImage(),
                   ),
-                  errorWidget: (context, url, error) => _buildPlaceholderImage(),
                 ),
-              ),
-            )
-          : _buildPlaceholderImage(),
+              )
+              : _buildPlaceholderImage(),
     );
   }
 
@@ -176,6 +185,4 @@ class ProductCard extends StatelessWidget {
       (Match m) => '${m[1]}.',
     );
   }
-
-
 }

@@ -167,12 +167,13 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   String _getCategoryName(int categoryId) {
     final category = _categoryEntities.firstWhere(
       (cat) => cat.id == categoryId,
-      orElse: () => Category(
-        id: null,
-        name: 'Khác',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
+      orElse:
+          () => Category(
+            id: null,
+            name: 'Khác',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
     );
     return category.name;
   }
@@ -182,7 +183,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     setState(() {
       _categoryEntities = categories;
       _categories = ['Tất cả', ...categories.map((cat) => cat.name).toList()];
-      
+
       // Reset selected category if it no longer exists
       if (!_categories.contains(_selectedCategory)) {
         _selectedCategory = 'Tất cả';
@@ -240,20 +241,20 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       (p) => p.id == product['id'],
       orElse: () => throw Exception('Product not found'),
     );
-    
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ProductDetailPage(product: productEntity),
-      ),
-    ).then((result) {
-      if (result == true) {
-        // Product was updated or deleted, refresh the list
-        _loadProducts();
-      }
-    });
+
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => ProductDetailPage(product: productEntity),
+          ),
+        )
+        .then((result) {
+          if (result == true) {
+            // Product was updated or deleted, refresh the list
+            _loadProducts();
+          }
+        });
   }
-
-
 
   Widget _buildProductContent(ProductState state) {
     if (state is ProductLoading) {

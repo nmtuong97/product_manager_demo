@@ -37,7 +37,8 @@ class MockProductsService {
   Future<void> _updateNextId() async {
     final products = await _readProducts();
     if (products.isNotEmpty) {
-      _nextId = products.map((p) => p.id ?? 0).reduce((a, b) => a > b ? a : b) + 1;
+      _nextId =
+          products.map((p) => p.id ?? 0).reduce((a, b) => a > b ? a : b) + 1;
     }
   }
 
@@ -51,21 +52,26 @@ class MockProductsService {
       print('📂 MockProductsService _readProducts:');
       print('   - File path: $dbPath');
       print('   - Raw data length: ${data.length}');
-      
+
       final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
       print('   - JSON list length: ${jsonList.length}');
-      
-      final products = jsonList.map((json) {
-        final productMap = json as Map<String, dynamic>;
-        print('   - Product raw images: ${productMap['images']} (type: ${productMap['images'].runtimeType})');
-        return Product.fromMap(productMap);
-      }).toList();
-      
+
+      final products =
+          jsonList.map((json) {
+            final productMap = json as Map<String, dynamic>;
+            print(
+              '   - Product raw images: ${productMap['images']} (type: ${productMap['images'].runtimeType})',
+            );
+            return Product.fromMap(productMap);
+          }).toList();
+
       print('   - Products loaded: ${products.length}');
       for (int i = 0; i < products.length; i++) {
-        print('   - Product $i: ${products[i].name} - Images: ${products[i].images.length}');
+        print(
+          '   - Product $i: ${products[i].name} - Images: ${products[i].images.length}',
+        );
       }
-      
+
       return products;
     }
 
@@ -77,11 +83,8 @@ class MockProductsService {
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
     final jsonList = products.map((product) => product.toMap()).toList();
-    
 
-    
     await file.writeAsString(json.encode(jsonList));
-
   }
 
   /// Get all products
@@ -191,38 +194,31 @@ class MockProductsService {
     final dbDir = await getApplicationDocumentsDirectory();
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
-    
 
-    
     await file.writeAsString('[]');
     _nextId = 1;
-    
-
   }
 
   /// Upload images for a product and return updated image URLs
-  Future<List<String>?> uploadProductImages(int productId, {int imageCount = 1}) async {
-
-    
+  Future<List<String>?> uploadProductImages(
+    int productId, {
+    int imageCount = 1,
+  }) async {
     final products = await _readProducts();
     final index = products.indexWhere((p) => p.id == productId);
-    
-    if (index == -1) {
 
+    if (index == -1) {
       return null; // Product not found
     }
-    
+
     final product = products[index];
 
-    
     // Generate new sample image URLs for the uploaded images
     final newImageUrls = ImageUrlGenerator.generateImageListForProduct(
       product.name,
       count: imageCount, // Generate URLs based on actual uploaded image count
     );
-    
 
-    
     // Update the product with new image URLs
     final updatedProduct = Product(
       id: product.id,
@@ -235,12 +231,10 @@ class MockProductsService {
       createdAt: product.createdAt,
       updatedAt: DateTime.now().toIso8601String(),
     );
-    
+
     products[index] = updatedProduct;
     await _writeProducts(products);
-    
 
-    
     return newImageUrls;
   }
 }

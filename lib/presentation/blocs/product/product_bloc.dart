@@ -77,7 +77,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ProductAdding());
     try {
       final createdProduct = await _addProduct(event.product);
-      emit(ProductOperationSuccess('Thêm sản phẩm thành công', productId: createdProduct.id));
+      emit(
+        ProductOperationSuccess(
+          'Thêm sản phẩm thành công',
+          productId: createdProduct.id,
+        ),
+      );
 
       // Reload products after successful addition with force refresh
       add(LoadProducts(forceRefresh: true));
@@ -99,8 +104,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductError('Không thể cập nhật sản phẩm: ${e.toString()}'));
     }
   }
-
-
 
   /// Handles deleting a product with loading state
   Future<void> _onDeleteProduct(
