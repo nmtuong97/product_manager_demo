@@ -13,9 +13,11 @@ import 'components/product_search_bar.dart';
 import 'components/product_states.dart';
 import 'components/product_views.dart';
 import 'components/view_toggle.dart';
+import 'components/search_results_header.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/entities/category.dart';
 import 'package:product_manager_demo/presentation/pages/product/product_detail_page.dart';
+import '../../core/utils/text_utils.dart';
 
 class ProductListWidget extends StatefulWidget {
   const ProductListWidget({super.key});
@@ -33,6 +35,9 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   bool _isGridView = true;
   List<Product> _allProducts = [];
   List<Map<String, dynamic>> _filteredProducts = [];
+  List<Map<String, dynamic>> _products = [];
+  bool _isSearching = false;
+  String _currentSearchQuery = '';
 
   @override
   void initState() {
@@ -57,7 +62,9 @@ class _ProductListWidgetState extends State<ProductListWidget> {
             if (state is ProductLoaded) {
               setState(() {
                 _allProducts = state.products;
-                _applyFilters();
+                _products = state.products.map((product) => _convertProductToMap(product)).toList();
+                // Apply current filters to the loaded products
+                _applyCurrentFilters();
               });
             } else if (state is ProductOperationSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -93,6 +100,8 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               onChanged: _onSearchChanged,
               onClear: _onSearchCleared,
               hintText: 'Tìm kiếm sản phẩm...',
+              isLoading: _isSearching,
+              debounceDuration: const Duration(milliseconds: 300),
             ),
             SizedBox(height: 16.h),
 
@@ -103,6 +112,18 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               onCategorySelected: _onCategorySelected,
             ),
             SizedBox(height: 16.h),
+
+            // Search results header
+            SearchResultsHeader(
+              searchQuery: _currentSearchQuery,
+              resultCount: _filteredProducts.length,
+              selectedCategory: _selectedCategory,
+              onClearSearch: () {
+                _searchController.clear();
+                _onSearchCleared();
+              },
+            ),
+            if (_currentSearchQuery.isNotEmpty) SizedBox(height: 12.h),
 
             // View toggle
             ViewToggle(
@@ -135,32 +156,31 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     context.read<CategoryBloc>().add(const LoadCategories());
   }
 
-  void _applyFilters() {
-    var filteredProducts = _allProducts;
-
-    // Filter by category
-    if (_selectedCategory != 'Tất cả') {
-      filteredProducts =
-          filteredProducts.where((product) {
-            final categoryName = _getCategoryName(product.categoryId);
-            return categoryName == _selectedCategory;
-          }).toList();
+  void _performSearch() {
+    final query = _currentSearchQuery.trim();
+    
+    if (query.isEmpty && _selectedCategory == 'Tất cả') {
+      // Load all products when no search query and no category filter
+      context.read<ProductBloc>().add(LoadProducts());
+      return;
     }
-
-    // Filter by search query
-    final searchQuery = _searchController.text.toLowerCase();
-    if (searchQuery.isNotEmpty) {
-      filteredProducts =
-          filteredProducts.where((product) {
-            return product.name.toLowerCase().contains(searchQuery);
-          }).toList();
+    
+    if (query.isNotEmpty) {
+      // Get category ID for search
+      int? categoryId;
+      if (_selectedCategory != 'Tất cả') {
+        categoryId = _getCategoryId(_selectedCategory);
+      }
+      
+      // Perform API search
+      context.read<ProductBloc>().add(SearchProductsEvent(query, categoryId: categoryId));
+    } else if (_selectedCategory != 'Tất cả') {
+      // Load products by category only
+      final categoryId = _getCategoryId(_selectedCategory);
+      if (categoryId != null) {
+        context.read<ProductBloc>().add(LoadProductsByCategory(categoryId));
+      }
     }
-
-    // Convert to Map format for UI compatibility
-    _filteredProducts =
-        filteredProducts
-            .map((product) => _convertProductToMap(product))
-            .toList();
   }
 
   /// Get category name by ID
@@ -178,6 +198,20 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     return category.name;
   }
 
+  /// Get category ID by name
+  int? _getCategoryId(String categoryName) {
+    if (categoryName == 'Tất cả') return null;
+    
+    try {
+      final category = _categoryEntities.firstWhere(
+        (cat) => cat.name == categoryName,
+      );
+      return category.id;
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Update categories list from CategoryBloc state
   void _updateCategoriesFromState(List<Category> categories) {
     setState(() {
@@ -187,7 +221,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       // Reset selected category if it no longer exists
       if (!_categories.contains(_selectedCategory)) {
         _selectedCategory = 'Tất cả';
-        _applyFilters();
+        _performSearch();
       }
     });
   }
@@ -208,23 +242,47 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     };
   }
 
+  /// Apply current search and category filters to loaded products without dispatching events
+  void _applyCurrentFilters() {
+    final query = _currentSearchQuery.trim();
+    
+    List<Map<String, dynamic>> filtered = _products;
+    
+    // Apply search filter with Vietnamese diacritic support
+    if (query.isNotEmpty) {
+      filtered = filtered.where((product) {
+        final name = product['name']?.toString() ?? '';
+        final description = product['description']?.toString() ?? '';
+        return TextUtils.matchesSearch(name, query) || 
+               TextUtils.matchesSearch(description, query);
+      }).toList();
+    }
+    
+    // Apply category filter
+    if (_selectedCategory != 'Tất cả') {
+      filtered = filtered.where((product) {
+        return product['category'] == _selectedCategory;
+      }).toList();
+    }
+    
+    _filteredProducts = filtered;
+  }
+
   // Event handlers
   void _onSearchChanged(String value) {
-    setState(() {
-      _applyFilters();
-    });
+    _currentSearchQuery = value;
+    _performSearch();
   }
 
   void _onSearchCleared() {
-    setState(() {
-      _applyFilters();
-    });
+    _currentSearchQuery = '';
+    _performSearch();
   }
 
   void _onCategorySelected(String category) {
     setState(() {
       _selectedCategory = category;
-      _applyFilters();
+      _performSearch();
     });
   }
 
@@ -257,7 +315,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   }
 
   Widget _buildProductContent(ProductState state) {
-    if (state is ProductLoading) {
+    if (state is ProductLoading || state is ProductSearching) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -288,18 +346,103 @@ class _ProductListWidgetState extends State<ProductListWidget> {
       );
     }
 
-    if (_filteredProducts.isEmpty) {
-      return const ProductEmptyState();
+    // Xử lý trạng thái tìm kiếm
+    if (state is ProductSearchLoaded) {
+      final displayProducts = state.searchResults
+          .map((product) => _convertProductToMap(product))
+          .toList();
+      
+      if (displayProducts.isEmpty) {
+        return ProductEmptyState(
+          searchQuery: state.query,
+          selectedCategory: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+          onClearSearch: () {
+            _searchController.clear();
+            _onSearchCleared();
+            if (_selectedCategory != 'Tất cả') {
+              setState(() {
+                _selectedCategory = 'Tất cả';
+              });
+              _performSearch();
+            }
+          },
+        );
+      }
+      
+      return _isGridView
+          ? ProductGridView(
+            products: displayProducts,
+            onProductTap: _onProductTap,
+          )
+          : ProductListView(
+            products: displayProducts,
+            onProductTap: _onProductTap,
+          );
     }
 
-    return _isGridView
-        ? ProductGridView(
-          products: _filteredProducts,
-          onProductTap: _onProductTap,
-        )
-        : ProductListView(
-          products: _filteredProducts,
-          onProductTap: _onProductTap,
+    // Hiển thị danh sách sản phẩm thông thường
+    if (state is ProductLoaded) {
+      _allProducts = state.products; // Update local cache
+      final displayProducts = state.products
+          .map((product) => _convertProductToMap(product))
+          .toList();
+      
+      if (displayProducts.isEmpty) {
+        return ProductEmptyState(
+          searchQuery: _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
+          selectedCategory: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+          onClearSearch: () {
+            _searchController.clear();
+            _onSearchCleared();
+            if (_selectedCategory != 'Tất cả') {
+              setState(() {
+                _selectedCategory = 'Tất cả';
+              });
+              _performSearch();
+            }
+          },
         );
-  }
+      }
+      
+      return _isGridView
+          ? ProductGridView(
+            products: displayProducts,
+            onProductTap: _onProductTap,
+          )
+          : ProductListView(
+            products: displayProducts,
+            onProductTap: _onProductTap,
+          );
+    }
+
+    // Fallback cho các trạng thái khác
+     final displayProducts = _filteredProducts.isEmpty ? _products : _filteredProducts;
+     
+     if (displayProducts.isEmpty) {
+       return ProductEmptyState(
+         searchQuery: _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
+         selectedCategory: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
+         onClearSearch: () {
+           _searchController.clear();
+           _onSearchCleared();
+           if (_selectedCategory != 'Tất cả') {
+             setState(() {
+               _selectedCategory = 'Tất cả';
+             });
+             _performSearch();
+           }
+         },
+       );
+     }
+
+     return _isGridView
+         ? ProductGridView(
+           products: displayProducts,
+           onProductTap: _onProductTap,
+         )
+         : ProductListView(
+           products: displayProducts,
+           onProductTap: _onProductTap,
+         );
+    }
 }

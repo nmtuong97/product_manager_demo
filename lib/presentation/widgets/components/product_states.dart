@@ -32,11 +32,17 @@ class ProductLoadingState extends StatelessWidget {
 class ProductEmptyState extends StatelessWidget {
   final VoidCallback? onAddProduct;
   final Future<void> Function()? onRefresh;
+  final String? searchQuery;
+  final String? selectedCategory;
+  final VoidCallback? onClearSearch;
 
   const ProductEmptyState({
     super.key,
     this.onAddProduct,
     this.onRefresh,
+    this.searchQuery,
+    this.selectedCategory,
+    this.onClearSearch,
   });
 
   @override
@@ -47,32 +53,28 @@ class ProductEmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.inventory_2_outlined,
-              size: 80.w,
-              color: Colors.grey[400],
-            ),
+            _buildEmptyIcon(),
             SizedBox(height: 16.h),
             Text(
-              'Chưa có sản phẩm nào',
+              _getEmptyTitle(),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[600],
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.h),
             Text(
-              'Hãy thêm sản phẩm đầu tiên của bạn',
+              _getEmptySubtitle(),
               style: TextStyle(
                 fontSize: 16.sp,
                 color: Colors.grey[500],
               ),
+              textAlign: TextAlign.center,
             ),
-            if (onAddProduct != null) ...[
-              SizedBox(height: 24.h),
-              _buildAddProductButton(),
-            ],
+            SizedBox(height: 24.h),
+            _buildActionButtons(),
           ],
         ),
       ),
@@ -91,17 +93,93 @@ class ProductEmptyState extends StatelessWidget {
     return content;
   }
 
-  Widget _buildAddProductButton() {
-    return ElevatedButton.icon(
-      onPressed: onAddProduct,
-      icon: const Icon(Icons.add),
-      label: const Text('Thêm sản phẩm'),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-      ),
+  Widget _buildEmptyIcon() {
+    if (_isSearchResult()) {
+      return Icon(
+        Icons.search_off,
+        size: 80.w,
+        color: Colors.grey[400],
+      );
+    }
+    return Icon(
+      Icons.inventory_2_outlined,
+      size: 80.w,
+      color: Colors.grey[400],
     );
+  }
+
+  String _getEmptyTitle() {
+    if (_isSearchResult()) {
+      return 'Không tìm thấy sản phẩm';
+    }
+    return 'Chưa có sản phẩm nào';
+  }
+
+  String _getEmptySubtitle() {
+    if (_isSearchResult()) {
+      if (searchQuery?.isNotEmpty == true && selectedCategory != 'Tất cả') {
+        return 'Không có sản phẩm nào phù hợp với "${searchQuery}" trong danh mục "${selectedCategory}"';
+      } else if (searchQuery?.isNotEmpty == true) {
+        return 'Không có sản phẩm nào phù hợp với "${searchQuery}"';
+      } else if (selectedCategory != 'Tất cả') {
+        return 'Không có sản phẩm nào trong danh mục "${selectedCategory}"';
+      }
+      return 'Thử tìm kiếm với từ khóa khác';
+    }
+    return 'Hãy thêm sản phẩm đầu tiên của bạn';
+  }
+
+  bool _isSearchResult() {
+    return (searchQuery?.isNotEmpty == true) || (selectedCategory != null && selectedCategory != 'Tất cả');
+  }
+
+  Widget _buildActionButtons() {
+    if (_isSearchResult()) {
+      return Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: onClearSearch,
+            icon: const Icon(Icons.clear),
+            label: const Text('Xóa bộ lọc'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+          ),
+          if (onAddProduct != null) ...[
+            SizedBox(height: 12.h),
+            OutlinedButton.icon(
+              onPressed: onAddProduct,
+              icon: const Icon(Icons.add),
+              label: const Text('Thêm sản phẩm mới'),
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+            ),
+          ],
+        ],
+      );
+    }
+
+    if (onAddProduct != null) {
+      return ElevatedButton.icon(
+        onPressed: onAddProduct,
+        icon: const Icon(Icons.add),
+        label: const Text('Thêm sản phẩm'),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }

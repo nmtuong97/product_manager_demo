@@ -32,6 +32,7 @@ import 'data/services/mock_products_service.dart' as _i539;
 import 'domain/repositories/category_repository.dart' as _i615;
 import 'domain/repositories/product_repository.dart' as _i746;
 import 'domain/usecases/add_category.dart' as _i945;
+import 'domain/usecases/add_multiple_products.dart' as _i741;
 import 'domain/usecases/add_product.dart' as _i365;
 import 'domain/usecases/delete_category.dart' as _i425;
 import 'domain/usecases/delete_product.dart' as _i840;
@@ -39,6 +40,7 @@ import 'domain/usecases/get_categories.dart' as _i664;
 import 'domain/usecases/get_category.dart' as _i677;
 import 'domain/usecases/get_product.dart' as _i671;
 import 'domain/usecases/get_products.dart' as _i240;
+import 'domain/usecases/search_products.dart' as _i699;
 import 'domain/usecases/update_category.dart' as _i173;
 import 'domain/usecases/update_product.dart' as _i249;
 import 'injection.dart' as _i464;
@@ -135,6 +137,10 @@ extension GetItInjectableX on _i174.GetIt {
       () async =>
           _i249.UpdateProduct(await getAsync<_i746.ProductRepository>()),
     );
+    gh.factoryAsync<_i699.SearchProducts>(
+      () async =>
+          _i699.SearchProducts(await getAsync<_i746.ProductRepository>()),
+    );
     gh.factoryAsync<_i840.DeleteProduct>(
       () async =>
           _i840.DeleteProduct(await getAsync<_i746.ProductRepository>()),
@@ -144,6 +150,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factoryAsync<_i671.GetProduct>(
       () async => _i671.GetProduct(await getAsync<_i746.ProductRepository>()),
+    );
+    gh.factoryAsync<_i741.AddMultipleProducts>(
+      () async =>
+          _i741.AddMultipleProducts(await getAsync<_i746.ProductRepository>()),
     );
     gh.factoryAsync<_i492.InitializationService>(
       () async => _i492.InitializationService(
@@ -157,8 +167,10 @@ extension GetItInjectableX on _i174.GetIt {
         getProducts: await getAsync<_i240.GetProducts>(),
         getProduct: await getAsync<_i671.GetProduct>(),
         addProduct: await getAsync<_i365.AddProduct>(),
+        addMultipleProducts: await getAsync<_i741.AddMultipleProducts>(),
         updateProduct: await getAsync<_i249.UpdateProduct>(),
         deleteProduct: await getAsync<_i840.DeleteProduct>(),
+        searchProducts: await getAsync<_i699.SearchProducts>(),
       ),
     );
     gh.factoryAsync<_i815.CategoryBloc>(

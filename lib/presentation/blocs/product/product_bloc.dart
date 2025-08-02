@@ -2,9 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/usecases/add_product.dart';
+import '../../../domain/usecases/add_multiple_products.dart';
 import '../../../domain/usecases/delete_product.dart';
 import '../../../domain/usecases/get_product.dart';
 import '../../../domain/usecases/get_products.dart';
+import '../../../domain/usecases/search_products.dart';
 import '../../../domain/usecases/update_product.dart';
 import 'product_event.dart';
 import 'product_state.dart';
@@ -18,27 +20,36 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final GetProducts _getProducts;
   final GetProduct _getProduct;
   final AddProduct _addProduct;
+  final AddMultipleProducts _addMultipleProducts;
   final UpdateProduct _updateProduct;
   final DeleteProduct _deleteProduct;
+  final SearchProducts _searchProducts;
 
   ProductBloc({
     required GetProducts getProducts,
     required GetProduct getProduct,
     required AddProduct addProduct,
+    required AddMultipleProducts addMultipleProducts,
     required UpdateProduct updateProduct,
     required DeleteProduct deleteProduct,
+    required SearchProducts searchProducts,
   }) : _getProducts = getProducts,
        _getProduct = getProduct,
        _addProduct = addProduct,
+       _addMultipleProducts = addMultipleProducts,
        _updateProduct = updateProduct,
        _deleteProduct = deleteProduct,
+       _searchProducts = searchProducts,
        super(ProductInitial()) {
     on<LoadProducts>(_onLoadProducts);
     on<LoadProductById>(_onLoadProductById);
     on<AddProductEvent>(_onAddProduct);
+    on<AddMultipleProductsEvent>(_onAddMultipleProducts);
     on<UpdateProductEvent>(_onUpdateProduct);
     on<DeleteProductEvent>(_onDeleteProduct);
     on<ResetProductState>(_onResetProductState);
+    on<SearchProductsEvent>(_onSearchProducts);
+    on<LoadProductsByCategory>(_onLoadProductsByCategory);
   }
 
   /// Handles loading products with optional force refresh
@@ -91,6 +102,27 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     }
   }
 
+  /// Handles adding multiple products with loading state
+  Future<void> _onAddMultipleProducts(
+    AddMultipleProductsEvent event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductAdding());
+    try {
+      await _addMultipleProducts(event.products);
+      emit(
+        ProductOperationSuccess(
+          'Thêm ${event.products.length} sản phẩm thành công',
+        ),
+      );
+
+      // Reload products after successful addition with force refresh
+      add(LoadProducts(forceRefresh: true));
+    } catch (e) {
+      emit(ProductError('Không thể thêm nhiều sản phẩm: ${e.toString()}'));
+    }
+  }
+
   /// Handles updating an existing product with loading state
   Future<void> _onUpdateProduct(
     UpdateProductEvent event,
@@ -125,5 +157,43 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) {
     emit(ProductInitial());
+  }
+
+  /// Handles searching products with loading state
+  Future<void> _onSearchProducts(
+    SearchProductsEvent event,
+    Emitter<ProductState> emit,
+  ) async {
+    if (event.query.trim().isEmpty) {
+      emit(ProductInitial());
+      return;
+    }
+
+    emit(ProductSearching(event.query));
+    try {
+      final searchResults = await _searchProducts(event.query, categoryId: event.categoryId);
+      emit(ProductSearchLoaded(
+        searchResults: searchResults,
+        query: event.query,
+        categoryId: event.categoryId,
+      ));
+    } catch (e) {
+      emit(ProductError('Không thể tìm kiếm sản phẩm: ${e.toString()}'));
+    }
+  }
+
+  /// Handles loading products by category
+  Future<void> _onLoadProductsByCategory(
+    LoadProductsByCategory event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductLoading());
+    try {
+      final products = await _getProducts();
+      final filteredProducts = products.where((product) => product.categoryId == event.categoryId).toList();
+      emit(ProductLoaded(filteredProducts));
+    } catch (e) {
+      emit(ProductError('Không thể tải sản phẩm theo danh mục: ${e.toString()}'));
+    }
   }
 }

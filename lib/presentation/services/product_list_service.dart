@@ -69,9 +69,6 @@ class ProductListService {
 
   /// Load products from mock service
   Future<List<Map<String, dynamic>>> loadProducts() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 500));
-
     // Get products from mock service and convert to Map format
     final products = await _mockProductsService.getAllProducts();
     return products.map((product) => _convertProductToMap(product)).toList();

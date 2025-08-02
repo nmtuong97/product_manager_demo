@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,6 +16,9 @@ import '../../presentation/services/image_url_generator.dart';
 class MockProductsService {
   static const String _fileName = 'products.json';
   int _nextId = 1;
+  
+  // Completer để đảm bảo chỉ có 1 file operation tại 1 thời điểm
+  Completer<void>? _fileOperationCompleter;
 
   MockProductsService();
 
@@ -42,22 +46,30 @@ class MockProductsService {
     }
   }
 
+  /// Thread-safe file read với retry mechanism
   Future<List<Product>> _readProducts() async {
+    // Đợi operation trước đó hoàn thành
+    while (_fileOperationCompleter != null && !_fileOperationCompleter!.isCompleted) {
+      await _fileOperationCompleter!.future;
+    }
+    
     final dbDir = await getApplicationDocumentsDirectory();
     final dbPath = '${dbDir.path}/$_fileName';
     final file = File(dbPath);
 
     if (await file.exists()) {
-      final data = await file.readAsString();
-      print('📂 MockProductsService _readProducts:');
-      print('   - File path: $dbPath');
-      print('   - Raw data length: ${data.length}');
+      // Retry mechanism cho việc đọc file
+      for (int attempt = 0; attempt < 3; attempt++) {
+        try {
+          final data = await file.readAsString();
+          print('📂 MockProductsService _readProducts (attempt ${attempt + 1}):');
+          print('   - File path: $dbPath');
+          print('   - Raw data length: ${data.length}');
 
-      final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
-      print('   - JSON list length: ${jsonList.length}');
+          final List<dynamic> jsonList = json.decode(data) as List<dynamic>;
+          print('   - JSON list length: ${jsonList.length}');
 
-      final products =
-          jsonList.map((json) {
+          final products = jsonList.map((json) {
             final productMap = json as Map<String, dynamic>;
             print(
               '   - Product raw images: ${productMap['images']} (type: ${productMap['images'].runtimeType})',
@@ -65,26 +77,62 @@ class MockProductsService {
             return Product.fromMap(productMap);
           }).toList();
 
-      print('   - Products loaded: ${products.length}');
-      for (int i = 0; i < products.length; i++) {
-        print(
-          '   - Product $i: ${products[i].name} - Images: ${products[i].images.length}',
-        );
-      }
+          print('   - Products loaded: ${products.length}');
+          for (int i = 0; i < products.length; i++) {
+            print(
+              '   - Product $i: ${products[i].name} - Images: ${products[i].images.length}',
+            );
+          }
 
-      return products;
+          return products;
+        } catch (e) {
+          print('⚠️ Read attempt ${attempt + 1} failed: $e');
+          if (attempt == 2) {
+            print('❌ All read attempts failed, returning empty list');
+            return [];
+          }
+          // Đợi một chút trước khi retry
+          await Future.delayed(Duration(milliseconds: 100 * (attempt + 1)));
+        }
+      }
     }
 
     return [];
   }
 
+  /// Thread-safe file write với atomic operation
   Future<void> _writeProducts(List<Product> products) async {
-    final dbDir = await getApplicationDocumentsDirectory();
-    final dbPath = '${dbDir.path}/$_fileName';
-    final file = File(dbPath);
-    final jsonList = products.map((product) => product.toMap()).toList();
-
-    await file.writeAsString(json.encode(jsonList));
+    // Đợi operation trước đó hoàn thành
+    while (_fileOperationCompleter != null && !_fileOperationCompleter!.isCompleted) {
+      await _fileOperationCompleter!.future;
+    }
+    
+    // Tạo completer mới cho operation này
+    _fileOperationCompleter = Completer<void>();
+    
+    try {
+      final dbDir = await getApplicationDocumentsDirectory();
+      final dbPath = '${dbDir.path}/$_fileName';
+      final tempPath = '${dbPath}.tmp';
+      
+      final jsonList = products.map((product) => product.toMap()).toList();
+      final jsonString = json.encode(jsonList);
+      
+      // Atomic write: ghi vào file tạm trước
+      final tempFile = File(tempPath);
+      await tempFile.writeAsString(jsonString);
+      
+      // Sau đó rename để thay thế file gốc (atomic operation)
+      await tempFile.rename(dbPath);
+      
+      print('✅ Successfully wrote ${products.length} products to file');
+    } catch (e) {
+      print('❌ Error writing products to file: $e');
+      rethrow;
+    } finally {
+      // Hoàn thành operation
+      _fileOperationCompleter!.complete();
+    }
   }
 
   /// Get all products
@@ -182,11 +230,38 @@ class MockProductsService {
     await _writeProducts([]);
   }
 
-  /// Add multiple products
+  /// Add multiple products với batch operation để tránh race condition
   Future<void> addProducts(List<Product> products) async {
+    if (products.isEmpty) return;
+    
+    // Đọc products hiện tại một lần
+    final existingProducts = await _readProducts();
+    final now = DateTime.now().toIso8601String();
+    
+    // Tạo tất cả products mới với ID tăng dần
+    final newProducts = <Product>[];
     for (final product in products) {
-      await addProduct(product);
+      final newProduct = Product(
+        id: _nextId++,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        categoryId: product.categoryId,
+        images: product.images,
+        createdAt: now,
+        updatedAt: now,
+      );
+      newProducts.add(newProduct);
     }
+    
+    // Thêm tất cả vào danh sách hiện tại
+    existingProducts.addAll(newProducts);
+    
+    // Ghi một lần duy nhất
+    await _writeProducts(existingProducts);
+    
+    print('✅ Successfully added ${products.length} products in batch');
   }
 
   /// Clear all products (for testing/debugging)

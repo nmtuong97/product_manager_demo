@@ -46,6 +46,17 @@ class AddProductEvent extends ProductEvent {
   List<Object?> get props => [product];
 }
 
+/// Event to add multiple products at once (batch operation)
+class AddMultipleProductsEvent extends ProductEvent {
+  /// The list of products to be added
+  final List<Product> products;
+
+  const AddMultipleProductsEvent(this.products);
+
+  @override
+  List<Object?> get props => [products];
+}
+
 /// Event to update an existing product
 class UpdateProductEvent extends ProductEvent {
   /// The product with updated information
@@ -71,4 +82,29 @@ class DeleteProductEvent extends ProductEvent {
 /// Event to reset product state
 class ResetProductState extends ProductEvent {
   const ResetProductState();
+}
+
+/// Event to search products
+class SearchProductsEvent extends ProductEvent {
+  /// The search query string
+  final String query;
+  
+  /// Optional category filter
+  final int? categoryId;
+
+  const SearchProductsEvent(this.query, {this.categoryId});
+
+  @override
+  List<Object?> get props => [query, categoryId];
+}
+
+/// Event to load products by category
+class LoadProductsByCategory extends ProductEvent {
+  /// The category ID to filter products
+  final int categoryId;
+
+  const LoadProductsByCategory(this.categoryId);
+
+  @override
+  List<Object?> get props => [categoryId];
 }

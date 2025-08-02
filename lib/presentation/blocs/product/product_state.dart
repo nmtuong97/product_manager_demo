@@ -89,3 +89,48 @@ class ProductUpdating extends ProductState {
 class ProductDeleting extends ProductState {
   const ProductDeleting();
 }
+
+/// State when search results are loaded
+class ProductSearchLoaded extends ProductState {
+  /// List of search results
+  final List<Product> searchResults;
+  
+  /// The search query that produced these results
+  final String query;
+  
+  /// Optional category filter applied
+  final int? categoryId;
+
+  const ProductSearchLoaded({
+    required this.searchResults,
+    required this.query,
+    this.categoryId,
+  });
+
+  /// Creates a copy of this state with updated values
+  ProductSearchLoaded copyWith({
+    List<Product>? searchResults,
+    String? query,
+    int? categoryId,
+  }) {
+    return ProductSearchLoaded(
+      searchResults: searchResults ?? this.searchResults,
+      query: query ?? this.query,
+      categoryId: categoryId ?? this.categoryId,
+    );
+  }
+
+  @override
+  List<Object?> get props => [searchResults, query, categoryId];
+}
+
+/// State when searching products is in progress
+class ProductSearching extends ProductState {
+  /// The current search query
+  final String query;
+  
+  const ProductSearching(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
