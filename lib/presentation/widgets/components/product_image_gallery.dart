@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/services/image_cache_manager.dart';
 
 class ProductImageGallery extends StatefulWidget {
   final List<String> images;
@@ -101,45 +101,12 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(color: Colors.grey[100]),
-      child: CachedNetworkImage(
+      child: CachedProductImage(
         imageUrl: imageUrl,
         fit: BoxFit.cover,
-        placeholder:
-            (context, url) => Container(
-              color: Colors.grey[200],
-              child: Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.w,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-            ),
-        errorWidget:
-            (context, url, error) => Container(
-              color: Colors.grey[200],
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.broken_image,
-                      size: 48.w,
-                      color: Colors.grey[400],
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Lỗi tải ảnh',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        // Không set heroTag ở đây vì đã có Hero widget bên ngoài
+        width: double.infinity,
+        height: double.infinity,
       ),
     );
   }
@@ -316,43 +283,39 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
           minScale: 1.0,
           maxScale: 4.0,
           child: Center(
-            child: Hero(
-              tag: '${widget.heroTag}_$index',
-              child: CachedNetworkImage(
-                imageUrl: widget.images[index],
-                fit: BoxFit.contain,
-                width: double.infinity,
-                height: double.infinity,
-                placeholder:
-                    (context, url) => Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.w,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Colors.white,
-                        ),
+            child: CachedProductImage(
+              imageUrl: widget.images[index],
+              fit: BoxFit.contain,
+              width: double.infinity,
+              height: double.infinity,
+              heroTag: '${widget.heroTag}_$index',
+              placeholder: Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.w,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Colors.white,
+                  ),
+                ),
+              ),
+              errorWidget: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.broken_image,
+                      size: 64.w,
+                      color: Colors.white54,
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Không thể tải ảnh',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white54,
                       ),
                     ),
-                errorWidget:
-                    (context, url, error) => Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.broken_image,
-                            size: 64.w,
-                            color: Colors.white54,
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            'Không thể tải ảnh',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Colors.white54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/services/image_cache_manager.dart';
 
 /// A reusable product card component that can display in grid or list format
 class ProductCard extends StatelessWidget {
@@ -99,33 +99,15 @@ class ProductCard extends StatelessWidget {
         color: Colors.grey[200],
         borderRadius: borderRadius,
       ),
-      child:
-          product['image'] != null
-              ? Hero(
-                tag: 'product_${product['id']}_0', // Use index 0 for thumbnail
-                child: ClipRRect(
-                  borderRadius: borderRadius,
-                  child: CachedNetworkImage(
-                    imageUrl: product['image'],
-                    fit: BoxFit.cover,
-                    placeholder:
-                        (context, url) => Container(
-                          color: Colors.grey[200],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.w,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                    errorWidget:
-                        (context, url, error) => _buildPlaceholderImage(),
-                  ),
-                ),
-              )
-              : _buildPlaceholderImage(),
+      child: product['image'] != null
+          ? CachedProductImage(
+              imageUrl: product['image'],
+              fit: BoxFit.cover,
+              borderRadius: borderRadius,
+              heroTag: 'product_${product['id']}_0', // Use index 0 for thumbnail
+              errorWidget: _buildPlaceholderImage(),
+            )
+          : _buildPlaceholderImage(),
     );
   }
 
