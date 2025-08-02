@@ -41,7 +41,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     on<DeleteCategoryEvent>(_onDeleteCategory);
   }
 
-  /// Handles loading categories with optional force refresh
+  /// Handles loading categories with optional force refresh and sorting by updateTime (newest first)
   Future<void> _onLoadCategories(
     LoadCategories event,
     Emitter<CategoryState> emit,
@@ -49,7 +49,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     try {
       emit(const CategoryLoading());
       final categories = await _getCategories(event.forceRefresh);
-      emit(CategoryLoaded(categories));
+      // Sort categories by updatedAt descending (newest first)
+      final sortedCategories = List<Category>.from(categories)
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      emit(CategoryLoaded(sortedCategories));
     } catch (e) {
       emit(CategoryError('Không thể tải danh sách danh mục: ${e.toString()}'));
     }
@@ -80,7 +83,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       final currentState = state;
       if (currentState is CategoryLoaded) {
         final updatedCategories = List<Category>.from(currentState.categories)
-          ..add(event.category);
+          ..add(event.category)
+          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending
         emit(CategoryLoaded(updatedCategories));
       }
 
@@ -106,7 +110,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         final updatedCategories =
             currentState.categories.map((c) {
               return c.id == event.category.id ? event.category : c;
-            }).toList();
+            }).toList()
+          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending
         emit(CategoryLoaded(updatedCategories));
       }
 
@@ -135,7 +140,8 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
         // Remove the deleted category from the list directly
         final updatedCategories = List<Category>.from(currentState.categories)
-          ..removeWhere((category) => category.id == event.categoryId);
+          ..removeWhere((category) => category.id == event.categoryId)
+          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending
 
         final updatedDeletingIds = Set<String>.from(
           currentState.deletingCategoryIds,

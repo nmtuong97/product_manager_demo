@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../domain/entities/product.dart';
 import '../../../domain/usecases/add_product.dart';
 import '../../../domain/usecases/add_multiple_products.dart';
 import '../../../domain/usecases/delete_product.dart';
@@ -52,7 +53,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadProductsByCategory>(_onLoadProductsByCategory);
   }
 
-  /// Handles loading products with optional force refresh
+  /// Handles loading products with optional force refresh and sorting by updateTime (newest first)
   Future<void> _onLoadProducts(
     LoadProducts event,
     Emitter<ProductState> emit,
@@ -60,7 +61,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       emit(const ProductLoading());
       final products = await _getProducts(forceRefresh: event.forceRefresh);
-      emit(ProductLoaded(products));
+      // Sort products by updatedAt descending (newest first)
+      final sortedProducts = List<Product>.from(products)
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      emit(ProductLoaded(sortedProducts));
     } catch (e) {
       emit(ProductError('Không thể tải danh sách sản phẩm: ${e.toString()}'));
     }
@@ -159,7 +163,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(const ProductInitial());
   }
 
-  /// Handles searching products with loading state
+  /// Handles searching products with loading state and sorting by updateTime (newest first)
   Future<void> _onSearchProducts(
     SearchProductsEvent event,
     Emitter<ProductState> emit,
@@ -175,9 +179,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         event.query,
         categoryId: event.categoryId,
       );
+      // Sort search results by updatedAt descending (newest first)
+      final sortedResults = List<Product>.from(searchResults)
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
       emit(
         ProductSearchLoaded(
-          searchResults: searchResults,
+          searchResults: sortedResults,
           query: event.query,
           categoryId: event.categoryId,
         ),
@@ -187,7 +194,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     }
   }
 
-  /// Handles loading products by category
+  /// Handles loading products by category with sorting by updateTime (newest first)
   Future<void> _onLoadProductsByCategory(
     LoadProductsByCategory event,
     Emitter<ProductState> emit,
@@ -195,10 +202,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(const ProductLoading());
     try {
       final products = await _getProducts();
-      final filteredProducts =
-          products
-              .where((product) => product.categoryId == event.categoryId)
-              .toList();
+      final filteredProducts = products
+          .where((product) => product.categoryId == event.categoryId)
+          .toList()
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)); // Sort by updatedAt descending (newest first)
       emit(ProductLoaded(filteredProducts));
     } catch (e) {
       emit(
