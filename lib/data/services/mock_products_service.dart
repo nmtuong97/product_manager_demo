@@ -293,4 +293,74 @@ class MockProductsService {
 
     return newImageUrls;
   }
+
+  /// Process mixed images (files and URLs) for a product
+  /// Files will be converted to URLs, existing URLs will be kept
+  Future<List<String>?> processProductImages(
+    int productId,
+    List<String> imagePaths, // Mix of file paths and URLs
+  ) async {
+    final products = await _readProducts();
+    final index = products.indexWhere((p) => p.id == productId);
+
+    if (index == -1) {
+      return null; // Product not found
+    }
+
+    final product = products[index];
+    final List<String> processedImages = [];
+    int newFileCount = 0;
+
+    // Count new files first
+    for (final imagePath in imagePaths) {
+      if (!_isUrl(imagePath)) {
+        newFileCount++;
+      }
+    }
+
+    // Generate URLs for new files
+    List<String> newUrls = [];
+    if (newFileCount > 0) {
+      newUrls = ImageUrlGenerator.generateImageListForProduct(
+        product.name,
+        count: newFileCount,
+      );
+    }
+
+    // Process each image path and build final list
+    int urlIndex = 0;
+    for (final imagePath in imagePaths) {
+      if (_isUrl(imagePath)) {
+        // Keep existing URL
+        processedImages.add(imagePath);
+      } else {
+        // Replace file path with generated URL
+        processedImages.add(newUrls[urlIndex]);
+        urlIndex++;
+      }
+    }
+
+    // Update the product with processed image URLs
+    final updatedProduct = Product(
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      quantity: product.quantity,
+      categoryId: product.categoryId,
+      images: processedImages,
+      createdAt: product.createdAt,
+      updatedAt: DateTime.now(),
+    );
+
+    products[index] = updatedProduct;
+    await _writeProducts(products);
+
+    return processedImages;
+  }
+
+  /// Check if a string is a URL
+  bool _isUrl(String path) {
+    return path.startsWith('http://') || path.startsWith('https://') || path.startsWith('assets/');
+  }
 }

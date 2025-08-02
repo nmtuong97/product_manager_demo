@@ -169,17 +169,22 @@ class MockProductInterceptor extends Interceptor {
       }
 
       try {
-        // Get the number of images from request data
+        // Get the images from request data (mix of file paths and URLs)
         final data = options.data as Map<String, dynamic>?;
         final imagesList = data?['images'] as List?;
-        final imageCount = imagesList?.length ?? 1;
+        
+        if (imagesList == null || imagesList.isEmpty) {
+          handler.reject(_badRequest(options, 'Images list is required'));
+          return;
+        }
 
-        final updatedImages = await _mockService.uploadProductImages(
+        final imagePaths = List<String>.from(imagesList);
+        final processedImages = await _mockService.processProductImages(
           id,
-          imageCount: imageCount,
+          imagePaths,
         );
 
-        if (updatedImages == null) {
+        if (processedImages == null) {
           handler.reject(_notFound(options));
           return;
         }
@@ -187,13 +192,13 @@ class MockProductInterceptor extends Interceptor {
         handler.resolve(
           _successResponse(options, {
             'data': {
-              'images': updatedImages,
-              'message': 'Images uploaded successfully',
+              'images': processedImages,
+              'message': 'Images processed successfully',
             },
           }),
         );
       } catch (e) {
-        handler.reject(_badRequest(options, 'Failed to upload images: $e'));
+        handler.reject(_badRequest(options, 'Failed to process images: $e'));
       }
       return;
     }

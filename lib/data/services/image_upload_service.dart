@@ -91,6 +91,41 @@ class ImageUploadService {
     }
   }
 
+  /// Process mixed images (files and URLs) for product update
+  /// Files will be uploaded and converted to URLs, existing URLs will be kept
+  Future<List<String>> processProductImages(
+    int productId,
+    List<File> newFiles,
+    List<String> existingUrls,
+  ) async {
+    try {
+      // Simulate processing delay
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Combine file paths and existing URLs
+      final List<String> allImagePaths = [
+        ...newFiles.map((file) => file.path),
+        ...existingUrls,
+      ];
+
+      // Call mock API endpoint
+      final response = await _dio.post(
+        '/api/products/$productId/images',
+        data: {'images': allImagePaths},
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        final imageUrls = List<String>.from(data['images'] as List);
+        return imageUrls;
+      } else {
+        throw Exception('Processing failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Không thể xử lý ảnh: $e');
+    }
+  }
+
   /// Show image source selection dialog
   Future<File?> showImageSourceDialog({
     required Future<File?> Function() onCamera,

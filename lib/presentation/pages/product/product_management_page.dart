@@ -259,6 +259,30 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     }
   }
 
+  /// Process images for product update (handles both new files and existing URLs)
+  Future<List<String>> _processImagesForUpdate(int productId) async {
+    setState(() {
+      _isUploadingImages = true;
+    });
+
+    try {
+      final List<String> processedUrls = await _imageUploadService
+          .processProductImages(productId, _selectedImages, _uploadedImageUrls);
+
+      setState(() {
+        _isUploadingImages = false;
+      });
+
+      return processedUrls;
+    } catch (e) {
+      setState(() {
+        _isUploadingImages = false;
+      });
+      _showSnackBar('Lỗi khi xử lý ảnh: $e', isError: true);
+      rethrow;
+    }
+  }
+
   void _showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -271,6 +295,15 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
         duration: Duration(seconds: isError ? 4 : 2),
       ),
     );
+  }
+
+  /// Helper method to compare two lists for equality
+  bool _listsEqual(List<String> list1, List<String> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
   }
 
   Future<void> _handlePostProductSuccess(ProductOperationSuccess state) async {
@@ -1375,7 +1408,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     );
   }
 
-  void _handleSubmit() {
+  Future<void> _handleSubmit() async {
     // Validate all fields one more time
     _validateName(_nameController.text);
     _validateDescription(_descriptionController.text);
@@ -1404,41 +1437,67 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
 
     final now = DateTime.now();
 
-    // Use uploaded images or generate default ones
-    List<String> finalImages = [];
-    if (_uploadedImageUrls.isNotEmpty) {
-      finalImages = List.from(_uploadedImageUrls);
-    } else if (_isEditMode && widget.product != null) {
-      finalImages = List.from(widget.product!.images);
-    } else {
-      // Generate default images for new products without uploaded images
-      finalImages = ImageUrlGenerator.generateImageListForProduct(
-        _nameController.text.trim(),
-        count: 3,
-      );
-    }
-
     // Parse price from formatted string
     final String priceDigitsOnly = _priceController.text.replaceAll(
       RegExp(r'[^0-9]'),
       '',
     );
 
-    final product = Product(
-      id: _isEditMode ? widget.product!.id : null,
-      name: _nameController.text.trim(),
-      description: _descriptionController.text.trim(),
-      price: double.parse(priceDigitsOnly),
-      quantity: int.parse(_quantityController.text),
-      categoryId: _selectedCategory!.id!,
-      images: finalImages,
-      createdAt: _isEditMode ? widget.product!.createdAt : now,
-      updatedAt: now,
-    );
+    if (_isEditMode && widget.product != null) {
+      // For update mode, process images first if there are changes
+      List<String> finalImages;
+      
+      if (_selectedImages.isNotEmpty || !_listsEqual(_uploadedImageUrls, widget.product!.images)) {
+        // There are image changes, process them
+        try {
+          finalImages = await _processImagesForUpdate(widget.product!.id!);
+        } catch (e) {
+          // Error already shown in _processImagesForUpdate
+          return;
+        }
+      } else {
+        // No image changes, keep existing images
+        finalImages = List.from(widget.product!.images);
+      }
 
-    if (_isEditMode) {
+      final product = Product(
+        id: widget.product!.id,
+        name: _nameController.text.trim(),
+        description: _descriptionController.text.trim(),
+        price: double.parse(priceDigitsOnly),
+        quantity: int.parse(_quantityController.text),
+        categoryId: _selectedCategory!.id!,
+        images: finalImages,
+        createdAt: widget.product!.createdAt,
+        updatedAt: now,
+      );
+
       context.read<ProductBloc>().add(UpdateProductEvent(product));
     } else {
+      // For create mode, use existing logic
+      List<String> finalImages = [];
+      if (_uploadedImageUrls.isNotEmpty) {
+        finalImages = List.from(_uploadedImageUrls);
+      } else {
+        // Generate default images for new products without uploaded images
+        finalImages = ImageUrlGenerator.generateImageListForProduct(
+          _nameController.text.trim(),
+          count: 3,
+        );
+      }
+
+      final product = Product(
+        id: null,
+        name: _nameController.text.trim(),
+        description: _descriptionController.text.trim(),
+        price: double.parse(priceDigitsOnly),
+        quantity: int.parse(_quantityController.text),
+        categoryId: _selectedCategory!.id!,
+        images: finalImages,
+        createdAt: now,
+        updatedAt: now,
+      );
+
       context.read<ProductBloc>().add(AddProductEvent(product));
     }
   }
