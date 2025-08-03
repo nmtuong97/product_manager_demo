@@ -1,6 +1,5 @@
-# Product Manager Demo / Ứng dụng Quản lý Sản phẩm
+# Ứng Dụng Quản Lý Sản Phẩm
 
-<!-- Badges -->
 [![Flutter](https://img.shields.io/badge/Flutter-3.7.2+-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -8,192 +7,70 @@
 
 > 🇺🇸 [English](README.md) | 🇻🇳 Tiếng Việt
 
-## 📖 Tổng quan
+## 📖 Tổng Quan
 
-Ứng dụng Flutter quản lý sản phẩm với kiến trúc offline-first, real-time synchronization và UI/UX hiện đại. Được phát triển theo nguyên tắc Clean Architecture và industry best practices.
+Ứng dụng Flutter quản lý sản phẩm với kiến trúc offline-first, đồng bộ thời gian thực và UI/UX hiện đại, tuân thủ Clean Architecture.
 
-## ✨ Tính năng theo từng màn hình
+## ✨ Tính Năng Chính
 
-### 🏠 **Home Page**
-- Hiển thị danh sách sản phẩm (chuyển đổi grid/list view)
-- Real-time search với category filtering
-- Pull-to-refresh functionality
-- Generate random sample products
-- Navigate đến category management
-- Thêm sản phẩm mới qua floating action button
+- **Quản Lý Danh Mục**: Hiển thị, thêm, sửa, xóa danh mục; lọc sản phẩm theo danh mục.
+- **Quản Lý Sản Phẩm**: Danh sách (lưới/danh sách), chi tiết, thêm/sửa/xóa; tạo dữ liệu mẫu.
+- **Tìm Kiếm**: Theo từ khóa, danh mục; kết quả thời gian thực với thông báo.
+- **Tải Lên Ảnh**: Hỗ trợ nhiều ảnh từ máy ảnh/thư viện; xem trước, tạo URL giả lập.
+- **Tiện Ích**: Kéo để làm mới, chuyển chế độ xem, hỗ trợ ngoại tuyến, xử lý lỗi thân thiện.
+- **API Giả Lập**: Các endpoint GET/POST/PUT/DELETE cho sản phẩm và danh mục qua interceptor.
 
-### 📱 **Product Detail Page**
-- Full-screen image gallery với zoom và Hero animations
-- Hiển thị thông tin sản phẩm đầy đủ
-- Chức năng edit và delete sản phẩm
-- Category name resolution
-- Responsive layout với custom scroll view
+## 🛠️ Ngăn Xếp Công Nghệ
 
-### ✏️ **Product Management Page**
-- Thêm sản phẩm mới hoặc chỉnh sửa sản phẩm hiện có
-- Form validation cho tất cả fields
-- Multi-image picker (camera/gallery)
-- Category dropdown selection
-- Auto-generate sample product data
-- Price formatting với thousand separators
+| Gói | Phiên Bản | Mục Đích |
+|-----|-----------|----------|
+| flutter_bloc | ^9.1.1 | Quản lý trạng thái |
+| get_it | ^8.1.0 | Tiêm phụ thuộc |
+| injectable | ^2.3.2 | Tạo mã DI |
+| dio | ^5.8.0+1 | Client HTTP |
+| sqflite | ^2.4.2 | SQLite cục bộ |
+| flutter_screenutil | ^5.9.0 | UI responsive |
+| cached_network_image | ^3.4.1 | Lưu đệm ảnh |
+| flutter_cache_manager | ^3.4.1 | Quản lý bộ đệm cho cached_network_image |
+| image_picker | ^1.0.4 | Chọn ảnh |
+| http_mock_adapter | ^0.6.1 | API giả lập kết hợp với dio |
+| intl | ^0.20.2 | Bản địa hóa, định dạng tiền tệ |
+| equatable | ^2.0.7 | So sánh giá trị |
 
-### 📂 **Category Management**
-- Xem và quản lý product categories
-- Category-based product filtering
-
-## 🚀 Các tính năng chi tiết
-
-### 📂 **Danh mục**
-- **Danh sách**: Hiển thị tất cả danh mục
-- **Pull to refresh**: Làm mới dữ liệu danh mục
-- **Thêm mới**: Tạo danh mục sản phẩm mới
-- **Chỉnh sửa**: Sửa đổi thông tin danh mục hiện có
-- **Xóa**: Xóa danh mục với xác nhận
-
-### 📦 **Sản phẩm**
-- **Danh sách**: Hiển thị sản phẩm dạng list hoặc grid
-- **Pull to refresh**: Làm mới dữ liệu sản phẩm
-- **Cache image**: Tối ưu hóa tải và cache hình ảnh
-- **Chi tiết**: Hiển thị thông tin sản phẩm đầy đủ
-- **View full screen images**: Xem ảnh sản phẩm toàn màn hình
-- **Thêm mới**: Tạo sản phẩm mới với form validation
-- **Chỉnh sửa**: Sửa đổi thông tin sản phẩm hiện có
-- **Xóa**: Xóa sản phẩm với xác nhận
-
-### 🔍 **Tính năng tìm kiếm**
-- **Search by keyword**: Tìm kiếm sản phẩm theo tên hoặc mô tả
-- **Search by category**: Lọc sản phẩm theo danh mục
-- **Search result**: Hiển thị "Found <total> products for <keyword>" mỗi khi search
-- **Real-time search**: Kết quả tìm kiếm tức thì khi gõ
-
-### 🛠️ **Tính năng tiện ích**
-- **Tạo mới ngẫu nhiên 10 sản phẩm**: Sinh dữ liệu mẫu hàng loạt
-- **Tạo ngẫu nhiên thông tin của 1 sản phẩm**: Sinh thông tin sản phẩm ngẫu nhiên
-- **Reset dữ liệu**: Xóa và tạo lại dữ liệu mẫu
-
-### 🌐 **Mock API**
-
-Tạo một client mock giả lập API trực tiếp ở thiết bị và xử lý request/response thông qua interceptor:
-
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| GET    | `/products` | Danh sách sản phẩm (lọc: `q`, `categoryId`) |
-| GET    | `/products/{id}` | Chi tiết sản phẩm |
-| POST   | `/products` | Tạo mới sản phẩm |
-| PUT    | `/products/{id}` | Cập nhật sản phẩm |
-| DELETE | `/products/{id}` | Xóa sản phẩm |
-| POST   | `/products/{id}/images` | Upload ảnh |
-| GET    | `/categories` | Danh sách danh mục |
-
-### 📸 **Tính năng upload image**
-- **Khi chọn/chụp ảnh**: Hiển thị preview ảnh local ngay lập tức
-- **Khi upload sẽ gửi đường dẫn của file lên mock API**:
-  - Nếu trong danh sách có đường dẫn local → gen URL ngẫu nhiên → cập nhật vào product
-  - Nếu trong danh sách có URL → giữ nguyên các index là URL (sử dụng trong tính năng edit)
-- **Multi-image support**: Xử lý nhiều ảnh cho mỗi sản phẩm
-- **Camera/Gallery integration**: Chọn từ camera hoặc thư viện ảnh
-
-## 🛠️ Tech Stack & Sử dụng
-
-| Package | Version | Sử dụng trong dự án |
-|---------|---------|---------------------|
-| **flutter_bloc** | `^9.1.1` | State management cho ProductBloc, CategoryBloc |
-| **get_it** | `^8.1.0` | Dependency injection container |
-| **injectable** | `^2.3.2` | Code generation cho DI setup |
-| **dio** | `^5.8.0+1` | HTTP client cho mock API calls |
-| **sqflite** | `^2.4.2` | Local SQLite database storage |
-| **flutter_screenutil** | `^5.9.0` | Responsive UI sizing (w, h, sp, r) |
-| **cached_network_image** | `^3.4.1` | Image caching và loading |
-| **flutter_cache_manager** | `^3.4.1` | Advanced image cache management |
-| **image_picker** | `^1.0.4` | Camera/gallery image selection |
-| **http_mock_adapter** | `^0.6.1` | Mock REST API responses |
-| **shared_preferences** | `^2.5.3` | Simple key-value storage |
-| **intl** | `^0.20.2` | Date formatting và localization |
-| **equatable** | `^2.0.7` | Value equality cho Bloc states |
-
-## 🏗️ Architecture
-
-Được xây dựng theo nguyên tắc **Clean Architecture**:
+## 🏗️ Kiến Trúc
 
 ```
 lib/
-├── domain/          # Business logic layer
-├── data/            # Data access layer
-├── presentation/    # UI layer
-└── core/            # Shared utilities
+├── domain/   # Thực thể, usecase, repository contract
+├── data/     # Mô hình, repository impl, datasource
+├── presentation/ # UI, Bloc, widget
+└── core/     # Dịch vụ, tiện ích, interceptor
 ```
 
-- **Domain**: Entities, use cases, repository contracts
-- **Data**: Models, repository implementations, data sources
-- **Presentation**: UI screens, state management (Bloc), widgets
-- **Core**: Services, utilities, mock interceptors
+## 💾 Lưu Trữ Dữ Liệu
 
-### 💾 **Kiến trúc lưu trữ dữ liệu**
+- **SQLite**: Bảng Products, Categories.
+- **JSON Files**: Mock api data: products.json, categories.json trong thư mục ứng dụng; đồng bộ với SQLite.
+- **Hình Ảnh**: Lưu cục bộ, tạo URL giả lập, lưu đệm với flutter_cache_manager.
 
-#### Local Database
-- **SQLite**: Lưu trữ chính cho chức năng offline-first
-- **Tables**: Products, Categories, Images
-- **Relationships**: Ràng buộc khóa ngoại giữa các entities
+## 🚀 Bắt Đầu
 
-#### Mock API Data Storage
-- **File JSON**: Mock API lưu dữ liệu trong file JSON của thư mục app
-  - `products.json`: Lưu danh sách sản phẩm
-  - `categories.json`: Lưu danh sách category
-- **Vị trí file**: Thư mục documents của ứng dụng
-- **Persistence**: Dữ liệu được lưu giữ giữa các phiên app
-- **Sync Strategy**: Local SQLite ↔ Mock API JSON files
+### Cài Đặt
 
-#### Image Storage
-- **Local Images**: Lưu trong thư mục documents của app
-- **Remote URLs**: Tạo mock URLs cho ảnh đã upload
-- **Caching**: Cache ảnh nâng cao với `flutter_cache_manager`
-- **Preview**: Preview local ngay lập tức trước khi upload
+1. Sao chép: `git clone https://github.com/nmtuong97/product_manager_demo.git && cd product_manager_demo`
+2. Phụ thuộc: `flutter pub get`
+3. Tạo mã: `flutter packages pub run build_runner build`
+4. Chạy: `flutter run`
 
-### 🚀 Getting Started
+## 📱 Ảnh Chụp
 
-#### Prerequisites
+| Danh Sách | Chi Tiết | Thêm/Sửa |
+|-----------|----------|----------|
+| ![Danh Sách](screenshots/product_list.png) | ![Chi Tiết](screenshots/product_detail.png) | ![Thêm](screenshots/add_product.png) |
 
-- **Flutter SDK** `3.7.2` trở lên
-- **Dart SDK** `3.0` trở lên
-- **Android Studio** / **VS Code** với Flutter extensions
-- **Android SDK** (cho phát triển Android)
-- **Xcode** (cho phát triển iOS, chỉ trên macOS)
+## 📄 Giấy Phép
 
-#### Installation
-
-1. **Clone repository**
-   ```bash
-   git clone https://github.com/nmtuong97/product_manager_demo.git
-   cd product_manager_demo
-   ```
-
-2. **Cài đặt dependencies**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Generate code** (cho dependency injection)
-   ```bash
-   flutter packages pub run build_runner build
-   ```
-
-4. **Chạy ứng dụng**
-   ```bash
-   # Debug mode
-   flutter run
-   ```
-
-## 📱 Screenshots
-
-| Product List | Product Detail | Add/Edit Product |
-|--------------|----------------|------------------|
-| ![Product List](screenshots/product_list.png) | ![Product Detail](screenshots/product_detail.png) | ![Add Product](screenshots/add_product.png) |
-
-
-## 📄 License
-
-Dự án này được license theo MIT License - xem file [LICENSE](LICENSE) để biết chi tiết.
+MIT License - xem [LICENSE](LICENSE).
 
 ---
-
-📘 [English](README.md) – Click here to view the English documentation
+📘 [English](README.md)
