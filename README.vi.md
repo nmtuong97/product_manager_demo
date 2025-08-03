@@ -41,10 +41,10 @@
 
 ```
 lib/
-├── domain/   # Thực thể, usecase, repository contract
-├── data/     # Mô hình, repository impl, datasource
+├── domain/   # Entities, usecase, repository contract
+├── data/     # Models, repository impl, datasource
 ├── presentation/ # UI, Bloc, widget
-└── core/     # Dịch vụ, tiện ích, interceptor
+└── core/     # Services, Utilities, interceptor
 ```
 
 ## 💾 Lưu Trữ Dữ Liệu

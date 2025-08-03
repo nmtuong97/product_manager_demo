@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
 
             if (snapshot.hasError) {
               return MaterialApp(
+                debugShowCheckedModeBanner: false,
                 home: Scaffold(
                   body: Center(child: Text('Error: ${snapshot.error}')),
                 ),
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
               ],
               child: MaterialApp(
                 title: 'Product Manager Demo',
+                debugShowCheckedModeBanner: false,
                 theme: ThemeData(
                   colorScheme: ColorScheme.fromSeed(
                     seedColor: Colors.deepPurple,
