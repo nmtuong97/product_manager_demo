@@ -2,22 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../blocs/product/product_bloc.dart';
-import '../blocs/product/product_event.dart';
-import '../blocs/product/product_state.dart';
-import '../blocs/category/category_bloc.dart';
-import '../blocs/category/category_event.dart';
-import '../blocs/category/category_state.dart';
-import 'components/category_filter.dart';
-import 'components/product_search_bar.dart';
-import 'components/product_states.dart';
-import 'components/product_views.dart';
-import 'components/view_toggle.dart';
-import 'components/search_results_header.dart';
-import '../../domain/entities/product.dart';
-import '../../domain/entities/category.dart';
-import '../pages/product/product_detail_page.dart';
-import '../../core/utils/text_utils.dart';
+import '../../blocs/product/index.dart';
+import '../../blocs/category/index.dart';
+import 'category_filter.dart';
+import 'product_search_bar.dart';
+import 'product_states.dart';
+import 'product_views.dart';
+import 'view_toggle.dart';
+import 'search_results_header.dart';
+import '../../../domain/entities/product.dart';
+import '../../../domain/entities/category.dart';
+import '../../pages/product/product_detail_page.dart';
+import '../../../core/utils/text_utils.dart';
 
 class ProductListWidget extends StatefulWidget {
   const ProductListWidget({super.key});

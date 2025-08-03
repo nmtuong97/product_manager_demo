@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'injection.dart';
 import 'core/services/initialization_service.dart';
 import 'presentation/blocs/category/index.dart';
-import 'presentation/blocs/product/product_bloc.dart';
+import 'presentation/blocs/product/index.dart';
 import 'presentation/pages/home_page.dart';
 
 Future<void> main() async {

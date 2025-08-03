@@ -6,11 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../core/utils/product_template_generator.dart';
 import '../../domain/entities/product.dart';
-import '../blocs/product/product_bloc.dart';
-import '../blocs/product/product_event.dart';
-import '../blocs/product/product_state.dart';
+import '../blocs/product/index.dart';
 import '../../domain/services/image_url_generator.dart';
-import '../widgets/product_list_widget.dart';
+import '../widgets/index.dart';
 import 'category/category_list_page.dart';
 import 'product/product_management_page.dart';
 

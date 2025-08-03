@@ -8,12 +8,8 @@ import 'package:intl/intl.dart';
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/product.dart';
 import '../../../injection.dart';
-import '../../blocs/category/category_bloc.dart';
-import '../../blocs/category/category_event.dart';
-import '../../blocs/category/category_state.dart';
-import '../../blocs/product/product_bloc.dart';
-import '../../blocs/product/product_event.dart';
-import '../../blocs/product/product_state.dart';
+import '../../blocs/category/index.dart';
+import '../../blocs/product/index.dart';
 import '../../../data/services/image_upload_service.dart';
 import '../../../domain/services/image_url_generator.dart';
 

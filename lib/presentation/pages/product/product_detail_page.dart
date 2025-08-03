@@ -4,12 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '../../../domain/entities/product.dart';
-import '../../blocs/category/category_bloc.dart';
-import '../../blocs/category/category_state.dart';
-import '../../blocs/product/product_bloc.dart';
-import '../../blocs/product/product_event.dart';
-import '../../blocs/product/product_state.dart';
-import '../../widgets/components/product_image_gallery.dart';
+import '../../blocs/category/index.dart';
+import '../../blocs/product/index.dart';
+import '../../widgets/index.dart';
 import 'product_management_page.dart';
 
 class ProductDetailPage extends StatefulWidget {
