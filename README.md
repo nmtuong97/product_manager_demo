@@ -68,6 +68,18 @@ lib/
 |------|--------|----------|
 | ![List](screenshots/product_list.png) | ![Detail](screenshots/product_detail.png) | ![Add](screenshots/add_product.png) |
 
+## 🎥 Demos
+
+![Category Management](gifs/category_demo.gif)
+
+![Add Product](gifs/product_add.gif)
+
+![Product Detail](gifs/product_detail.gif)
+
+![Products Filter](gifs/products_filter.gif)
+
+![Products Search](gifs/products_search.gif)
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE).

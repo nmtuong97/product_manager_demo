@@ -68,6 +68,18 @@ lib/
 |-----------|----------|----------|
 | ![Danh Sách](screenshots/product_list.png) | ![Chi Tiết](screenshots/product_detail.png) | ![Thêm](screenshots/add_product.png) |
 
+## 🎥 Demo
+
+![Quản Lý Danh Mục](gifs/category_demo.gif)
+
+![Thêm Sản Phẩm](gifs/product_add.gif)
+
+![Chi Tiết Sản Phẩm](gifs/product_detail.gif)
+
+![Lọc Sản Phẩm](gifs/products_filter.gif)
+
+![Tìm Kiếm Sản Phẩm](gifs/products_search.gif)
+
 ## 📄 Giấy Phép
 
 MIT License - xem [LICENSE](LICENSE).
