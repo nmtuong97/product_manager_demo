@@ -106,10 +106,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       width: 36.w,
       height: 36.h,
       decoration: BoxDecoration(
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8.r),
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
       ),
@@ -1036,7 +1033,8 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
           onChanged: (Category? value) {
             setState(() {
               _selectedCategory = value;
-              _categoryError = value == null ? 'Please select a category' : null;
+              _categoryError =
+                  value == null ? 'Please select a category' : null;
             });
           },
           style: TextStyle(fontSize: 14.sp, color: colorScheme.onSurface),
@@ -1480,7 +1478,6 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
       }
 
       final product = Product(
-        id: null,
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
         price: double.parse(priceDigitsOnly),

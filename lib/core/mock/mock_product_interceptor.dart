@@ -172,7 +172,7 @@ class MockProductInterceptor extends Interceptor {
         // Get the images from request data (mix of file paths and URLs)
         final data = options.data as Map<String, dynamic>?;
         final imagesList = data?['images'] as List?;
-        
+
         if (imagesList == null || imagesList.isEmpty) {
           handler.reject(_badRequest(options, 'Images list is required'));
           return;
@@ -218,7 +218,7 @@ class MockProductInterceptor extends Interceptor {
       handler.resolve(
         _successResponse(options, {
           'data': createdProduct.toMap(),
-        }, statusCode: 201),
+        }, statusCode: 201,),
       );
     } catch (e) {
       handler.reject(_badRequest(options, 'Invalid product data: $e'));
@@ -297,7 +297,7 @@ class MockProductInterceptor extends Interceptor {
     handler.resolve(
       _successResponse(options, {
         'message': 'Product deleted successfully',
-      }, statusCode: 204),
+      }, statusCode: 204,),
     );
   }
 

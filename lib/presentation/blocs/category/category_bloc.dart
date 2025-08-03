@@ -163,7 +163,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
             deletingCategoryIds: updatedDeletingIds,
           ),
         );
-        
+
         // Emit success state for UI feedback
         emit(const CategoryOperationSuccess('Category deleted successfully'));
       } catch (e) {

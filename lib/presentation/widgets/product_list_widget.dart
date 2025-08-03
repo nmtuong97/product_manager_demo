@@ -39,6 +39,7 @@ class _ProductListWidgetState extends State<ProductListWidget> {
   final bool _isSearching = false;
   String _currentSearchQuery = '';
   int _currentResultCount = 0;
+  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -70,10 +71,13 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                 _currentResultCount = state.products.length;
                 // Apply current filters to the loaded products
                 _applyCurrentFilters();
+                // Reset refresh state when data is loaded
+                _isRefreshing = false;
               });
             } else if (state is ProductSearchLoaded) {
               setState(() {
                 _currentResultCount = state.searchResults.length;
+                _isRefreshing = false;
               });
             } else if (state is ProductOperationSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -83,6 +87,9 @@ class _ProductListWidgetState extends State<ProductListWidget> {
                 ),
               );
             } else if (state is ProductError) {
+              setState(() {
+                _isRefreshing = false;
+              });
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),
@@ -145,11 +152,17 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               ),
               SizedBox(height: 16.h),
 
-              // Product content
+              // Product content with pull to refresh
               Expanded(
                 child: BlocBuilder<ProductBloc, ProductState>(
                   builder: (context, state) {
-                    return _buildProductContent(state);
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      color: Theme.of(context).primaryColor,
+                      backgroundColor: Colors.white,
+                      strokeWidth: 2,
+                      child: _buildProductContent(state),
+                    );
                   },
                 ),
               ),
@@ -167,6 +180,32 @@ class _ProductListWidgetState extends State<ProductListWidget> {
 
   void _loadCategories() {
     context.read<CategoryBloc>().add(const LoadCategories());
+  }
+
+  /// Handle pull to refresh action
+  Future<void> _onRefresh() async {
+    if (_isRefreshing) return;
+
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    try {
+      // Force reload both products and categories from API
+      context.read<ProductBloc>().add(const LoadProducts(forceRefresh: true));
+      context.read<CategoryBloc>().add(
+        const LoadCategories(forceRefresh: true),
+      );
+
+      // Wait for a minimum duration to show refresh indicator
+      await Future.delayed(const Duration(milliseconds: 500));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
+    }
   }
 
   void _performSearch() {
@@ -348,28 +387,34 @@ class _ProductListWidgetState extends State<ProductListWidget> {
     }
 
     if (state is ProductError) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
-            SizedBox(height: 16.h),
-            Text(
-              'An error occurred while loading data',
-              style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+                SizedBox(height: 16.h),
+                Text(
+                  'An error occurred while loading data',
+                  style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  state.message,
+                  style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16.h),
+                ElevatedButton(
+                  onPressed: _loadProducts,
+                  child: const Text('Try Again'),
+                ),
+              ],
             ),
-            SizedBox(height: 8.h),
-            Text(
-              state.message,
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16.h),
-            ElevatedButton(
-              onPressed: _loadProducts,
-              child: const Text('Try Again'),
-            ),
-          ],
+          ),
         ),
       );
     }
@@ -382,20 +427,26 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               .toList();
 
       if (displayProducts.isEmpty) {
-        return ProductEmptyState(
-          searchQuery: state.query,
-          selectedCategory:
-              _selectedCategory != 'All' ? _selectedCategory : null,
-          onClearSearch: () {
-            _searchController.clear();
-            _onSearchCleared();
-            if (_selectedCategory != 'All') {
-              setState(() {
-                _selectedCategory = 'All';
-              });
-              _performSearch();
-            }
-          },
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: ProductEmptyState(
+              searchQuery: state.query,
+              selectedCategory:
+                  _selectedCategory != 'All' ? _selectedCategory : null,
+              onClearSearch: () {
+                _searchController.clear();
+                _onSearchCleared();
+                if (_selectedCategory != 'All') {
+                  setState(() {
+                    _selectedCategory = 'All';
+                  });
+                  _performSearch();
+                }
+              },
+            ),
+          ),
         );
       }
 
@@ -419,21 +470,27 @@ class _ProductListWidgetState extends State<ProductListWidget> {
               .toList();
 
       if (displayProducts.isEmpty) {
-        return ProductEmptyState(
-          searchQuery:
-              _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
-          selectedCategory:
-              _selectedCategory != 'All' ? _selectedCategory : null,
-          onClearSearch: () {
-            _searchController.clear();
-            _onSearchCleared();
-            if (_selectedCategory != 'All') {
-              setState(() {
-                _selectedCategory = 'All';
-              });
-              _performSearch();
-            }
-          },
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: ProductEmptyState(
+              searchQuery:
+                  _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
+              selectedCategory:
+                  _selectedCategory != 'All' ? _selectedCategory : null,
+              onClearSearch: () {
+                _searchController.clear();
+                _onSearchCleared();
+                if (_selectedCategory != 'All') {
+                  setState(() {
+                    _selectedCategory = 'All';
+                  });
+                  _performSearch();
+                }
+              },
+            ),
+          ),
         );
       }
 
@@ -453,20 +510,27 @@ class _ProductListWidgetState extends State<ProductListWidget> {
         _filteredProducts.isEmpty ? _products : _filteredProducts;
 
     if (displayProducts.isEmpty) {
-      return ProductEmptyState(
-        searchQuery:
-            _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
-        selectedCategory: _selectedCategory != 'All' ? _selectedCategory : null,
-        onClearSearch: () {
-          _searchController.clear();
-          _onSearchCleared();
-          if (_selectedCategory != 'All') {
-              setState(() {
-                _selectedCategory = 'All';
-              });
-              _performSearch();
-          }
-        },
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: ProductEmptyState(
+            searchQuery:
+                _currentSearchQuery.isNotEmpty ? _currentSearchQuery : null,
+            selectedCategory:
+                _selectedCategory != 'All' ? _selectedCategory : null,
+            onClearSearch: () {
+              _searchController.clear();
+              _onSearchCleared();
+              if (_selectedCategory != 'All') {
+                setState(() {
+                  _selectedCategory = 'All';
+                });
+                _performSearch();
+              }
+            },
+          ),
+        ),
       );
     }
 
