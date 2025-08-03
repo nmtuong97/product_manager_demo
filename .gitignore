@@ -123,3 +123,5 @@ app.*.symbols
 description.md
 /macos
 lib/injection.config.dart
+devtools_options.yaml
+product_manager_demo.iml
