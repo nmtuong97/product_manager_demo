@@ -149,18 +149,39 @@ lib/
 - **Caching**: Cache ảnh nâng cao với `flutter_cache_manager`
 - **Preview**: Preview local ngay lập tức trước khi upload
 
-## 🚀 Getting Started
+### 🚀 Getting Started
 
-```bash
-# Install dependencies
-flutter pub get
+#### Prerequisites
 
-# Generate code (cho dependency injection)
-flutter packages pub run build_runner build
+- **Flutter SDK** `3.7.2` trở lên
+- **Dart SDK** `3.0` trở lên
+- **Android Studio** / **VS Code** với Flutter extensions
+- **Android SDK** (cho phát triển Android)
+- **Xcode** (cho phát triển iOS, chỉ trên macOS)
 
-# Run application
-flutter run
-```
+#### Installation
+
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/nmtuong97/product_manager_demo.git
+   cd product_manager_demo
+   ```
+
+2. **Cài đặt dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Generate code** (cho dependency injection)
+   ```bash
+   flutter packages pub run build_runner build
+   ```
+
+4. **Chạy ứng dụng**
+   ```bash
+   # Debug mode
+   flutter run
+   ```
 
 ## 📱 Screenshots
 
@@ -168,9 +189,6 @@ flutter run
 |--------------|----------------|------------------|
 | ![Product List](screenshots/product_list.png) | ![Product Detail](screenshots/product_detail.png) | ![Add Product](screenshots/add_product.png) |
 
-## 📚 Documentation
-
-- [Image Cache Guide](docs/IMAGE_CACHE_GUIDE.md) - Advanced image caching implementation
 
 ## 📄 License
 

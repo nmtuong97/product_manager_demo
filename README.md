@@ -163,7 +163,7 @@ lib/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/product_manager_demo.git
+   git clone https://github.com/nmtuong97/product_manager_demo.git
    cd product_manager_demo
    ```
 
