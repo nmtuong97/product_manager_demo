@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '../../../domain/entities/category.dart';
-import '../../blocs/category/category_barrel.dart';
+import '../../blocs/category/index.dart';
 import 'category_form_page.dart';
 
 /// Main page for displaying and managing categories

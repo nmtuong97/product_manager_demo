@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../domain/entities/category.dart';
-import '../../blocs/category/category_barrel.dart';
+import '../../blocs/category/index.dart';
 
 /// Form page for adding or editing categories
 ///
