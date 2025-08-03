@@ -9,15 +9,15 @@
 
 ## 🎥 Demos
 
-<img src="gifs/category_demo.gif" width="300" alt="Category Management">
+<img src="gifs/category_demo.gif" width="640" alt="Category Management">
 
-<img src="gifs/product_add.gif" width="300" alt="Add Product">
+<img src="gifs/product_add.gif" width="640" alt="Add Product">
 
-<img src="gifs/product_detail.gif" width="300" alt="Product Detail">
+<img src="gifs/product_detail.gif" width="640" alt="Product Detail">
 
-<img src="gifs/products_filter.gif" width="300" alt="Products Filter">
+<img src="gifs/products_filter.gif" width="640" alt="Products Filter">
 
-<img src="gifs/products_search.gif" width="300" alt="Products Search">
+<img src="gifs/products_search.gif" width="640" alt="Products Search">
 
 ## 📖 Overview
 
