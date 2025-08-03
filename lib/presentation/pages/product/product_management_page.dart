@@ -81,6 +81,8 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     context.read<CategoryBloc>().add(const LoadCategories());
   }
 
+
+
   void _initializeForm() {
     if (_isEditMode && widget.product != null) {
       final product = widget.product!;
@@ -121,54 +123,7 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
     );
   }
 
-  Widget _buildImageActionButton({
-    required IconData icon,
-    required String label,
-    required String subtitle,
-    required VoidCallback onTap,
-    required ColorScheme colorScheme,
-  }) {
-    return Container(
-      height: 70.h,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: colorScheme.outline.withValues(alpha: 0.5),
-          width: 1.5,
-        ),
-        borderRadius: BorderRadius.circular(10.r),
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10.r),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 22.w, color: colorScheme.primary),
-              SizedBox(height: 4.h),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Future<void> _pickImageFromCamera() async {
     try {
@@ -1049,210 +1004,247 @@ class _ProductManagementPageState extends State<ProductManagementPage> {
   }
 
   Widget _buildImageSection() {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Product Images',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            if (_selectedImages.length + _uploadedImageUrls.length < 5)
-              Row(
-                children: [
-                  _buildCompactImageButton(
-                    icon: Icons.photo_library_outlined,
-                    onTap: _pickMultipleImages,
-                    colorScheme: colorScheme,
-                  ),
-                  SizedBox(width: 8.w),
-                  _buildCompactImageButton(
-                    icon: Icons.photo_camera_outlined,
-                    onTap: _pickImageFromCamera,
-                    colorScheme: colorScheme,
-                  ),
-                ],
-              ),
-          ],
-        ),
+        _buildImageSectionHeader(),
         SizedBox(height: 8.h),
-
-        // Image count info
-        if (_selectedImages.length + _uploadedImageUrls.length < 5)
-          Center(
-            child: Text(
-              'Maximum 5 images • ${_selectedImages.length + _uploadedImageUrls.length}/5',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-
-        // Selected images preview
-        if (_selectedImages.isNotEmpty) ...[
-          SizedBox(height: 16.h),
-          Text(
-            'Selected images (${_selectedImages.length})',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          SizedBox(
-            height: 100.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _selectedImages.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(right: 12.w),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.r),
-                        child: Image.file(
-                          _selectedImages[index],
-                          width: 100.w,
-                          height: 100.h,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        top: 4.h,
-                        right: 4.w,
-                        child: GestureDetector(
-                          onTap: () => _removeSelectedImage(index),
-                          child: Container(
-                            padding: EdgeInsets.all(4.w),
-                            decoration: BoxDecoration(
-                              color: colorScheme.error,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.close,
-                              size: 16.w,
-                              color: colorScheme.onError,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-
-        // Uploaded images preview
-        if (_uploadedImageUrls.isNotEmpty) ...[
-          SizedBox(height: 16.h),
-          Text(
-            'Uploaded images (${_uploadedImageUrls.length})',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          SizedBox(
-            height: 100.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _uploadedImageUrls.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(right: 12.w),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.r),
-                        child: Image.network(
-                          _uploadedImageUrls[index],
-                          width: 100.w,
-                          height: 100.h,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 100.w,
-                              height: 100.h,
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Icon(
-                                Icons.broken_image,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Positioned(
-                        top: 4.h,
-                        right: 4.w,
-                        child: GestureDetector(
-                          onTap: () => _removeUploadedImage(index),
-                          child: Container(
-                            padding: EdgeInsets.all(4.w),
-                            decoration: BoxDecoration(
-                              color: colorScheme.error,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.close,
-                              size: 16.w,
-                              color: colorScheme.onError,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-
-        // Upload progress
-        if (_isUploadingImages) ...[
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              SizedBox(
-                width: 20.w,
-                height: 20.h,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colorScheme.primary,
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Text(
-                'Uploading images...',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ],
+        _buildImageCountInfo(),
+        ..._buildSelectedImagesPreview(),
+        ..._buildUploadedImagesPreview(),
+        ..._buildUploadProgress(),
       ],
     );
+  }
+
+  Widget _buildImageSectionHeader() {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Product Images',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        if (_selectedImages.length + _uploadedImageUrls.length < 5)
+          _buildImageActionButtons(colorScheme),
+      ],
+    );
+  }
+
+  Widget _buildImageActionButtons(ColorScheme colorScheme) {
+    return Row(
+      children: [
+        _buildCompactImageButton(
+          icon: Icons.photo_library_outlined,
+          onTap: _pickMultipleImages,
+          colorScheme: colorScheme,
+        ),
+        SizedBox(width: 8.w),
+        _buildCompactImageButton(
+          icon: Icons.photo_camera_outlined,
+          onTap: _pickImageFromCamera,
+          colorScheme: colorScheme,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageCountInfo() {
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    if (_selectedImages.length + _uploadedImageUrls.length >= 5) {
+      return const SizedBox.shrink();
+    }
+    
+    return Center(
+      child: Text(
+        'Maximum 5 images • ${_selectedImages.length + _uploadedImageUrls.length}/5',
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildSelectedImagesPreview() {
+    if (_selectedImages.isEmpty) return [];
+    
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return [
+      SizedBox(height: 16.h),
+      Text(
+        'Selected images (${_selectedImages.length})',
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSurface,
+        ),
+      ),
+      SizedBox(height: 8.h),
+      _buildImageListView(
+        itemCount: _selectedImages.length,
+        itemBuilder: (index) => _buildSelectedImageItem(index, colorScheme),
+      ),
+    ];
+  }
+
+  List<Widget> _buildUploadedImagesPreview() {
+    if (_uploadedImageUrls.isEmpty) return [];
+    
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return [
+      SizedBox(height: 16.h),
+      Text(
+        'Uploaded images (${_uploadedImageUrls.length})',
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSurface,
+        ),
+      ),
+      SizedBox(height: 8.h),
+      _buildImageListView(
+        itemCount: _uploadedImageUrls.length,
+        itemBuilder: (index) => _buildUploadedImageItem(index, colorScheme),
+      ),
+    ];
+  }
+
+  Widget _buildImageListView({
+    required int itemCount,
+    required Widget Function(int) itemBuilder,
+  }) {
+    return SizedBox(
+      height: 100.h,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: itemCount,
+        itemBuilder: (context, index) => Container(
+          margin: EdgeInsets.only(right: 12.w),
+          child: itemBuilder(index),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedImageItem(int index, ColorScheme colorScheme) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: Image.file(
+            _selectedImages[index],
+            width: 100.w,
+            height: 100.h,
+            fit: BoxFit.cover,
+          ),
+        ),
+        _buildRemoveButton(
+          onTap: () => _removeSelectedImage(index),
+          colorScheme: colorScheme,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUploadedImageItem(int index, ColorScheme colorScheme) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: Image.network(
+            _uploadedImageUrls[index],
+            width: 100.w,
+            height: 100.h,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => _buildImageErrorWidget(colorScheme),
+          ),
+        ),
+        _buildRemoveButton(
+          onTap: () => _removeUploadedImage(index),
+          colorScheme: colorScheme,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageErrorWidget(ColorScheme colorScheme) {
+    return Container(
+      width: 100.w,
+      height: 100.h,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Icon(
+        Icons.broken_image,
+        color: colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+
+  Widget _buildRemoveButton({
+    required VoidCallback onTap,
+    required ColorScheme colorScheme,
+  }) {
+    return Positioned(
+      top: 4.h,
+      right: 4.w,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            color: colorScheme.error,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.close,
+            size: 16.w,
+            color: colorScheme.onError,
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildUploadProgress() {
+    if (!_isUploadingImages) return [];
+    
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return [
+      SizedBox(height: 16.h),
+      Row(
+        children: [
+          SizedBox(
+            width: 20.w,
+            height: 20.h,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: colorScheme.primary,
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Text(
+            'Uploading images...',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    ];
   }
 
   Widget _buildActionButtons() {
