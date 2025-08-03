@@ -74,12 +74,6 @@ lib/
 3. Tạo mã: `flutter packages pub run build_runner build`
 4. Chạy: `flutter run`
 
-## 📱 Ảnh Chụp
-
-| Danh Sách | Chi Tiết | Thêm/Sửa |
-|-----------|----------|----------|
-| ![Danh Sách](screenshots/product_list.png) | ![Chi Tiết](screenshots/product_detail.png) | ![Thêm](screenshots/add_product.png) |
-
 ## 📄 Giấy Phép
 
 MIT License - xem [LICENSE](LICENSE).

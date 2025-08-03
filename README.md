@@ -74,12 +74,6 @@ lib/
 3. Generate code: `flutter packages pub run build_runner build`
 4. Run: `flutter run`
 
-## 📱 Screenshots
-
-| List | Detail | Add/Edit |
-|------|--------|----------|
-| ![List](screenshots/product_list.png) | ![Detail](screenshots/product_detail.png) | ![Add](screenshots/add_product.png) |
-
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE).
