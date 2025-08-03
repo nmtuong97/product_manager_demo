@@ -9,15 +9,15 @@
 
 ## 🎥 Demo
 
-<img src="gifs/category_demo.gif" width="300" alt="Quản Lý Danh Mục">
+<img src="gifs/category_demo.gif" width="320" height="621" alt="Quản Lý Danh Mục">
 
-<img src="gifs/product_add.gif" width="300" alt="Thêm Sản Phẩm">
+<img src="gifs/product_add.gif" width="320" height="621" alt="Thêm Sản Phẩm">
 
-<img src="gifs/product_detail.gif" width="300" alt="Chi Tiết Sản Phẩm">
+<img src="gifs/product_detail.gif" width="320" height="621" alt="Chi Tiết Sản Phẩm">
 
-<img src="gifs/products_filter.gif" width="300" alt="Lọc Sản Phẩm">
+<img src="gifs/products_filter.gif" width="320" height="621" alt="Lọc Sản Phẩm">
 
-<img src="gifs/products_search.gif" width="300" alt="Tìm Kiếm Sản Phẩm">
+<img src="gifs/products_search.gif" width="320" height="621" alt="Tìm Kiếm Sản Phẩm">
 
 ## 📖 Tổng Quan
 

@@ -5,19 +5,19 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey?style=for-the-badge)](https://flutter.dev)
 
-> 🇺🇸 [English](README.md) | 🇻🇳 Tiếng Việt
+> 🇺🇸 [English](README.md) | 🇻🇳 [Tiếng Việt](README.vi.md)
 
 ## 🎥 Demos
 
-<img src="gifs/category_demo.gif" width="320" alt="Category Management">
+<img src="gifs/category_demo.gif" width="320" height="621" alt="Category Management">
 
-<img src="gifs/product_add.gif" width="320" alt="Add Product">
+<img src="gifs/product_add.gif" width="320" height="621" alt="Add Product">
 
-<img src="gifs/product_detail.gif" width="320" alt="Product Detail">
+<img src="gifs/product_detail.gif" width="320" height="621" alt="Product Detail">
 
-<img src="gifs/products_filter.gif" width="320" alt="Products Filter">
+<img src="gifs/products_filter.gif" width="320" height="621" alt="Products Filter">
 
-<img src="gifs/products_search.gif" width="320" alt="Products Search">
+<img src="gifs/products_search.gif" width="320" height="621" alt="Products Search">
 
 ## 📖 Overview
 
