@@ -7,6 +7,18 @@
 
 > 🇺🇸 [English](README.md) | 🇻🇳 Tiếng Việt
 
+## 🎥 Demos
+
+<img src="gifs/category_demo.gif" width="300" alt="Category Management">
+
+<img src="gifs/product_add.gif" width="300" alt="Add Product">
+
+<img src="gifs/product_detail.gif" width="300" alt="Product Detail">
+
+<img src="gifs/products_filter.gif" width="300" alt="Products Filter">
+
+<img src="gifs/products_search.gif" width="300" alt="Products Search">
+
 ## 📖 Overview
 
 Flutter app for product management with offline-first architecture, real-time sync, and modern UI/UX, following Clean Architecture.
@@ -67,18 +79,6 @@ lib/
 | List | Detail | Add/Edit |
 |------|--------|----------|
 | ![List](screenshots/product_list.png) | ![Detail](screenshots/product_detail.png) | ![Add](screenshots/add_product.png) |
-
-## 🎥 Demos
-
-![Category Management](gifs/category_demo.gif)
-
-![Add Product](gifs/product_add.gif)
-
-![Product Detail](gifs/product_detail.gif)
-
-![Products Filter](gifs/products_filter.gif)
-
-![Products Search](gifs/products_search.gif)
 
 ## 📄 License
 

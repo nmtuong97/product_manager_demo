@@ -7,6 +7,18 @@
 
 > 🇺🇸 [English](README.md) | 🇻🇳 Tiếng Việt
 
+## 🎥 Demo
+
+<img src="gifs/category_demo.gif" width="300" alt="Quản Lý Danh Mục">
+
+<img src="gifs/product_add.gif" width="300" alt="Thêm Sản Phẩm">
+
+<img src="gifs/product_detail.gif" width="300" alt="Chi Tiết Sản Phẩm">
+
+<img src="gifs/products_filter.gif" width="300" alt="Lọc Sản Phẩm">
+
+<img src="gifs/products_search.gif" width="300" alt="Tìm Kiếm Sản Phẩm">
+
 ## 📖 Tổng Quan
 
 Ứng dụng Flutter quản lý sản phẩm với kiến trúc offline-first, đồng bộ thời gian thực và UI/UX hiện đại, tuân thủ Clean Architecture.
@@ -67,18 +79,6 @@ lib/
 | Danh Sách | Chi Tiết | Thêm/Sửa |
 |-----------|----------|----------|
 | ![Danh Sách](screenshots/product_list.png) | ![Chi Tiết](screenshots/product_detail.png) | ![Thêm](screenshots/add_product.png) |
-
-## 🎥 Demo
-
-![Quản Lý Danh Mục](gifs/category_demo.gif)
-
-![Thêm Sản Phẩm](gifs/product_add.gif)
-
-![Chi Tiết Sản Phẩm](gifs/product_detail.gif)
-
-![Lọc Sản Phẩm](gifs/products_filter.gif)
-
-![Tìm Kiếm Sản Phẩm](gifs/products_search.gif)
 
 ## 📄 Giấy Phép
 
